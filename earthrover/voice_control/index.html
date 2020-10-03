@@ -1,0 +1,90 @@
+<!--
+Project: Earthrover
+Created by: Jitesh Saini
+-->
+
+<!DOCTYPE html>
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <title>Voice Control</title>
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        
+        <style type="text/css">
+            #text{
+                height:100px;border:1px solid grey;
+                width:84%;
+                background-color:darkblue;
+                padding:2%;
+                margin: 2%;
+                font-size: 70px;
+            }
+            #command_block{
+                border:1px solid lightgrey;
+                background-color: #e8fcff;
+                padding: 0%;
+            }
+            #command_block button{ font-size: 20px; margin-right: 5%; }
+
+            #response_block{
+                border:1px solid lightgrey;
+                background-color: #f8ffeb;
+                margin-top: 3%;
+            }
+            #response{
+                color:green;
+                margin-left: 5%;
+                font-size: 40px;
+            }
+            .label{
+                float:left; 
+                background-color: grey;
+                color:white;
+                padding:0.3%;
+            }
+        </style>
+    </head>
+    <body>
+        <h1 align='center'>Earth Rover Voice Control</h1>
+        <h2 class="no-browser-support">Your Browser Doesn't Support the Web Speech API</h2>
+
+        <div id='command_block' align='center'>
+            <txt class='label'>Voice commands to Rover</txt>
+            <br><br>
+
+            <div style='float:left;margin-top: 5%;'>
+                <img src='images/speak.png' height="80">
+            </div>
+
+            <div id='text'>
+				<b id="note-textarea" style="color:white"></b>
+            </div>
+
+            <br>                
+            <button id="start-record-btn" title="Start Recording">
+                Start Voice Recognition
+            </button>
+
+            <button id="stop-record-btn" title="Pause Recording">
+                Stop
+            </button>
+
+            <p style="color:grey" id="recording-instructions"></p>
+        </div>
+
+        <div id='response_block'>
+            <txt class='label'>Response from Rover</txt>
+            <br><br>
+            <img src='images/rover.png' height="90">
+            
+            <b id="response"></b>
+           
+        </div>
+        
+        <script src="/earthrover/control_panel/js/jquery.min.js"></script>
+        <script src="script.js"></script>
+    </body>
+</html>
+
+

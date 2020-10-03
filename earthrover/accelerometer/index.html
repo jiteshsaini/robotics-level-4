@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<title>Accelerometer Control</title>
+
+<style>
+body {
+	font-family: helvetica, arial, sans serif;
+}
+#outer_box{
+	float: left;
+	border: 0px solid blue;
+	width: 90%;
+	margin-left: 4%;
+}
+#acc{
+	background-color:gray;
+	border-radius:10px;
+	float:right;
+	width:5%;
+	margin:2%;
+}
+
+.box_1{
+	float: left;
+	border: 1px solid grey;
+	width: 92%;
+	font-size: 50px;color: blue;
+	margin-top: 2%;
+}
+.box_1 b{
+	margin-right: 15%;
+	margin-left: 5%;
+	font-size: 30px;color: black;
+}
+</style>
+<script src="/earthrover/control_panel/js/jquery.min.js"></script>
+<script src="acc.js"></script>
+
+</head>
+
+<body>
+	
+<div id='outer_box' align='center'>
+    <input id='acc' type='submit' onclick=acc_toggle(); value='OFF'/>
+	
+	<h2>Earthrover control through smart phone's Accelerometer</h2>
+	
+	<div class='box_1'>
+		<b>X</b><span id="accelerationX"></span>
+	</div>
+	
+	<div class='box_1'>
+		<b>Y</b><span id="accelerationY"></span>
+	</div>
+	
+	<div class='box_1'>
+		<b>Z</b><span id="accelerationZ"></span>
+	</div>
+
+</div>
+
+</body>
+</html>
