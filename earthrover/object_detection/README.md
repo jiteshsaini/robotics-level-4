@@ -10,20 +10,18 @@ Read the article: <a href='https://helloworld.co.in/article/ai-robot-object-dete
 </p>
                     
 <p align="center">
-   <img src="img/obj_det.gif">
+   <img src="https://github.com/jiteshsaini/robotics-level-4/blob/main/img/obj_det.gif">
 </p>
 
 ## Code Files
-The directory 'all_models' contains the models and label files.
-
-The code for this project is placed in a directory named 'object_detection' inside the 'earthrover' directory. Rest of the folder contains various modules implemented in the robot and do not pertain to object detection part.
+The ML model used in this project is placed in 'all_models' directory.
 
 
 ## Overview
 The code in this project is based on Google-Coral Object Detection example available at:-<br>
 https://github.com/google-coral/examples-camera/tree/master/opencv
 
-The 'object_detection' directory has following Python files. The purpose of the files is mentioned below them:-
+A brief description of the files used in this project is mentioned below.
 
 1. **object_detection.py**
 
