@@ -5,7 +5,7 @@
 </p>
 
 ## Model files
-The ML model used in this project is same as the one used in Object Detection project and can be found at this [link](https://github.com/jiteshsaini/object_detection_AI-Robot). 
+The ML model used in this project is placed in 'all_models' directory inside parent directory.
 
 ## Overview of the Project
 Robot detects an object using a Machine Learning model 'MobileNet SSD v1 (COCO)' and TensorFlow Lite interpreter. The Robot follows the object and manoeuvres itself to get the object in the center of frame. While the robot is tracking / following the object, working of tracking algorithm and Robot's view can be accessed on a browser. Robot's view with information overlay is generated using OpenCV. The various overlays on a frame are shown in the picture below
