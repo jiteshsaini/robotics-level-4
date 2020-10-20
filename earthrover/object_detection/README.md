@@ -14,7 +14,7 @@ Read the article: <a href='https://helloworld.co.in/article/ai-robot-object-dete
 </p>
 
 ## Code Files
-The ML model used in this project is placed in 'all_models' directory.
+The ML model used in this project is placed in 'all_models' directory inside parent directory.
 
 
 ## Overview
