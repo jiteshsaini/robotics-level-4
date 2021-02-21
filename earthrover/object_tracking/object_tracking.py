@@ -8,7 +8,7 @@ Inference is carried out using TensorFlow Lite interpreter.
 Using OpenCV, the frame is overlayed with information such as bounding boxes, center coordinates of the object, deviation of the object from center of the frame etc.
 The frame with overlays is streamed over LAN using FLASK, which can be accessed using a browser by typing IP address of the RPi followed by the port (2204 as per this code)
 
-The code moves the robot in order to brings center of the object closer to center of the frame.
+The code moves the robot in order to bring center of the object closer to center of the frame.
 """
 
 import common as cm
