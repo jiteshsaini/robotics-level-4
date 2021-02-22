@@ -13,13 +13,13 @@ The code of Human following robot is partially derived from the <a href='https:/
 
 Both the files 'human_follower.py' and 'human_follower2.py' files are identicle in logic. The difference is as follows:-
 
-'human_follower.py'
+### 'human_follower.py'
 This file performs human following and streams the robot view over LAN using FLASK (Python's micro Web Framework). 
 
-'human_follower2.py'
+### 'human_follower2.py'
 Pure human following logic. The code pertaing to FLASK is removed.
 
-'common.py'
+### 'common.py'
 This file contains the utility functions which are required for setting up of Tensorflow Lite interpreter.
 
  
