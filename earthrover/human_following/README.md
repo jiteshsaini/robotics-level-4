@@ -11,7 +11,7 @@ The ML model used in this project is placed in 'all_models' directory inside par
 Robot detects presence of a person in camera frame using a Machine Learning model 'MobileNet SSD v1 (COCO)' and TensorFlow Lite interpreter. 
 The code of Human following robot is partially derived from the <a href='https://github.com/jiteshsaini/robotics-level-4/tree/main/earthrover/object_tracking'>Object Tracking code</a>. However, there is a difference in the method which calculates distance from the object to generate forward motion command.
 
-Both the files 'human_follower.py' and 'human_follower2.py' files are identicle in logic. The difference is as follows:-
+Both the files 'human_follower.py' and 'human_follower2.py' files are identical in logic. The difference is as follows:-
 
 ### 'human_follower.py'
 This file performs human following and streams the robot view over LAN using FLASK (Python's micro Web Framework). 
