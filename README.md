@@ -6,6 +6,7 @@ This repo is an extension of previous [level](https://github.com/jiteshsaini/rob
 - Image Classification
 - Object Detection 
 - Object Tracking
+- Human Following
 
 
 ## Object Detection
@@ -15,6 +16,10 @@ The ML model used in this project is placed inside 'all_models' directory.
 
 ## Object Tracking
 The code for this project is placed in a directory named 'object_tracking' inside the 'earthrover' directory
+The ML model used in this project is placed inside 'all_models' directory.  
+
+## Human Following
+The code for this project is placed in a directory named 'human_following' inside the 'earthrover' directory
 The ML model used in this project is placed inside 'all_models' directory.  
 
 ## Image Classification
