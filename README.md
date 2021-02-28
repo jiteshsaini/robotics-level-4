@@ -1,6 +1,6 @@
 # Robotics Level 4
 
-This repo is an extension of previous [level](https://github.com/jiteshsaini/robotics-level-3). It contains projects to show how we can integrate various Machine Learning Models with the robot to achieve following advanced capabilities:-
+This repo is an extension of previous [level](https://github.com/jiteshsaini/robotics-level-3). The code of this robot is organised in various folders inside the directory 'earthrover'. The names of these folders briefly indicate the purpose of the code inside them. This repo focusses on the advanced capabilities embedded into the robot via use of Pre-trained Machine Learning models provided by "tensorflow.org" or created via online tool of Google called Teachable Machine. The following projects in this repo demonstrate how we can integrate Tensorflow Lite and such Machine Learning Models on a Raspberry Pi computer. You can further read about them by accessing their individual README.md file.
 
 - Gesture Controls
 - Image Classification
