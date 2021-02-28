@@ -4,21 +4,21 @@ This repo is an extension of previous [level](https://github.com/jiteshsaini/rob
 
 - Gesture Controls
 - Image Classification
-- Object Detection 
+- Object Detection
 - Object Tracking
 - Human Following
 
 
-## Object Detection
+## <a href='https://github.com/jiteshsaini/robotics-level-4/tree/main/earthrover/object_detection'>Object Detection</a>
 
 The code for this project is placed in a directory named 'object_detection' inside the 'earthrover' directory
 The ML model used in this project is placed inside 'all_models' directory. 
 
-## Object Tracking
+## <a href='https://github.com/jiteshsaini/robotics-level-4/tree/main/earthrover/object_tracking'>Object Tracking</a>
 The code for this project is placed in a directory named 'object_tracking' inside the 'earthrover' directory
 The ML model used in this project is placed inside 'all_models' directory.  
 
-## Human Following
+## <a href='https://github.com/jiteshsaini/robotics-level-4/tree/main/earthrover/human_following'>Human Following</a>
 The code for this project is placed in a directory named 'human_following' inside the 'earthrover' directory
 The ML model used in this project is placed inside 'all_models' directory.  
 
