@@ -146,13 +146,12 @@ def get_delay(deviation):
     return d
 
 def main():
-
-	if (edgetpu==1):
+    if (edgetpu==1):
         mdl = model_edgetpu
     else:
          mdl = model
   
-    interpreter, labels =cm.load_model(model_dir,model_edgetpu,lbl,edgetpu)
+    interpreter, labels =cm.load_model(model_dir,mdl,lbl,edgetpu)
     
     fps=1
    
