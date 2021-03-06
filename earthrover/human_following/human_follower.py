@@ -6,7 +6,7 @@ Project: AI Robot - Human Following
 -Presence of human in the frame is detected using Machine Learning moldel.
 -TensorFlow Lite interpreter is used to carry out inference.
 -Google coral accelerator is used to accelerate the inferencing process.
--FLASK is used for streaming the robot's view over LAN (accessed via browser)
+-FLASK is used for streaming the robot's view over LAN (accessed via browser).
 """
 
 import common as cm
@@ -28,7 +28,6 @@ edgetpu=1
 
 #default_model_dir = '../all_models
 model_dir = '/home/pi/Documents/all_models'
-model = 'mobilenet_ssd_v2_coco_quant_postprocess.tflite'
 model_edgetpu = 'mobilenet_ssd_v2_coco_quant_postprocess_edgetpu.tflite'
 lbl = 'coco_labels.txt'
 
@@ -36,7 +35,6 @@ tolerance=0.1
 x_deviation=0
 y_max=0
 arr_track_data=[0,0,0,0,0,0]
-#distance=0
 
 object_to_track='person'
 
@@ -76,7 +74,7 @@ print("speed set to: ", val)
 #------------------------------------------
 
 def track_object(objs,labels):
-    
+   
     global x_deviation, y_max, tolerance, arr_track_data
     
     if(len(objs)==0):
