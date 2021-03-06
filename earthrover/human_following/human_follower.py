@@ -32,9 +32,6 @@ model = 'mobilenet_ssd_v2_coco_quant_postprocess.tflite'
 model_edgetpu = 'mobilenet_ssd_v2_coco_quant_postprocess_edgetpu.tflite'
 lbl = 'coco_labels.txt'
 
-file_path="/var/www/html/earthrover/range_sensor/web/"
-
-#delay=0.05
 tolerance=0.1
 x_deviation=0
 y_max=0
@@ -79,8 +76,6 @@ print("speed set to: ", val)
 #------------------------------------------
 
 def track_object(objs,labels):
-    
-    #print ("object to track: ", object_to_track)
     
     global x_deviation, y_max, tolerance, arr_track_data
     
