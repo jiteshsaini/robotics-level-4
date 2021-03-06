@@ -2,10 +2,11 @@
 Author: Jitesh Saini
 Project: AI Robot - Human Following
 
-The robot uses PiCamera to capture a frame. Presence of human in the frame is detected using Machine Learning moldel.
-TensorFlow Lite interpreter is used to carry out inference
-Google coral accelerator is used to accelerate the inferencing process.
-
+-The robot uses PiCamera to capture a frame. 
+-Presence of human in the frame is detected using Machine Learning moldel.
+-TensorFlow Lite interpreter is used to carry out inference.
+-Google coral accelerator is used to accelerate the inferencing process.
+-FLASK is used for streaming the robot's view over LAN (accessed via browser)
 """
 
 import common as cm
@@ -21,10 +22,11 @@ import util as ut
 ut.init_gpio()
 
 cap = cv2.VideoCapture(0)
-threshold=0.2 
+threshold=0.2
 top_k=5 #first five objects with prediction probability above threshhold (0.2) to be considered
 edgetpu=1
 
+#default_model_dir = '../all_models
 model_dir = '/home/pi/Documents/all_models'
 model = 'mobilenet_ssd_v2_coco_quant_postprocess.tflite'
 model_edgetpu = 'mobilenet_ssd_v2_coco_quant_postprocess_edgetpu.tflite'
@@ -39,7 +41,7 @@ y_max=0
 arr_track_data=[0,0,0,0,0,0]
 #distance=0
 
-arr_valid_objects=['person']
+object_to_track='person'
 
 #---------Flask----------------------------------------
 from flask import Flask, Response
@@ -78,6 +80,8 @@ print("speed set to: ", val)
 
 def track_object(objs,labels):
     
+    #print ("object to track: ", object_to_track)
+    
     global x_deviation, y_max, tolerance, arr_track_data
     
     if(len(objs)==0):
@@ -86,15 +90,11 @@ def track_object(objs,labels):
         ut.red_light("OFF")
         arr_track_data=[0,0,0,0,0,0]
         return
-
     
-    #ut.head_lights("OFF")
-    k=0
     flag=0
     for obj in objs:
         lbl=labels.get(obj.id, obj.id)
-        k = arr_valid_objects.count(lbl)
-        if (k>0):
+        if (lbl==object_to_track):
             x_min, y_min, x_max, y_max = list(obj.bbox)
             flag=1
             break
@@ -116,7 +116,6 @@ def track_object(objs,labels):
     obj_y_center=y_min+(y_diff/2)
     obj_y_center=round(obj_y_center,3)
     
-        
     #print("[",obj_x_center, obj_y_center,"]")
         
     x_deviation=round(0.5-obj_x_center,3)
@@ -139,10 +138,11 @@ def move_robot():
     print("moving robot .............!!!!!!!!!!!!!!")
     print(x_deviation, tolerance, arr_track_data)
     
+    y=1-y_max #distance from bottom of the frame
+    
     if(abs(x_deviation)<tolerance):
         delay1=0
-        #ut.stop()
-        if(y_max>0.9):
+        if(y<0.1):
             cmd="Stop"
             ut.red_light("ON")
             ut.stop()
@@ -173,10 +173,7 @@ def move_robot():
     arr_track_data[5]=delay1
 
 def get_delay(deviation):
-    
     deviation=abs(deviation)
-    
-    
     if(deviation>=0.4):
         d=0.080
     elif(deviation>=0.35 and deviation<0.40):
@@ -185,23 +182,15 @@ def get_delay(deviation):
         d=0.050
     else:
         d=0.040
-    
     return d
     
-    
-
 def main():
     
-    if (edgetpu==1):
-        mdl = model_edgetpu
-    else:
-         mdl = model
-        
-    interpreter, labels =cm.load_model(model_dir,mdl,lbl,edgetpu)
+    interpreter, labels =cm.load_model(model_dir,model_edgetpu,lbl,edgetpu)
     
     fps=1
     arr_dur=[0,0,0]
-    #while cap.isOpened():
+    
     while True:
         start_time=time.time()
         
@@ -219,7 +208,6 @@ def main():
         pil_im = Image.fromarray(cv2_im_rgb)
        
         arr_dur[0]=time.time() - start_t0
-        #cm.time_elapsed(start_t0,"camera capture")
         #----------------------------------------------------
        
         #-------------------Inference---------------------------------
@@ -229,7 +217,6 @@ def main():
         objs = cm.get_output(interpreter, score_threshold=threshold, top_k=top_k)
         
         arr_dur[1]=time.time() - start_t1
-        #cm.time_elapsed(start_t1,"inference")
         #----------------------------------------------------
        
        #-----------------other------------------------------------
@@ -238,8 +225,9 @@ def main():
        
         if cv2.waitKey(1) & 0xFF == ord('q'):
             break
-        
+ 
         cv2_im = append_text_img1(cv2_im, objs, labels, arr_dur, arr_track_data)
+       # cv2.imshow('Object Tracking - TensorFlow Lite', cv2_im)
         
         ret, jpeg = cv2.imencode('.jpg', cv2_im)
         pic = jpeg.tobytes()
@@ -249,7 +237,6 @@ def main():
                b'Content-Type: image/jpeg\r\n\r\n' + pic + b'\r\n\r\n')
        
         arr_dur[2]=time.time() - start_t2
-        
         fps = round(1.0 / (time.time() - start_time),1)
         print("*********FPS: ",fps,"************")
 
@@ -264,8 +251,7 @@ def append_text_img1(cv2_im, objs, labels, arr_dur, arr_track_data):
     
     #draw black rectangle on top
     cv2_im = cv2.rectangle(cv2_im, (0,0), (width, 24), (0,0,0), -1)
-    
-     
+   
     #write processing durations
     cam=round(arr_dur[0]*1000,0)
     inference=round(arr_dur[1]*1000,0)
@@ -286,8 +272,7 @@ def append_text_img1(cv2_im, objs, labels, arr_dur, arr_track_data):
     #write deviations and tolerance
     str_tol='Tol : {}'.format(tolerance)
     cv2_im = cv2.putText(cv2_im, str_tol, (10, height-8),font, 0.55, (150, 150, 255), 2)
-   
-   
+  
     x_dev=arr_track_data[2]
     str_x='X: {}'.format(x_dev)
     if(abs(x_dev)<tolerance):
@@ -303,8 +288,7 @@ def append_text_img1(cv2_im, objs, labels, arr_dur, arr_track_data):
     else:
         color_y=(0,0,255)
     cv2_im = cv2.putText(cv2_im, str_y, (220, height-8),font, 0.55, color_y, 2)
-    
-    
+   
     #write command, tracking status and speed
     cmd=arr_track_data[4]
     cv2_im = cv2.putText(cv2_im, str(cmd), (int(width/2) + 10, height-8),font, 0.68, (0, 255, 255), 2)
