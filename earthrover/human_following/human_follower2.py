@@ -2,7 +2,8 @@
 Author: Jitesh Saini
 Project: AI Robot - Human Following
 
-Implementation without FLASK
+The code in this file is same as 'human_follower.py' file. However, code with respect to FLASK implementation has been removed.
+This is bare minimum human following robot.
 """
 
 import common as cm
@@ -22,7 +23,6 @@ threshold=0.2
 top_k=5 #number of objects to be shown as detected
 edgetpu=1
 
-#default_model_dir = '../all_models
 model_dir = '/home/pi/Documents/all_models'
 model_edgetpu = 'mobilenet_ssd_v2_coco_quant_postprocess_edgetpu.tflite'
 lbl = 'coco_labels.txt'
