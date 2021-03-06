@@ -34,8 +34,6 @@ model = 'mobilenet_ssd_v2_coco_quant_postprocess.tflite'
 model_edgetpu = 'mobilenet_ssd_v2_coco_quant_postprocess_edgetpu.tflite'
 lbl = 'coco_labels.txt'
 
-file_path="/var/www/html/earthrover/object_detection/web/"
-
 #delay=0.05
 tolerance=0.1
 x_deviation=0
