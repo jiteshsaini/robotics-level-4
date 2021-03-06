@@ -31,8 +31,7 @@ tolerance=0.1
 x_deviation=0
 y_max=0
 
-
-arr_valid_objects=['person']
+object_to_track='person'
 
 #-----initialise motor speed-----------------------------------
 
@@ -53,8 +52,10 @@ print("speed set to: ", val)
 #------------------------------------------
 
 def track_object(objs,labels):
-   
+    
+    #global delay
     global x_deviation, y_max, tolerance
+    
     
     if(len(objs)==0):
         print("no objects to track")
@@ -62,12 +63,10 @@ def track_object(objs,labels):
         ut.red_light("OFF")
         return
 
-    k=0
     flag=0
     for obj in objs:
         lbl=labels.get(obj.id, obj.id)
-        k = arr_valid_objects.count(lbl)
-        if (k>0):
+        if (lbl==object_to_track):
             x_min, y_min, x_max, y_max = list(obj.bbox)
             flag=1
             break
@@ -98,8 +97,10 @@ def track_object(objs,labels):
 def move_robot():
     global x_deviation, y_max, tolerance
     
+    y=1-y_max #distance from bottom of the frame
+    
     if(abs(x_deviation)<tolerance):
-        if(y_max>0.9):
+        if(y<0.1):
             ut.red_light("ON")
             ut.stop()
             print("reached person...........")
@@ -146,12 +147,8 @@ def get_delay(deviation):
     return d
 
 def main():
-    if (edgetpu==1):
-        mdl = model_edgetpu
-    else:
-         mdl = model
   
-    interpreter, labels =cm.load_model(model_dir,mdl,lbl,edgetpu)
+    interpreter, labels =cm.load_model(model_dir,model_edgetpu,lbl,edgetpu)
     
     fps=1
    
@@ -181,11 +178,9 @@ def main():
         fps = round(1.0 / (time.time() - start_time),1)
         print("*********FPS: ",fps,"************")
 
-        #-----------------------------------------------------
-        
-
     cap.release()
     cv2.destroyAllWindows()
 
 if __name__ == '__main__':
     main()
+
