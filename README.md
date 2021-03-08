@@ -23,20 +23,29 @@ This repo is an extension of previous [level](https://github.com/jiteshsaini/rob
 The code for this project is placed in a directory named 'object_detection' inside the 'earthrover' directory
 The ML model used in this project is placed inside 'all_models' directory. 
 
+The robot can spy on a particular object and provide an alarm on a remote Web Control panel whenever the selected object appears in the frame.
+
 ## <a href='https://github.com/jiteshsaini/robotics-level-4/tree/main/earthrover/object_tracking'>Object Tracking</a>
 The code for this project is placed in a directory named 'object_tracking' inside the 'earthrover' directory
 The ML model used in this project is placed inside 'all_models' directory.  
+
+Robot is made to track a ball and follow it. You can see the robot's camera view on a browser while it is tracking the ball.
 
 ## <a href='https://github.com/jiteshsaini/robotics-level-4/tree/main/earthrover/human_following'>Human Following</a>
 The code for this project is placed in a directory named 'human_following' inside the 'earthrover' directory
 The ML model used in this project is placed inside 'all_models' directory.  
 
-## Image Classification
+Robot is made to follow a human. It is a good human follower :)
+
+## <a href='https://github.com/jiteshsaini/robotics-level-4/tree/main/earthrover/image_classification'>Image Classification</a>
 
 The code for this project is placed in a directory named 'image_classification' inside the 'earthrover' directory. The directory also contains ML model used for image classification.
 
-## Gesture Control
+The robot is shown an object and it speaks out its name.
+
+## <a href='https://github.com/jiteshsaini/robotics-level-4/tree/main/earthrover/tm'>Gesture Control</a>
 
 The code for this project is placed in a directory named 'tm' inside the 'earthrover' directory. 
 The model used in this project is trained through Teachable Machine online tool by Google. The model files are present in the same directory. In order to use the code of this project, You will have to train your own model using Teachable Machine tool and download & replace the model files present here.
 
+A person can control this robot using his face or hand gestures
