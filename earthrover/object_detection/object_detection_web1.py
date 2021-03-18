@@ -25,7 +25,7 @@ import time
 cap = cv2.VideoCapture(0)
 threshold=0.2
 top_k=5 #number of objects to be shown as detected
-edgetpu=1
+edgetpu=0
 
 #default_model_dir = '../all_models
 model_dir = '/home/pi/Documents/all_models'
