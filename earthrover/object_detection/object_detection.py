@@ -21,7 +21,7 @@ import time
 cap = cv2.VideoCapture(0)
 threshold=0.2
 top_k=10 #number of objects to be shown as detected
-edgetpu=1
+edgetpu=0
 
 model_dir = '/home/pi/Documents/all_models'
 model = 'mobilenet_ssd_v2_coco_quant_postprocess.tflite'
