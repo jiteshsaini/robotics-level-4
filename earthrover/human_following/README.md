@@ -1,7 +1,8 @@
 # Human Following AI-Robot
 
 <p align="center">
-   <img src="https://github.com/jiteshsaini/robotics-level-4/blob/main/img/human_following.gif">
+   <img src="https://github.com/jiteshsaini/files/blob/main/img/human_following.gif">
+   
 </p>
 
 ## Model files
