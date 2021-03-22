@@ -2,15 +2,15 @@
 
 <p align="left">
 Read the article: <a href='https://helloworld.co.in/article/ai-robot-object-detection-tensorflow-lite-raspberry-pi-live-stream-results-browser' target='_blank'>
-   <img src='https://github.com/jiteshsaini/earthrover1/blob/master/img/logo3.gif' height='40px'>
+   <img src='https://github.com/jiteshsaini/files/blob/main/img/logo3.gif' height='40px'>
 </a> Watch the video on Yotube: 
 <a href='https://youtu.be/1pnUkhIL7QA' target='_blank'>
-   <img src='https://github.com/jiteshsaini/earthrover1/blob/master/img/btn_youtube.png' height='40px'>
+   <img src='https://github.com/jiteshsaini/files/blob/main/img/btn_youtube.png' height='40px'>
 </a>
 </p>
                     
 <p align="center">
-   <img src="https://github.com/jiteshsaini/robotics-level-4/blob/main/img/obj_det.gif">
+   <img src="https://github.com/jiteshsaini/files/blob/main/img/obj_det.gif">
 </p>
 
 ## Code Files
