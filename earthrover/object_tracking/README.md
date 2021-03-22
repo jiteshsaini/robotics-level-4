@@ -18,7 +18,7 @@ Robot detects an object using a Machine Learning model 'MobileNet SSD v1 (COCO)'
 When the object is present in the frame, information such as bounding boxes, center of the object, deviation of the object from center of the frame, robot direction and speed are updated as shown in picture below. In the below example, X and Y values denote the deviation of center of the object (the red dot) from center of the frame. Since the horizontal deviation i.e. value of 'X' is above the tolerance value, the code generated 'Move Left' command.  
 
 <p align="center">
-   <img src="https://github.com/jiteshsaini/robotics-level-4/blob/main/img/robo_view.gif">
+   <img src="https://github.com/jiteshsaini/files/blob/main/img/robo_view.gif">
 </p>
 
 
