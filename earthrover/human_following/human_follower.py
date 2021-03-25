@@ -5,8 +5,14 @@ Project: AI Robot - Human Following
 -The robot uses PiCamera to capture a frame. 
 -Presence of human in the frame is detected using Machine Learning moldel.
 -TensorFlow Lite interpreter is used to carry out inference.
--Google coral accelerator is used to accelerate the inferencing process.
+-Google Coral USB Accelerator is used to accelerate the inferencing process.
 -FLASK is used for streaming the robot's view over LAN (accessed via browser).
+
+When Coral USB Accelerator is connected:-
+edgetpu = 1 #(Line 33)
+
+When Coral USB Accelerator is not connected:-
+edgetpu = 0 #(Line 33)
 """
 
 import common as cm
@@ -24,10 +30,11 @@ ut.init_gpio()
 cap = cv2.VideoCapture(0)
 threshold=0.2
 top_k=5 #first five objects with prediction probability above threshhold (0.2) to be considered
-edgetpu=1
+edgetpu=0
 
 #default_model_dir = '../all_models
 model_dir = '/home/pi/Documents/all_models'
+model = 'mobilenet_ssd_v2_coco_quant_postprocess.tflite'
 model_edgetpu = 'mobilenet_ssd_v2_coco_quant_postprocess_edgetpu.tflite'
 lbl = 'coco_labels.txt'
 
@@ -179,7 +186,12 @@ def get_delay(deviation):
     
 def main():
     
-    interpreter, labels =cm.load_model(model_dir,model_edgetpu,lbl,edgetpu)
+    if (edgetpu==1):
+        mdl = model_edgetpu
+    else:
+         mdl = model
+        
+    interpreter, labels =cm.load_model(model_dir,mdl,lbl,edgetpu)
     
     fps=1
     arr_dur=[0,0,0]
