@@ -19,10 +19,85 @@ Created by: Jitesh Saini
 $host=$_SERVER['SERVER_ADDR'];//192.168.1.20
 $path=rtrim(dirname($_SERVER["PHP_SELF"]), "/\\"); //earthrover
 
-printf("<div align='center' id='box_outer'>");//------------------------
-	echo"<div align='center' id='box_title'>";
-		echo"<h1 style='color:#0000b3'>Earth Rover</h1>";
+echo"<div align='center' id='box_outer'>";//------------------------
+	echo"<h1 align='center' style='color:#0000b3'>Earth Rover</h1>";
+	
+	echo"<div align='center' id='box_top'>";
+		//Range Sensor block
+		echo"<div class='box_controls' style='width:14%'>";
+			echo"<zz>";
+				echo"<label class='floatLabel'>Range Sensor</label><br>";
+				echo"<b id='range' style='float:right;color:blue;font-size:30px'></b>";
+				echo"<input id='range_button' type='submit' onclick=toggle_rangeSensor('range_button'); value='OFF'/>";
+				echo"<script src='/earthrover/range_sensor/web/rangesensor.js'></script>";
+			echo"</zz>";
+		echo"</div>";
 		
+		//Javascript Robotics block
+		echo"<div class='box_controls' style='width:30%'>";
+			echo"<zz>";
+				echo"<label class='floatLabel' style='width: 120px;'>Javascript Robotics</label><br>";
+				echo"<div style='float:left;width:20%;border:0px solid blue'>";
+					$href_acc= 'https://'.$host."/earthrover/accelerometer";
+					echo"<a href='$href_acc' target='_blank'><button><img src='css/images/acc.png' height='40px'></button></a>";
+				echo"</div>";
+				echo"<div style='float:left;width:20%;margin-left:5%;border:0px solid red'>";
+					$href_voice= 'https://'.$host."/earthrover/voice_control";
+					echo"<a href='$href_voice' target='_blank'><button><img src='css/images/speak.png' height='40px'></button></a>";
+				echo"</div>";
+				echo"<div style='float:left;width:20%;margin-left:5%;border:0px solid red'>";
+					$href_obj= 'https://'.$host."/earthrover/compass";
+					echo"<a href='$href_obj' target='_blank'><button><img src='css/images/compass.png' height='35px'></button></a>";
+				echo"</div>";
+			echo"</zz>";
+		echo"</div>";
+
+		//AI Robotics block
+		echo"<div class='box_controls' style='width:40%'>";
+			echo"<zz>";
+				echo"<label class='floatLabel' style='width: 100px;'>AI Robotics</label><br>";
+				
+				echo"<div style='float:left;width:80%;border:0px solid red'>";
+					$style="width:25%;";
+					echo"<button id='object_detection' onclick=button_AI_action(id); style=$style>Object Detection</button>";
+					echo"<button id='object_tracking' onclick=button_AI_action(id); style=$style>Object Tracking</button>";
+					echo"<button id='human_following' onclick=button_AI_action(id); style=$style>Human Following</button>";
+					
+				echo"</div>";
+				
+				echo"<div style='float:left;width:18%;border:0px solid red'>";
+					$style_img="display:none;";
+				
+					$href= 'http://'.$host.':2204';
+					echo"<button id='img_object_tracking' style=$style_img><a href='$href' target='_blank'><img src='css/images/track.png' height='35px'></a></button>";
+					
+					$href= 'http://'.$host."/earthrover/object_detection/web";
+					echo"<button id='img_object_detection' style=$style_img><a href='$href' target='_blank'><img src='css/images/obj.png' height='40px'></a></button>";
+					
+					$href= 'http://'.$host.':2204';
+					echo"<button id='img_human_following' style=$style_img><a href='$href' target='_blank'><img src='css/images/compass.png' height='40px'></a></button>";
+					
+				echo"</div>";
+				
+			echo"</zz>";
+		echo"</div>";
+		
+	echo"</div>";
+	
+	//****************************************************************************
+	
+	$link_remote= 'http://'.$host.$path.'/'."remote.php";//http://192.168.1.20/earthrover/remote.php
+	$link_vid= 'http://'.$host.':8000';//http://192.168.1.20:8000
+	
+	echo"
+		<iframe src='$link_vid' id='box_video'></iframe>
+		<iframe src= '$link_remote' id='box_remote'></iframe>
+	";
+	//****************************************************************************
+	
+	echo"<div align='center' id='box_bottom'>";
+		
+		//Camera Controls block
 		echo"<div class='box_controls' style='width:14%'>";
 			echo"<zz>";
 				echo"<label class='floatLabel'>Camera</label><br>";
@@ -33,6 +108,7 @@ printf("<div align='center' id='box_outer'>");//------------------------
 			echo"</zz>";
 		echo"</div>";
 		
+		//Lights Controls block
 		echo"<div class='box_controls' style='width:14%'>";
 			echo"<zz>";
 				echo"<label class='floatLabel'>Lights</label><br>";
@@ -44,15 +120,7 @@ printf("<div align='center' id='box_outer'>");//------------------------
 			echo"</zz>";
 		echo"</div>";
 		
-		echo"<div class='box_controls' style='width:14%'>";
-			echo"<zz>";
-				echo"<label class='floatLabel'>Range Sensor</label><br>";
-				echo"<b id='range' style='float:right;color:blue;font-size:30px'></b>";
-				echo"<input id='range_button' type='submit' onclick=toggle_rangeSensor('range_button'); value='OFF'/>";
-				echo"<script src='/earthrover/range_sensor/web/rangesensor.js'></script>";
-			echo"</zz>";
-		echo"</div>";
-		
+		//Sound Controls block
 		echo"<div class='box_controls'>";
 			echo"<zz>";
 				echo"<label class='floatLabel'>Speaker</label><br>";
@@ -71,43 +139,9 @@ printf("<div align='center' id='box_outer'>");//------------------------
 			echo"</zz>";
 		echo"</div>";
 		
-		echo"<div class='box_controls' style='width:30%'>";
-			echo"<zz>";
-				echo"<label class='floatLabel'>Adv Controls</label><br>";
-				echo"<div style='float:left;width:20%;border:0px solid blue'>";
-					$href_acc= 'https://'.$host."/earthrover/accelerometer";
-					echo"<a href='$href_acc' target='_blank'><button><img src='css/images/acc.png' height='40px'></button></a>";
-				echo"</div>";
-				echo"<div style='float:left;width:20%;margin-left:5%;border:0px solid red'>";
-					$href_voice= 'https://'.$host."/earthrover/voice_control";
-					echo"<a href='$href_voice' target='_blank'><button><img src='css/images/speak.png' height='40px'></button></a>";
-				echo"</div>";
-				
-				echo"<div style='float:left;width:20%;margin-left:5%;border:0px solid red'>";
-					$href_obj= 'http://'.$host."/earthrover/object_detection/web";
-					echo"<a href='$href_obj' target='_blank'><button><img src='css/images/obj.png' height='40px'></button></a>";
-				echo"</div>";
-				
-				echo"<div style='float:left;width:20%;margin-left:5%;border:0px solid red'>";
-					$href_obj= 'http://'.$host.':2204';
-					echo"<a href='$href_obj' target='_blank'><button><img src='css/images/track.png' height='35px'></button></a>";
-				echo"</div>";
-				
-			echo"</zz>";
-		echo"</div>";
-
+		
 	echo"</div>";
 	
-	//****************************************************************************
-	
-	$link_remote= 'http://'.$host.$path.'/'."remote.php";//http://192.168.1.20/earthrover/remote.php
-	$link_vid= 'http://'.$host.':8000';//http://192.168.1.20:8000
-	
-	echo"
-		<iframe src='$link_vid' id='box_video'></iframe>
-		<iframe src= '$link_remote' id='box_remote'></iframe>
-	";
-	//****************************************************************************
 	
 echo"</div>";//------------------------------------------------------
 
