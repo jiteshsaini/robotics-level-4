@@ -2,6 +2,6 @@
 
 $state=$_POST["state"];
 
-$xx=exec("sudo python3 /var/www/html/earthrover/image_classification/master.py $state");
+$xx=exec("sudo python /var/www/html/earthrover/image_classification/master.py $state");
 
 ?>

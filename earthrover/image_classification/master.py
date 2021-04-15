@@ -13,7 +13,6 @@ status = sys.argv[1]
 file_name="image_recog_cv2.py"
 
 if (status=="1"):
-	print "starting Object Detection script"
 	cmd= "sudo python3 " + local_path + "/" + file_name + " &"
 	print ("cmd: ", cmd)
 	os.system(cmd)
