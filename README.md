@@ -49,4 +49,4 @@ The robot is shown an object and it speaks out its name.
 The code for this project is placed in a directory named 'tm' inside the 'earthrover' directory. 
 The model used in this project is trained through Teachable Machine online tool by Google. The model files are present in the same directory. In order to use the code of this project, You will have to train your own model using Teachable Machine tool and download & replace the model files present here.
 
-A person can control this robot using his face or hand gestures
+A person can control this robot using his face or hand gestures.
