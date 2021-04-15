@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="en"> 
+
+<!-- 
+https://github.com/lamplightdev/compass 
+https://developer.mozilla.org/en-US/docs/Web/API/DeviceOrientationEvent
+-->
+
+<head>
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+    
+<title>Control-1</title>
+
+<link rel="stylesheet" href="/earthrover/compass/robot_compass/css/app3.css">
+<script src="/earthrover/control_panel/js/jquery.min.js"></script>
+<script src="/earthrover/control_panel/js/remote.js"></script>  
+   
+<style>
+#btn_submit, #gif{
+    font-size:30px;
+    color:black;
+    border-radius:10px;
+    width:75px;
+    float:right;
+    margin-top:25px;
+    //position: absolute;
+    //left: 15%;
+    //top: 150px;
+}
+
+
+</style>
+	
+<script>
+
+    function get_heading(heading){
+	document.getElementById("data").innerHTML = heading;
+	document.getElementById("disp").innerHTML = heading + "°";
+	//document.getElementById("btn_submit").value = heading + "°";
+	        
+    }
+
+    function send_data(){
+	var hh = document.getElementById("data").innerHTML;
+	
+	document.getElementById("btn_submit").style.display = "none"; 
+	document.getElementById("gif").style.display = "block"; 
+            
+	//alert(hh);
+	$.post("/earthrover/compass/turn_degrees.php",
+	    {
+             heading_cmd:hh
+            },
+            function(data,status){
+             
+	     document.getElementById("btn_submit").style.display = "block";
+	     document.getElementById("gif").style.display = "none"; 
+             
+            });
+    }
+    
+    function bg_image() {
+	document.body.style.backgroundColor = "#00042e";
+        //document.body.style.backgroundImage = "url('images/bg2.jpg')";
+    }
+
+    function btn_fwd_back(id)
+	{
+	    //alert(id);
+	    console.log(id);
+	    button_caption=document.getElementById(id).value;
+	   // alert(button_caption);
+	    if(id=='btn_fwd'){
+		if(button_caption=="Forward"){
+			document.getElementById(id).value="Stop";
+			document.getElementById(id).style.backgroundColor="#66ff66";
+			//alert("hi");
+			button_direction('f')
+			
+		}
+		if(button_caption=="Stop"){
+			document.getElementById(id).value="Forward";
+			document.getElementById(id).style.backgroundColor="lightgray";
+			
+			button_direction('s')
+		}
+	    }
+	    else{
+		//alert("hi");
+		
+		if(button_caption=="Backward"){
+			document.getElementById(id).value="Stop";
+			document.getElementById(id).style.backgroundColor="#66ff66";
+			//alert("hi");
+			button_direction('b')
+			
+		}
+		if(button_caption=="Stop"){
+			document.getElementById(id).value="Backward";
+			document.getElementById(id).style.backgroundColor="lightgray";
+			
+			button_direction('s')
+		}
+	    }
+	    
+			
+	}
+	
+    </script>
+</head>
+
+
+
+<body onload="bg_image()">
+
+<header>
+    <h1 align='center'>Remote Control</h1>
+</header>
+    
+<div class="container">
+    
+    <div class="compass">
+
+      <div id="rose" class="compass__rose">
+
+        <svg class="compass__rose__dial" viewBox="0 0 130 130" version="1.1" xmlns="http://www.w3.org/2000/svg">
+
+          <circle cx="65" cy="65" r="56" stroke="white" stroke-width="1" fill="none" />
+          <polyline points="63,9  67,9  65,15" fill="white"/>
+          <polyline points="121,63  121,67  115,65" fill="white"/>
+          <polyline points="63,121  67,121  65,115" fill="white"/>
+          <polyline points="9,63  9,67  15,65" fill="white"/>
+
+          <text x="65" y="4.2" font-size="6" text-anchor="middle" fill="white">N</text>
+          <text x="127" y="67" font-size="6" text-anchor="middle" fill="white">E</text>
+          <text x="65" y="129" font-size="6" text-anchor="middle" fill="white">S</text>
+          <text x="2.8" y="67" font-size="6" text-anchor="middle" fill="white">W</text>
+
+        </svg>
+	
+      </div>
+    
+      <svg class="compass__pointer" viewBox="0 0 130 130" version="1.1" xmlns="http://www.w3.org/2000/svg">
+
+        <polyline points="60,60  70,60  65,15" fill="#b60000"/>
+        <polyline points="60,70  70,70  65,115" fill="white"/>
+        <circle cx="65" cy="65" r="7" stroke="#b60000" stroke-width="7" fill="none" />
+
+      </svg>
+
+    </div>
+
+
+</div>
+
+    
+<!--
+<div class='status'>
+    <b id="demo">hi</b>
+    <b id="response">saini</b>
+    
+</div>
+-->
+<div align='center' class='status'>
+    <input id="btn_submit" type="submit" value="Turn" onclick="send_data()">
+    <img id="gif" src='/earthrover/compass/control2/load.gif' height='40px' style='display:none'>
+    <b style='color:yellow;font-size:80px;margin-bottom:1px' id="disp">hey</b>
+    <b style='display:none' id="data"></b>
+    
+    <div style='width:100%; border:0px solid red;float:left;margin-top:10px'>
+	<input id='btn_fwd' type='submit' value='Forward' style='height:30px;width:50%;float:left' onclick="btn_fwd_back('btn_fwd')">
+    	<input id='btn_back' type='submit' value='Backward' style='height:30px;width:50%;float:left' onclick="btn_fwd_back('btn_back')">
+    </div>
+</div>
+
+    
+<script src="/earthrover/compass/robot_compass/js/app3.js"></script>
+
+</body>
+
+
+</html>

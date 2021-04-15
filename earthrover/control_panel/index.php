@@ -1,6 +1,9 @@
 <!--
 Project: Earthrover
-Created by: Jitesh Saini
+Author: Jitesh Saini
+Github: https://github.com/jiteshsaini
+website: https://helloworld.co.in
+
 -->
 <html>
 <head>        
@@ -75,7 +78,7 @@ echo"<div align='center' id='box_outer'>";//------------------------
 					echo"<button id='img_object_detection' style=$style_img><a href='$href' target='_blank'><img src='css/images/obj.png' height='40px'></a></button>";
 					
 					$href= 'http://'.$host.':2204';
-					echo"<button id='img_human_following' style=$style_img><a href='$href' target='_blank'><img src='css/images/compass.png' height='40px'></a></button>";
+					echo"<button id='img_human_following' style=$style_img><a href='$href' target='_blank'><img src='css/images/human_follower.png' height='40px'></a></button>";
 					
 				echo"</div>";
 				

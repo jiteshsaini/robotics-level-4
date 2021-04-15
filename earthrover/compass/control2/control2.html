@@ -1,0 +1,182 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <title>RoundSlider - A sample demo</title>
+    
+    <style>
+        #followup_box {
+          border: 0px solid green;
+          width:200px;
+          height:200px;
+          top:0px;
+          left:0px;
+          position: absolute
+        }
+        #outer_box {
+          border: 0px solid red;
+          width:86%;
+          float:left;
+          margin-top:50px;
+        }
+        #outer_box_2 {
+          border: 1px solid red;
+          width:10%;
+          float:right;
+        }
+        #outer_box_2 #btn_fwd,#btn_back{
+            height:300px;
+        }
+        #control_box {
+          border: 0px solid orange;
+          display: inline-block;
+          overflow: hidden;
+          padding:2%;
+          margin:auto;
+        }
+        
+        #control_box span {
+            font-size: 5.6em;
+        }
+        
+        #bottom_box {
+          border: 0px solid blue;
+          margin-top: 5px;
+          width:100%;
+          float:left;
+        }
+        #bottom_box button {
+            font-size: 3.6em;
+        }
+        
+        .rs-control .rs-handle {
+            background-color: blue;
+        }
+        .rs-control .rs-range-color {
+            background-color: yellow;
+        }
+
+    </style>
+    <script src="/earthrover/control_panel/js/jquery.min.js"></script>
+    <script src="/earthrover/control_panel/js/remote.js"></script>  
+    <link href="roundslider.min.css" rel="stylesheet" />
+    <script src="roundslider.min.js"></script>
+     <script type="text/javascript">
+        var hh;
+
+        $(document).ready(function () {
+            $("#shape").roundSlider({
+                svgMode: true,
+                startAngle: 90,
+                value: 0,
+                radius: 280,
+                width:32,
+                min: 0,
+                max: 359,
+                step: 1,
+                handleSize: "+35",
+                change: "traceEvent",
+                sliderType: "min-range"
+            });
+        });
+
+        function traceEvent(e) {
+            var obj = $("#shape").data("roundSlider");
+
+            hh = obj.option("value");
+
+            console.log(hh);
+        }
+        
+        function send_data(){
+            //alert(hh);
+            document.getElementById("submit").style.display = "none"; 
+            document.getElementById("gif").style.display = "block"; 
+            
+                $.post("/earthrover/compass/turn_degrees.php",
+                {
+                    heading_cmd: hh
+                },
+                function(data,status){
+		    document.getElementById("resp").innerHTML = data;
+                    document.getElementById("submit").style.display = "block"; 
+                    document.getElementById("gif").style.display = "none"; 
+                });
+                
+                console.log(hh);
+            }
+        function btn_fwd_back(id)
+	{
+	    //alert(id);
+	    console.log(id);
+	    button_caption=document.getElementById(id).value;
+	   // alert(button_caption);
+	    if(id=='btn_fwd'){
+		if(button_caption=="Forward"){
+			document.getElementById(id).value="Stop";
+			document.getElementById(id).style.backgroundColor="#66ff66";
+			//alert("hi");
+			button_direction('f')
+			
+		}
+		if(button_caption=="Stop"){
+			document.getElementById(id).value="Forward";
+			document.getElementById(id).style.backgroundColor="lightgray";
+			
+			button_direction('s')
+		}
+	    }
+	    else{
+		//alert("hi");
+		
+		if(button_caption=="Backward"){
+			document.getElementById(id).value="Stop";
+			document.getElementById(id).style.backgroundColor="#66ff66";
+			//alert("hi");
+			button_direction('b')
+			
+		}
+		if(button_caption=="Stop"){
+			document.getElementById(id).value="Backward";
+			document.getElementById(id).style.backgroundColor="lightgray";
+			
+			button_direction('s')
+		}
+	    }
+	    
+			
+	}
+    </script>
+
+</head>
+
+<body>
+
+    <div id="outer_box" align='center'>
+    
+        <div id="followup_box">
+            <iframe src='followup/followup.html' height='100%' width='100%'></iframe>
+        </div>
+        
+        <div id="control_box">
+            <div id="shape"></div>
+            
+        </div>
+    
+        <div id="bottom_box">
+            <button id='submit' onclick='send_data()'>Turn</button>
+            <img id='gif' src='load.gif' height='75px' style='display:none'>
+        </div>
+    
+    </div>
+
+    <div id="outer_box_2">
+        <input id='btn_fwd' type='submit' value='Forward' style='width:100%' onclick="btn_fwd_back('btn_fwd')">
+        <input id='btn_back' type='submit' value='Backward' style='width:100%' onclick="btn_fwd_back('btn_back')">
+    </div>
+    
+    
+    <div style='width:100%;float:left;font-size:15px'>
+	<p id='resp'></p>
+    <div>
+</body>
+</html>

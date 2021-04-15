@@ -31,6 +31,13 @@ function set_lights(id,state)
 function camera(status)
 {
 		//alert(status);
+		if (status=="on"){
+			disable_buttons();
+		}
+		else{
+			enable_buttons();
+		}
+		
 		$.post("/earthrover/camera_lights/ajax_camera.php",
 		{
 		camera:status
@@ -40,6 +47,62 @@ function camera(status)
 		location.reload();
 }
 
+
+var z=1;
+function button_AI_action(id)
+{
+	console.log(id + "************");
+	var path = "/earthrover/" + id + "/web/ajax_master.php"
+	var id_img="img_" + id;
+	
+	if (z==1){
+		console.log(id + " ON !!!!!!!!!!!!");
+		z=z+1;
+		document.getElementById(id).style.backgroundColor="66ff66";//#66ff66
+		disable_buttons();
+		document.getElementById(id).disabled=false;
+		
+		$.post(path,{state: 1});
+				
+		sleep(2000);
+		
+		document.getElementById(id_img).style.display="block";
+					
+	}
+	else{
+		console.log(id + " OFF ###########");
+		z=1;
+		document.getElementById(id).style.backgroundColor="lightgrey";
+		enable_buttons();
+		$.post(path,{state: 0});
+		
+		document.getElementById(id_img).style.display="none";
+	}
+				
+}
+
+function disable_buttons(){
+	console.log("disable_buttons");
+	
+	document.getElementById("object_detection").disabled=true;
+	document.getElementById("object_tracking").disabled=true;
+	document.getElementById("human_following").disabled=true;
+	document.getElementById("cam_on").disabled=true;
+	
+	//document.getElementById(id).disabled=false;
+	
+}
+
+function enable_buttons(){
+	console.log("enable_buttons");
+	
+	document.getElementById("object_detection").disabled=false;
+	document.getElementById("object_tracking").disabled=false;
+	document.getElementById("human_following").disabled=false;
+	document.getElementById("cam_on").disabled=false;
+	
+	
+}
 
 function sleep(milliseconds) {
 	var start = new Date().getTime();

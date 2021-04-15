@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en"> 
+
+<!-- 
+https://github.com/lamplightdev/compass 
+https://developer.mozilla.org/en-US/docs/Web/API/DeviceOrientationEvent
+-->
+
+<head>
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Compass</title>
+<link rel="stylesheet" href="css/app3.css">
+<script src="/earthrover/control_panel/js/jquery.min.js"></script>
+
+<script>
+    
+    //this function receives heading from the app3.js file
+    function get_heading(heading){
+	    document.getElementById("disp").innerHTML = heading + "°";
+	    $.post("ajax_heading.php",{heading:heading});
+    }
+    
+    function bg_image() {
+        document.body.style.backgroundColor = "black";
+        //document.body.style.backgroundImage = "url('images/bg1.jpg')";
+    }
+    
+</script>
+
+</head>
+
+<body onload="bg_image()">
+
+<header>
+    <h1 align='center'>Earthrover Compass</h1>
+</header>
+
+
+<div class="container">
+    
+    <div class="compass">
+
+      <div id="rose" class="compass__rose">
+
+        <svg class="compass__rose__dial" viewBox="0 0 130 130" version="1.1" xmlns="http://www.w3.org/2000/svg">
+
+          <circle cx="65" cy="65" r="56" stroke="white" stroke-width="1" fill="none" />
+          <polyline points="63,9  67,9  65,15" fill="white"/>
+          <polyline points="121,63  121,67  115,65" fill="white"/>
+          <polyline points="63,121  67,121  65,115" fill="white"/>
+          <polyline points="9,63  9,67  15,65" fill="white"/>
+
+          <text x="65" y="4.2" font-size="6" text-anchor="middle" fill="white">N</text>
+          <text x="127" y="67" font-size="6" text-anchor="middle" fill="white">E</text>
+          <text x="65" y="129" font-size="6" text-anchor="middle" fill="white">S</text>
+          <text x="2.8" y="67" font-size="6" text-anchor="middle" fill="white">W</text>
+
+        </svg>
+	
+      </div>
+    
+    
+      <svg class="compass__pointer" viewBox="0 0 130 130" version="1.1" xmlns="http://www.w3.org/2000/svg">
+
+        <polyline points="60,60  70,60  65,15" fill="#b60000"/>
+        <polyline points="60,70  70,70  65,115" fill="white"/>
+        <circle cx="65" cy="65" r="7" stroke="#b60000" stroke-width="7" fill="none" />
+
+      </svg>
+
+    </div>
+
+
+
+</div>
+
+    
+
+<div align='center' class='status'>
+    <b style='color:yellow;font-size:80px;margin-bottom:1px' id="disp">hey</b>
+</div>
+
+<script src="js/app3.js"></script>
+
+</body>
+
+
+</html>
