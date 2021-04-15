@@ -61,10 +61,11 @@ echo"<div align='center' id='box_outer'>";//------------------------
 				echo"<label class='floatLabel' style='width: 100px;'>AI Robotics</label><br>";
 				
 				echo"<div style='float:left;width:80%;border:0px solid red'>";
-					$style="width:25%;";
+					$style="width:22%;";
 					echo"<button id='object_detection' onclick=button_AI_action(id); style=$style>Object Detection</button>";
 					echo"<button id='object_tracking' onclick=button_AI_action(id); style=$style>Object Tracking</button>";
 					echo"<button id='human_following' onclick=button_AI_action(id); style=$style>Human Following</button>";
+					echo"<button id='image_classification' onclick=button_AI_action(id); style=$style>Image Classification</button>";
 					
 				echo"</div>";
 				
@@ -79,6 +80,10 @@ echo"<div align='center' id='box_outer'>";//------------------------
 					
 					$href= 'http://'.$host.':2204';
 					echo"<button id='img_human_following' style=$style_img><a href='$href' target='_blank'><img src='css/images/human_follower.png' height='40px'></a></button>";
+					
+					$href= 'http://'.$host.':2204';
+					echo"<button id='img_image_classification' style=$style_img><a href='$href' target='_blank'><img src='css/images/compass.png' height='40px'></a></button>";
+					
 					
 				echo"</div>";
 				
