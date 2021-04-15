@@ -27,7 +27,7 @@ echo"<div align='center' id='box_outer'>";//------------------------
 	
 	echo"<div align='center' id='box_top'>";
 		//Range Sensor block
-		echo"<div class='box_controls' style='width:14%'>";
+		echo"<div class='box_controls' style='width:10%'>";
 			echo"<zz>";
 				echo"<label class='floatLabel'>Range Sensor</label><br>";
 				echo"<b id='range' style='float:right;color:blue;font-size:30px'></b>";
@@ -37,7 +37,7 @@ echo"<div align='center' id='box_outer'>";//------------------------
 		echo"</div>";
 		
 		//Javascript Robotics block
-		echo"<div class='box_controls' style='width:30%'>";
+		echo"<div class='box_controls' style='width:25%'>";
 			echo"<zz>";
 				echo"<label class='floatLabel' style='width: 120px;'>Javascript Robotics</label><br>";
 				echo"<div style='float:left;width:20%;border:0px solid blue'>";
@@ -56,16 +56,16 @@ echo"<div align='center' id='box_outer'>";//------------------------
 		echo"</div>";
 
 		//AI Robotics block
-		echo"<div class='box_controls' style='width:40%'>";
+		echo"<div class='box_controls' style='width:60%'>";
 			echo"<zz>";
 				echo"<label class='floatLabel' style='width: 100px;'>AI Robotics</label><br>";
 				
 				echo"<div style='float:left;width:80%;border:0px solid red'>";
-					$style="width:22%;";
+					$style="width:18%;";
+					echo"<button id='image_classification' onclick=button_AI_action(id); style=$style>Image Classification</button>";
 					echo"<button id='object_detection' onclick=button_AI_action(id); style=$style>Object Detection</button>";
 					echo"<button id='object_tracking' onclick=button_AI_action(id); style=$style>Object Tracking</button>";
 					echo"<button id='human_following' onclick=button_AI_action(id); style=$style>Human Following</button>";
-					echo"<button id='image_classification' onclick=button_AI_action(id); style=$style>Image Classification</button>";
 					
 				echo"</div>";
 				
