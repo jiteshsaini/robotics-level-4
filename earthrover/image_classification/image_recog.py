@@ -81,8 +81,8 @@ ut.init_gpio()
 #-----initialise the Model and Load into interpreter-------------------------
 
 #specify the path of Model and Label file
-model_path = "mobilenet_v1_1.0_224_quant.tflite" 
-label_path = "labels_mobilenet_quant_v1_224.txt"
+model_path = "/var/www/html/all_models/mobilenet_v1_1.0_224_quant.tflite" 
+label_path = "/var/www/html/all_models/labels_mobilenet_quant_v1_224.txt"
 top_k_results = 3
 
 with open(label_path, 'r') as f:

@@ -27,8 +27,7 @@ threshold=0.2
 top_k=5 #number of objects to be shown as detected
 edgetpu=0
 
-#default_model_dir = '../all_models
-model_dir = '/home/pi/Documents/all_models'
+model_dir = '/var/www/html/all_models'
 model = 'mobilenet_ssd_v2_coco_quant_postprocess.tflite'
 model_edgetpu = 'mobilenet_ssd_v2_coco_quant_postprocess_edgetpu.tflite'
 lbl = 'coco_labels.txt'
