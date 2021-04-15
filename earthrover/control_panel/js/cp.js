@@ -87,6 +87,7 @@ function disable_buttons(){
 	document.getElementById("object_detection").disabled=true;
 	document.getElementById("object_tracking").disabled=true;
 	document.getElementById("human_following").disabled=true;
+	document.getElementById("image_classification").disabled=true;
 	document.getElementById("cam_on").disabled=true;
 	
 	//document.getElementById(id).disabled=false;
@@ -99,6 +100,7 @@ function enable_buttons(){
 	document.getElementById("object_detection").disabled=false;
 	document.getElementById("object_tracking").disabled=false;
 	document.getElementById("human_following").disabled=false;
+	document.getElementById("image_classification").disabled=false;
 	document.getElementById("cam_on").disabled=false;
 	
 	
