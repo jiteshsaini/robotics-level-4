@@ -1,18 +1,22 @@
 """
+Project: AI Robot - Object Detection
 Author: Jitesh Saini
+Github: https://github.com/jiteshsaini
+website: https://helloworld.co.in
 
-This code is based on Google-Coral Object Detection example code available at:
-https://github.com/google-coral/examples-camera/tree/master/opencv
+- The robot uses PiCamera to capture frames. 
+- An object within the frame is detected using Machine Learning moldel & TensorFlow Lite interpreter. 
+- Using OpenCV, the frame is overlayed with information such as: color coded bounding boxes, information bar to show FPS, Processing durations and an Object Counter.
+- The frame with overlays is streamed over LAN using FLASK. The Flask stream is embedded into a Web GUI which can be accessed at "http://192.168.1.20/earthrover/object_detection/web". IP '192.168.1.20' should be replaced with your RPi's IP
+- You can select an object through Web GUI to generate alarm on a specific object.
+- Google Coral USB Accelerator can be used to accelerate the inferencing process.
 
-The example code has been modified to implements following:-
-1. Object Detection with colour coded bounding boxes
-2. Added information bar on top of the output window to show FPS, Processing duration and an Object Counter
-3. Streaming of output window is achieved through FLASK. Added a a html file named 'index2.html' in directory named 'templates'.
-4. The object name is fetched from a txt file for updating the Object Counter. The txt file is updated through Web GUI. 
+When Coral USB Accelerator is connected, amend line 14 of util.py as:-
+edgetpu = 1 
 
-Run this Python file through terminal and access Web GUI through http://192.168.1.20/earthrover/object_detection/web
+When Coral USB Accelerator is not connected, amend line 14 of util.py as:-
+edgetpu = 0 
 
-Note: IP address '192.168.1.20' should be replaced with your RPi's IP
 """
 
 import common1 as cm
@@ -21,10 +25,12 @@ import numpy as np
 from PIL import Image
 import time
 
+import sys
+sys.path.insert(0, '/var/www/html/earthrover')
+
 cap = cv2.VideoCapture(0)
 threshold=0.2
 top_k=5 #number of objects to be shown as detected
-edgetpu=0
 
 model_dir = '/var/www/html/all_models'
 model = 'mobilenet_ssd_v2_coco_quant_postprocess.tflite'
@@ -102,6 +108,7 @@ def show_selected_object_counter(objs,labels):
     
 
 def main():
+    from util import edgetpu
     
     if (edgetpu==1):
         mdl = model_edgetpu

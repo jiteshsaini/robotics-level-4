@@ -1,18 +1,16 @@
 """
+Project: AI Robot - Object Detection
 Author: Jitesh Saini
+Github: https://github.com/jiteshsaini
+website: https://helloworld.co.in
 
-This code is based on Google-Coral Object Detection example code available at:
-https://github.com/google-coral/examples-camera/tree/master/opencv
+The code does following:-
+- The robot uses PiCamera to capture frames. 
+- An object within the frame is detected using Machine Learning moldel & TensorFlow Lite interpreter. 
+- Using OpenCV, the frame is overlayed with information such as: color coded bounding boxes, information bar to show FPS, Processing durations and an Object Counter.
+- Stream the output window (camera view with overlays) over LAN through FLASK.
+- The Flask stream can be accessed at "http://192.168.1.20:2204". IP '192.168.1.20' should be replaced with your RPi's IP
 
-The example code has been modified to implements following:-
-1. Object Detection with colour coded bounding boxes
-2. Added information bar on top of the output window to show FPS, Processing duration and an Object Counter
-3. Counter gets updated upon finding 'Person' in the frame
-4. Streaming of output window is achieved through FLASK. Created a directory named 'templates' and placed a html file named 'index1.html' in it.
-
-Run this Python file through terminal and access web page through http://192.168.1.20:2204
-
-Note: IP address '192.168.1.20' should be replaced with your RPi's IP
 """
 
 
@@ -22,10 +20,12 @@ import numpy as np
 from PIL import Image
 import time
 
+import sys
+sys.path.insert(0, '/var/www/html/earthrover')
+
 cap = cv2.VideoCapture(0)
 threshold=0.2
 top_k=5 #number of objects to be shown as detected
-edgetpu=0
 
 model_dir = '/var/www/html/all_models'
 model = 'mobilenet_ssd_v2_coco_quant_postprocess.tflite'
@@ -83,6 +83,7 @@ def show_selected_object_counter(objs,labels):
     
 
 def main():
+    from util import edgetpu
     
     if (edgetpu==1):
         mdl = model_edgetpu

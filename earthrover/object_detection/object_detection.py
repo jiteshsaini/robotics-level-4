@@ -1,14 +1,14 @@
 """
+Project: AI Robot - Object Detection
 Author: Jitesh Saini
+Github: https://github.com/jiteshsaini
+website: https://helloworld.co.in
 
-This code is based on Google-Coral Object Detection example code available at:
-https://github.com/google-coral/examples-camera/tree/master/opencv
-
-The example code has been modified to implements following:-
-1. Object Detection with colour coded bounding boxes
-2. Added information bar on top of the output window to show FPS, Processing duration and an Object Counter
-3. Counter gets updated upon finding 'Person' in the frame
-4. Display the output window locally on Raspberry Pi
+The code does following:-
+- The robot uses PiCamera to capture frames. 
+- An object within the frame is detected using Machine Learning moldel & TensorFlow Lite interpreter. 
+- Using OpenCV, the frame is overlayed with information such as: color coded bounding boxes, information bar to show FPS, Processing durations and an Object Counter.
+- Display the output window (camera view with overlays) locally on Raspberry Pi
 
 """
 
@@ -17,6 +17,9 @@ import cv2
 import numpy as np
 from PIL import Image
 import time
+
+import sys
+sys.path.insert(0, '/var/www/html/earthrover')
 
 cap = cv2.VideoCapture(0)
 threshold=0.2
@@ -58,6 +61,7 @@ def show_selected_object_counter(objs,labels):
     
 
 def main():
+    from util import edgetpu
     
     if (edgetpu==1):
         mdl = model_edgetpu

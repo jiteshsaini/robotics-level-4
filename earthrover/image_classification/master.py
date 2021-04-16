@@ -1,5 +1,7 @@
-#Project: Earthrover
-#Created by: Jitesh Saini
+'''
+Project: AI Robot - Real-time Image Classification
+Author: Jitesh Saini
+'''
 
 import time,os
 import sys
