@@ -1,6 +1,8 @@
 <!--
 Project: Earthrover
-Created by: Jitesh Saini
+Author: Jitesh Saini
+Github: https://github.com/jiteshsaini
+website: https://helloworld.co.in
 -->
 <html>
 <head>        

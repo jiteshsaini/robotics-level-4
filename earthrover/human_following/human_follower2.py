@@ -1,9 +1,11 @@
 """
-Author: Jitesh Saini
 Project: AI Robot - Human Following
+Author: Jitesh Saini
+Github: https://github.com/jiteshsaini
+website: https://helloworld.co.in
 
 The code in this file is same as 'human_follower.py' file. However, code with respect to FLASK implementation has been removed.
-This is bare minimum human following robot.
+So there is no streaming of camera view. This is bare minimum human following robot.
 """
 
 import common as cm
@@ -44,7 +46,7 @@ GPIO.setup(21, GPIO.OUT)# set GPIO 21 as output pin
 pin20 = GPIO.PWM(20, 100)    # create object pin20 for PWM on port 20 at 100 Hertz  
 pin21 = GPIO.PWM(21, 100)    # create object pin21 for PWM on port 21 at 100 Hertz  
 
-val=100
+val=100 # maximum speed
 pin20.start(val)              # start pin20 on 0 percent duty cycle (off)  
 pin21.start(val)              # start pin21 on 0 percent duty cycle (off)  
     

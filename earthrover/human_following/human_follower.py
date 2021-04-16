@@ -1,18 +1,22 @@
 """
-Author: Jitesh Saini
 Project: AI Robot - Human Following
+Author: Jitesh Saini
+Github: https://github.com/jiteshsaini
+website: https://helloworld.co.in
 
--The robot uses PiCamera to capture a frame. 
--Presence of human in the frame is detected using Machine Learning moldel.
--TensorFlow Lite interpreter is used to carry out inference.
--Google Coral USB Accelerator is used to accelerate the inferencing process.
--FLASK is used for streaming the robot's view over LAN (accessed via browser).
+- The robot uses PiCamera to capture a frame. 
+- Presence of human in the frame is detected using Machine Learning moldel & TensorFlow Lite interpreter.
+- Using OpenCV, the frame is overlayed with information such as bounding boxes, center coordinates of the person, deviation of the person from center of the frame etc.
+- FLASK is used for streaming the robot's view over LAN (accessed via browser).
+- Google Coral USB Accelerator should be used to accelerate the inferencing process.
 
-When Coral USB Accelerator is connected:-
-edgetpu = 1 #(Line 33)
+When Coral USB Accelerator is connected, amend line 14 of util.py as:-
+edgetpu = 1 
 
-When Coral USB Accelerator is not connected:-
-edgetpu = 0 #(Line 33)
+When Coral USB Accelerator is not connected, amend line 14 of util.py as:-
+edgetpu = 0 
+
+The code moves the robot in order to get closer to the person and bring the person towards center of the frame.
 """
 
 import common as cm
@@ -30,7 +34,7 @@ ut.init_gpio()
 cap = cv2.VideoCapture(0)
 threshold=0.2
 top_k=5 #first five objects with prediction probability above threshhold (0.2) to be considered
-edgetpu=0
+#edgetpu=0
 
 model_dir = '/var/www/html/all_models'
 model = 'mobilenet_ssd_v2_coco_quant_postprocess.tflite'
@@ -184,6 +188,8 @@ def get_delay(deviation):
     return d
     
 def main():
+    
+    from util import edgetpu
     
     if (edgetpu==1):
         mdl = model_edgetpu

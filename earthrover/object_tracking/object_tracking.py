@@ -1,12 +1,20 @@
 """
+Project: AI Robot - Object Tracking
 Author: Jitesh Saini
-Project: AI Robot - Object Tracking 
+Github: https://github.com/jiteshsaini
+website: https://helloworld.co.in
 
-The robot uses PiCamera to capture frames. 
-An object within the frame is detected using Machine Learning moldel.
-Inference is carried out using TensorFlow Lite interpreter. 
-Using OpenCV, the frame is overlayed with information such as bounding boxes, center coordinates of the object, deviation of the object from center of the frame etc.
-The frame with overlays is streamed over LAN using FLASK, which can be accessed using a browser by typing IP address of the RPi followed by the port (2204 as per this code)
+- The robot uses PiCamera to capture frames. 
+- An object within the frame is detected using Machine Learning moldel & TensorFlow Lite interpreter. 
+- Using OpenCV, the frame is overlayed with information such as bounding boxes, center coordinates of the object, deviation of the object from center of the frame etc.
+- The frame with overlays is streamed over LAN using FLASK, which can be accessed using a browser by typing IP address of the RPi followed by the port (2204 as per this code)
+- Google Coral USB Accelerator should be used to accelerate the inferencing process.
+
+When Coral USB Accelerator is connected, amend line 14 of util.py as:-
+edgetpu = 1 
+
+When Coral USB Accelerator is not connected, amend line 14 of util.py as:-
+edgetpu = 0 
 
 The code moves the robot in order to bring center of the object closer to center of the frame.
 """
@@ -26,14 +34,12 @@ ut.init_gpio()
 cap = cv2.VideoCapture(0)
 threshold=0.2
 top_k=5 #number of objects to be shown as detected
-edgetpu=0
 
 model_dir = '/var/www/html/all_models'
 model = 'mobilenet_ssd_v2_coco_quant_postprocess.tflite'
 model_edgetpu = 'mobilenet_ssd_v2_coco_quant_postprocess_edgetpu.tflite'
 lbl = 'coco_labels.txt'
 
-#delay=0.05
 tolerance=0.1
 x_deviation=0
 y_deviation=0
@@ -228,6 +234,8 @@ def get_delay(deviation,direction):
     
 
 def main():
+    
+    from util import edgetpu
     
     if (edgetpu==1):
         mdl = model_edgetpu
