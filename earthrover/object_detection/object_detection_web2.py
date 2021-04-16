@@ -27,6 +27,8 @@ import time
 
 import sys
 sys.path.insert(0, '/var/www/html/earthrover')
+import util as ut
+ut.init_gpio()
 
 cap = cv2.VideoCapture(0)
 threshold=0.2
@@ -91,17 +93,22 @@ def show_selected_object_counter(objs,labels):
     print("selected_obj: ",selected_obj)
 
     
-    x = arr.count(selected_obj)
+    x = arr.count(selected_obj) #no of occurances of selected object in array of objects detected by the model
     f1 = open(file_path + "object_found.txt", "w")
     f1.write(str(x))
     f1.close()
     
-    diff=x - prev_val
+    if(x>0):#selected object present in frame. Make GPIO pin high
+        ut.camera_light("ON") 
+    else:#selected object absent in frame. Make GPIO pin Low
+        ut.camera_light("OFF")
+        
+    diff=x - prev_val #detect change in the no of occurances of selected object w.r.t previous frame
     
     print("diff:",diff)
-    if(diff>0):
+    if(diff>0): #if there is an change then update counter
         counter=counter + diff
-    
+        
     prev_val = x
     
     print("counter:",counter)
