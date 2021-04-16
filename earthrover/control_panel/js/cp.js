@@ -106,6 +106,11 @@ function enable_buttons(){
 	
 }
 
+function init(){
+	document.getElementById("hw_1").innerHTML="<a style='color:grey;text-decoration:none' href='https://helloworld.co.in' target='_blank'>helloworld.co.in</a>";
+	document.getElementById("hw_2").innerHTML="<a style='color:grey;text-decoration:none' href='https://github.com/jiteshsaini' target='_blank'>github.com/jiteshsaini</a>";
+}
+
 function sleep(milliseconds) {
 	var start = new Date().getTime();
 	for (var i = 0; i < 1e7; i++) {
