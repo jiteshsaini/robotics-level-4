@@ -16,7 +16,7 @@ website: https://helloworld.co.in
 	
    </script>
 </head> 
-<body>
+<body onload="init()">
 <?php
 
 $host=$_SERVER['SERVER_ADDR'];//192.168.1.20
@@ -25,7 +25,7 @@ $path=rtrim(dirname($_SERVER["PHP_SELF"]), "/\\"); //earthrover
 echo"<div align='center' id='box_outer'>";//------------------------
 	echo"<h1 align='center' style='color:#0000b3'>Earth Rover</h1>";
 	
-	echo"<div align='center' id='box_top'>";
+	echo"<div align='center' class='box_inner'>";//------------------------
 		//Range Sensor block
 		echo"<div class='box_controls' style='width:10%'>";
 			echo"<zz>";
@@ -63,9 +63,13 @@ echo"<div align='center' id='box_outer'>";//------------------------
 				echo"<div style='float:left;width:80%;border:0px solid red'>";
 					$style="width:18%;";
 					echo"<button id='image_classification' onclick=button_AI_action(id); style=$style>Image Classification</button>";
-					echo"<button id='object_detection' onclick=button_AI_action(id); style=$style>Object Detection</button>";
-					echo"<button id='object_tracking' onclick=button_AI_action(id); style=$style>Object Tracking</button>";
-					echo"<button id='human_following' onclick=button_AI_action(id); style=$style>Human Following</button>";
+					
+					//echo"<div align='center' style='border:1px solid gray;overflow:auto;margin-left:100px'>";
+						echo"<button id='object_detection' onclick=button_AI_action(id); style=$style>Object Detection</button>";
+						echo"<button id='object_tracking' onclick=button_AI_action(id); style=$style>Object Tracking</button>";
+						echo"<button id='human_following' onclick=button_AI_action(id); style=$style>Human Following</button>";
+						//echo"Coral Accelerator <input type='checkbox' id='coral_accelerator' />";
+					//echo"</div>";
 					
 				echo"</div>";
 				
@@ -82,7 +86,7 @@ echo"<div align='center' id='box_outer'>";//------------------------
 					echo"<button id='img_human_following' style=$style_img><a href='$href' target='_blank'><img src='css/images/human_follower.png' height='40px'></a></button>";
 					
 					$href= 'http://'.$host.':2204';
-					echo"<button id='img_image_classification' style=$style_img><a href='$href' target='_blank'><img src='css/images/compass.png' height='40px'></a></button>";
+					echo"<button id='img_image_classification' style=$style_img><a href='$href' target='_blank'><img src='css/images/img_classification.png' height='40px'></a></button>";
 					
 					
 				echo"</div>";
@@ -103,7 +107,7 @@ echo"<div align='center' id='box_outer'>";//------------------------
 	";
 	//****************************************************************************
 	
-	echo"<div align='center' id='box_bottom'>";
+	echo"<div align='center' class='box_inner'>";//------------------------
 		
 		//Camera Controls block
 		echo"<div class='box_controls' style='width:14%'>";
@@ -150,10 +154,15 @@ echo"<div align='center' id='box_outer'>";//------------------------
 		
 	echo"</div>";
 	
+	echo"<div align='center' style='margin-top:50px;margin-bottom:10px' class='box_inner'>";//------------------------
+		echo"<span id='hw_1'></span>";
+		echo"<span style='margin-left:15%' id='hw_2'></span>";
+	echo"</div>";
 	
-echo"</div>";//------------------------------------------------------
+echo"</div>";//--box_outer----------------------------------------------------
 
 ?>
+
 
 </body>
 </html>
