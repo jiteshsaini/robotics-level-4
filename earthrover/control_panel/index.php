@@ -27,7 +27,7 @@ echo"<div align='center' id='box_outer'>";//------------------------
 	
 	echo"<div align='center' class='box_inner'>";//------------------------
 		//Range Sensor block
-		echo"<div class='box_controls' style='width:10%'>";
+		echo"<div class='box_controls' style='width:15%'>";
 			echo"<zz>";
 				echo"<label class='floatLabel'>Range Sensor</label><br>";
 				echo"<b id='range' style='float:right;color:blue;font-size:30px'></b>";
@@ -37,7 +37,7 @@ echo"<div align='center' id='box_outer'>";//------------------------
 		echo"</div>";
 		
 		//Javascript Robotics block
-		echo"<div class='box_controls' style='width:25%'>";
+		echo"<div class='box_controls' style='width:20%'>";
 			echo"<zz>";
 				echo"<label class='floatLabel' style='width: 120px;'>Javascript Robotics</label><br>";
 				echo"<div style='float:left;width:20%;border:0px solid blue'>";
@@ -60,20 +60,20 @@ echo"<div align='center' id='box_outer'>";//------------------------
 			echo"<zz>";
 				echo"<label class='floatLabel' style='width: 100px;'>AI Robotics</label><br>";
 				
-				echo"<div style='float:left;width:80%;border:0px solid red'>";
-					$style="width:18%;";
+				echo"<div style='float:left;width:88%;border:1px solid red'>";
+					$style="width:15%;";
+					$href= 'https://'.$host."/earthrover/tm/";
+					echo"<a href='$href' target='_blank'><button style='width:12%;background-color:yellow'>Gesture Controls</button></a>";
+					
 					echo"<button id='image_classification' onclick=button_AI_action(id); style=$style>Image Classification</button>";
 					
-					//echo"<div align='center' style='border:1px solid gray;overflow:auto;margin-left:100px'>";
-						echo"<button id='object_detection' onclick=button_AI_action(id); style=$style>Object Detection</button>";
-						echo"<button id='object_tracking' onclick=button_AI_action(id); style=$style>Object Tracking</button>";
-						echo"<button id='human_following' onclick=button_AI_action(id); style=$style>Human Following</button>";
-						//echo"Coral Accelerator <input type='checkbox' id='coral_accelerator' />";
-					//echo"</div>";
-					
+					echo"<button id='object_detection' onclick=button_AI_action(id); style=$style>Object Detection</button>";
+					echo"<button id='object_tracking' onclick=button_AI_action(id); style=$style>Object Tracking</button>";
+					echo"<button id='human_following' onclick=button_AI_action(id); style=$style>Human Following</button>";
+				
 				echo"</div>";
 				
-				echo"<div style='float:left;width:18%;border:0px solid red'>";
+				echo"<div style='float:left;width:10%;border:1px solid green'>";
 					$style_img="display:none;";
 				
 					$href= 'http://'.$host.':2204';

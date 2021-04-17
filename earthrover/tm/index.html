@@ -1,33 +1,63 @@
 <html>
 <head>
 <title>Teachable Machine Model</title>
+<style>
+#div_instructions{
+    width:80%; 
+    float:left;
+    margin-left:10%;margin-top:30px;padding:10px; 
+    border:1px solid gray; 
+    font-family:arial; 
+    font-size:20px; 
+    color:grey
+}
+</style>
 </head>
 <body>
-<div>
-    <h2 align='center' style='color:green'>Teachable Machine Image Model</h2>
-    <h1 style='color:red;'><span id='msg'></span></h1> 
+<div style='width:100%; float:left; border:0px solid red'>
+    <h1 align='center' style='color:brown'>Teachable Machine - Robotics (Gesture Controls )</h1>
+    <h3 align='center' style='color:brown'>Exporting Image Model on Raspberry Pi</h3>
+</div>
+
+<div align='center' style='width:20%; float:left;'>
+    <h1 style='background-color:green;color:white;'><span id='msg1'></span></h1> 
+    <h1 style='background-color:black;color:white;'><span id='msg2'></span></h1> 
+</div>
+
+<div align='center' style='width:60%; float:left; border:0px solid blue'>
+    <button style='width:10%;height:30px;margin:10px' type="button" onclick="init()">Start</button>
+    <div align='center' id="webcam-container" style='border:1px solid grey; height:50%;width:50%'></div>
+    <div id="label-container" style='background-color:lightgrey; width:50%;height:100px;margin:10px;font-size:20px;'></div>
     
 </div>
 
-<div align='center'>
-    <button type="button" onclick="init()">Start</button>
-    <div align='center' id="webcam-container" style='border:1px solid grey; height:50%;width:50%'></div>
-    <div id="label-container" style='border:1px solid grey;background-color:lightyellow; width:50%;height:300px;margin-top:3%;font-size:20px;'></div>
-    <div>
-    <span>some instructions</span>
-    </div>
+<div id='div_instructions'>
+    <p>- Press 'Start' button and wait for the Webcam to start.</p>
+    <p>- The model is generated through <a href='https://teachablemachine.withgoogle.com/train/image' target='_blank'>Teachale Machine</a> online tool by Google. Following gestures are recognised by the model:-</p>
+    <p><img src='/earthrover/control_panel/css/images/gestures.jpg' height='250px'></p>
+    <p>- Using your hand, make any of the 3 gestures shown above. Ensure that the backgroud is blank while you show hand gestures to web cam.</p>
+    <p> When a gesture is recognised, a command is sent to the server i.e. Raspberry Pi from where this page is fetched. Based on the command received, GPIO pins of RPi are actuated</p>
+    
 </div>
-
+    
+<!--
 <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@1.3.1/dist/tf.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/@teachablemachine/image@0.8/dist/teachablemachine-image.min.js"></script>
+-->
+
+<script src="js/tf.min.js"></script>
+<script src="js/teachablemachine-image.min.js"></script>
+
 <script src="/earthrover/control_panel/js/jquery.min.js"></script>
 <script type="text/javascript">
     // More API functions here:
     // https://github.com/googlecreativelab/teachablemachine-community/tree/master/libraries/image
 
-    // the link to your model provided by Teachable Machine export panel
     var delay = 200;
     
+    var prob = 0.9;
+    
+    // the link to your model provided by Teachable Machine export panel
     const URL = "/earthrover/tm/";
 
     let model, webcam, labelContainer, maxPredictions;
@@ -70,36 +100,54 @@
         // predict can take in an image, video or canvas html element
         const prediction = await model.predict(webcam.canvas);
         for (let i = 0; i < maxPredictions; i++) {
-            const classPrediction = prediction[i].className + ": " + prediction[i].probability.toFixed(4);
-            labelContainer.childNodes[i].innerHTML = classPrediction;
+            const classPrediction = prediction[i].className + ":    " + prediction[i].probability.toFixed(4);
             
-            if(prediction[i].className=="none" && prediction[i].probability>0.8){
-                sleep(delay);
-                console.log(prediction[i].className + ": " + prediction[i].probability.toFixed(4));
-                document.getElementById("msg").innerHTML = " ";
+            if(prediction[i].probability>prob)
+                labelContainer.childNodes[i].innerHTML = "<b style='color:green'>" + classPrediction + "</b>";
+            else
+                labelContainer.childNodes[i].innerHTML = "<b style='color:blue'>" + classPrediction + "</b>";
+            
+            
+            
+            if(prediction[i].className=="none" && prediction[i].probability>prob){
+                cmd_to_robot="stop"
                 
-                send_data("stop");
+                sleep(delay);
+                send_data("");
+                
+                console.log(classPrediction);
+                display_msg("", cmd_to_robot);
+                
             }
 
-            if(prediction[i].className=="Gesture-1" && prediction[i].probability>0.8){
-                document.getElementById("msg").innerHTML = prediction[i].className + "detected";
+            if(prediction[i].className=="Gesture-1" && prediction[i].probability>prob){
+                cmd_to_robot="light_on"
+                
                 sleep(delay);
-                send_data("light_on");
-                console.log(prediction[i].className + ": " + prediction[i].probability.toFixed(4));
+                send_data(cmd_to_robot);
+                
+                console.log(classPrediction);
+                display_msg(prediction[i].className, cmd_to_robot);
             }
             
-            if(prediction[i].className=="Gesture-2" && prediction[i].probability>0.8){
-                document.getElementById("msg").innerHTML = prediction[i].className + "detected";
+            if(prediction[i].className=="Gesture-2" && prediction[i].probability>prob){
+                cmd_to_robot="forward"
+                
                 sleep(delay);
-                send_data("forward");
-                console.log(prediction[i].className + ": " + prediction[i].probability.toFixed(4));
+                send_data(cmd_to_robot);
+                
+                console.log(classPrediction);
+                display_msg(prediction[i].className, cmd_to_robot);
             }
             
-            if(prediction[i].className=="Gesture-3" && prediction[i].probability>0.8){
-                document.getElementById("msg").innerHTML = prediction[i].className + "detected";
+            if(prediction[i].className=="Gesture-3" && prediction[i].probability>prob){
+                cmd_to_robot="backward"
+                
                 sleep(delay);
-                send_data("backward");
-                console.log(prediction[i].className + ": " + prediction[i].probability.toFixed(4));
+                send_data(cmd_to_robot);
+                
+                console.log(classPrediction);
+                display_msg(prediction[i].className, cmd_to_robot);
             }
         }
     }
@@ -122,6 +170,12 @@
             }
         }
     }
+    
+    function display_msg(class_name,cmd){
+        document.getElementById("msg1").innerHTML = class_name;
+        document.getElementById("msg2").innerHTML = cmd;
+    }
+    
 </script>
 </body>
 </html>
