@@ -1,11 +1,23 @@
+<html>
+<head>
+<title>Teachable Machine Model</title>
+</head>
+<body>
 <div>
-    <h1 align='center' style='color:brown;'>Earth Rover: Machine learning controls</h1> 
     <h2 align='center' style='color:green'>Teachable Machine Image Model</h2>
-
+    <h1 style='color:red;'><span id='msg'></span></h1> 
+    
 </div>
-<button type="button" onclick="init()">Start</button>
-<div align='center' id="webcam-container" style='border:1px solid grey; height:50%;width:50%'></div>
-<div id="label-container" style='border:1px solid grey;background-color:lightyellow; width:50%;margin-top:3%;font-size:20px;'></div>
+
+<div align='center'>
+    <button type="button" onclick="init()">Start</button>
+    <div align='center' id="webcam-container" style='border:1px solid grey; height:50%;width:50%'></div>
+    <div id="label-container" style='border:1px solid grey;background-color:lightyellow; width:50%;height:300px;margin-top:3%;font-size:20px;'></div>
+    <div>
+    <span>some instructions</span>
+    </div>
+</div>
+
 <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@1.3.1/dist/tf.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/@teachablemachine/image@0.8/dist/teachablemachine-image.min.js"></script>
 <script src="/earthrover/control_panel/js/jquery.min.js"></script>
@@ -64,40 +76,29 @@
             if(prediction[i].className=="none" && prediction[i].probability>0.8){
                 sleep(delay);
                 console.log(prediction[i].className + ": " + prediction[i].probability.toFixed(4));
+                document.getElementById("msg").innerHTML = " ";
+                
                 send_data("stop");
             }
 
-            if(prediction[i].className=="ear left" && prediction[i].probability>0.9){
+            if(prediction[i].className=="Gesture-1" && prediction[i].probability>0.8){
+                document.getElementById("msg").innerHTML = prediction[i].className + "detected";
                 sleep(delay);
-                send_data("left");
+                send_data("light_on");
                 console.log(prediction[i].className + ": " + prediction[i].probability.toFixed(4));
             }
             
-            if(prediction[i].className=="ear right" && prediction[i].probability>0.9){
-                sleep(delay);
-                send_data("right");
-                console.log(prediction[i].className + ": " + prediction[i].probability.toFixed(4));
-            }
-            
-            if(prediction[i].className=="left hand" && prediction[i].probability>0.9){
+            if(prediction[i].className=="Gesture-2" && prediction[i].probability>0.8){
+                document.getElementById("msg").innerHTML = prediction[i].className + "detected";
                 sleep(delay);
                 send_data("forward");
                 console.log(prediction[i].className + ": " + prediction[i].probability.toFixed(4));
             }
             
-            if(prediction[i].className=="right hand" && prediction[i].probability>0.9){
+            if(prediction[i].className=="Gesture-3" && prediction[i].probability>0.8){
+                document.getElementById("msg").innerHTML = prediction[i].className + "detected";
                 sleep(delay);
                 send_data("backward");
-                console.log(prediction[i].className + ": " + prediction[i].probability.toFixed(4));
-            }
-            if(prediction[i].className=="nose" && prediction[i].probability>0.9){
-                sleep(delay);
-                send_data("light_on");
-                console.log(prediction[i].className + ": " + prediction[i].probability.toFixed(4));
-            }
-            if(prediction[i].className=="mouth" && prediction[i].probability>0.9){
-                sleep(2000);
-                send_data("speak");
                 console.log(prediction[i].className + ": " + prediction[i].probability.toFixed(4));
             }
         }
@@ -122,3 +123,5 @@
         }
     }
 </script>
+</body>
+</html>
