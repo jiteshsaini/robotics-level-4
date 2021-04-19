@@ -12,7 +12,7 @@ function toggle_light(id)
 		}
 		if(button_caption=="ON"){
 			document.getElementById(id).value="OFF";
-			document.getElementById(id).style.backgroundColor="lightgray";
+			document.getElementById(id).style.backgroundColor="white";
 			set_lights(id,0);
 		}
 			
@@ -58,7 +58,7 @@ function button_AI_action(id)
 	if (z==1){
 		console.log(id + " ON !!!!!!!!!!!!");
 		z=z+1;
-		document.getElementById(id).style.backgroundColor="66ff66";//#66ff66
+		document.getElementById(id).style.backgroundColor="#66ff66";//#66ff66
 		disable_buttons();
 		document.getElementById(id).disabled=false;
 		
@@ -72,7 +72,7 @@ function button_AI_action(id)
 	else{
 		console.log(id + " OFF ###########");
 		z=1;
-		document.getElementById(id).style.backgroundColor="lightgrey";
+		document.getElementById(id).style.backgroundColor="white";
 		enable_buttons();
 		$.post(path,{state: 0});
 		

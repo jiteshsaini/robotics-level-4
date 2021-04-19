@@ -34,7 +34,7 @@
 }
 
 .box_controls{
-	background-color:#e6e6ff;
+	background-color:#c2c9ff; //#e6e6ff;
 	box-shadow: 4px 4px 3px #888888;
 	float:left;
 	padding: 0.25%;	
@@ -82,9 +82,10 @@
   float: left;
   margin-left: 20%;
   cursor: pointer;
+  background-color:white;
 }
 .box_controls input[type="submit"]:hover {
-  background: lightgray;
+  background: #1ad1ff;
   //text-shadow: 0 1px 3px rgba(70, 93, 41, 0.7);
 }
 
@@ -94,13 +95,59 @@ button{
   min-width: 2rem;
   border: none;
   border-radius: 0.15rem;
-  margin-left: 25px;
+  //margin-left: 25px;
   box-shadow: inset 0 -0.15rem 0 rgba(0, 0, 0, 0.2);
   cursor: pointer;
   float:left;
+  background-color:white;
+}
+/*
+#box_top button:hover {
+  background-color: #1ad1ff;
+}
+*/
+
+.tooltip {
+  position: relative;
+  display: inline-block;
+  border: 0px solid black;
 }
 
-#box_top button:hover {
-  background: #1ad1ff;
-  //text-shadow: 0 1px 3px rgba(70, 93, 41, 0.7);
+.tooltip .tooltiptext {
+  visibility: hidden;
+  width: 120px;
+  background-color: #555;
+  color: #fff;
+  font-size:12px;
+  text-align: center;
+  border-radius: 6px;
+  padding: 5px 0;
+  position: absolute;
+  z-index: 1;
+  bottom: 125%;
+  left: 50%;
+  margin-left: -60px;
+  opacity: 0;
+  transition: opacity 0.5s;
+}
+
+.tooltip .tooltiptext a{
+  text-decoration: none;
+  color:yellow
+}
+
+.tooltip .tooltiptext::after {
+  content: "";
+  position: absolute;
+  top: 100%;
+  left: 50%;
+  margin-left: -5px;
+  border-width: 5px;
+  border-style: solid;
+  border-color: #555 transparent transparent transparent;
+}
+
+.tooltip:hover .tooltiptext {
+  visibility: visible;
+  opacity: 1;
 }

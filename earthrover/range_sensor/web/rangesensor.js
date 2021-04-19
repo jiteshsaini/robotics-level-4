@@ -10,7 +10,7 @@ function toggle_rangeSensor(id)
 			rangeSensor(1);
 			
 			document.getElementById(id).value="ON";
-			document.getElementById(id).style.backgroundColor="blue";
+			document.getElementById(id).style.backgroundColor="#66ff66";
 			//alert("hi");
 			interval=window.setInterval(get_range, 500); //timer for initiating ajax request 
 
@@ -20,7 +20,7 @@ function toggle_rangeSensor(id)
 		if(button_caption=="ON"){
 			rangeSensor(0);
 			document.getElementById(id).value="OFF";
-			document.getElementById(id).style.backgroundColor="lightgray";
+			document.getElementById(id).style.backgroundColor="white";
 			
 			clearInterval(interval);
 			document.getElementById("range").innerHTML="";

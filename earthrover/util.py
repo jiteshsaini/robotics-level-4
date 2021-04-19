@@ -11,7 +11,7 @@ GPIO.setwarnings(False)
 
 import os, time
 
-edgetpu=1
+edgetpu=0 # If Coral USB Accelerator connected, then make it '1' otherwise '0'
 
 m1_1 = 8
 m1_2 = 11
