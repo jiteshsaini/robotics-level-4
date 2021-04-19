@@ -53,5 +53,3 @@ function send_acc_data(xx,yy,zz)
 		}
 		);
 }
-
-
