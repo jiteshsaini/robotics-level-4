@@ -200,7 +200,7 @@ echo"<div align='center' id='box_outer'>";//------------------------
 		echo"<span style='margin-left:15%' id='hw_2'></span>";
 	echo"</div>";
 	
-echo"</div>";//--box_outer----------------------------------------------------
+echo"</div>";//--box_outer---------------------------------------------------
 
 ?>
 
