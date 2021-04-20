@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+<html lang="en"> 
+
+<head>
+<title>Read me</title>
+    
+<style>
+    #outer_box{
+        border:2px solid grey;
+        mrgin:1%;
+        padding:0.5%;
+    }
+    
+    body{
+        font-family:verdana;
+        font-size:16px;
+    }
+    p{
+        color:#515151;
+    }
+    txt{
+        color:green;
+        //font-weight: 500;
+    }
+    h3{
+        text-decoration: underline;
+        margin-top:50px;
+    }
+    a{
+        border:1px solid grey;
+        border-radius:5px;
+        text-decoration:none;
+        background-color:grey;
+        color:white;
+        padding:4px;
+    }
+</style>
+    
+</head>
+
+
+
+<body>
+
+<div id='outer_box'>
+<h1 align='center'>Earth Rover - The Raspberry Pi Robot</h1>
+
+<hr>
+
+<h2 align='center'>Hardware connections</h2>
+
+<img src='img/ckt.jpeg' width='90%'>
+
+<p>
+12 V, 100 RPM DC Motors can be used. Use a L293D based motor driver board to connect motors.  you can use motor driving board of you choice. Read more about the hardware connections here and here.<br>
+Attach the Pi Camera to the Raspberry Pi. Don't forget to enable it in the preferences.
+</p>
+
+<hr>
+
+<!------------------ Basic Robot----------------------------->
+<h2 align='center'>Basic Robot</h2>
+
+<h3>Direction and Speed Controls</h3>
+<img src='img/dir.jpg' width='200px'>
+<p>
+<txt>Code Location</txt>: <b>earthrover/control_panel</b>
+<br><br>
+The direction buttons send commands to GPIO pins 8 & 11 for motor 1 and GPIO pins 14 & 15 for motor 2. <br>
+The speed slider sends a value between 0-100 (in increments of 10) to server. This value is used to generate PWM on pins 20 & 21 simultaneously, resulting in speed control of motors.
+</p>
+
+<a href='https://helloworld.co.in/article/basic-robotics-make-robot-raspberry-pi-web-controls' target='_blank'>read more</a>
+<br>
+
+<hr>
+
+<!------------------ Additional Hardware----------------------------->
+<h2 align='center'>Additional Hardware</h2>
+
+<h3>Camera and light Controls</h3>
+<img src='img/camera.jpg'>
+<img src='img/lights.jpg'>
+<p>
+<txt>Code Location</txt>: <b>earthrover/camera_lights</b>
+<br><br>
+When you press camera 'ON' button, a python script 'earthrover/camera_lights/cam_server.py' is launched in the background and starts streaming the camera video.<br>
+The Light buttons toggles the state of GPIO pins 17, 18 & 27. You can connect simple LEDs directly to these GPIO pins or 12 V high brigthness LEDs through a transistor switching circuit.
+</p>
+<a href='https://helloworld.co.in/article/camera-robot-using-raspberry-pi-web-controlled-surveillance-robot' target='_blank'>read more</a>
+<br>
+
+
+<h3>Sound Controls</h3>
+<img src='img/speaker.jpg'>
+<p>
+<txt>Code Location</txt>: <b>earthrover/speaker</b>
+<br><br>
+The robot can speak out a written text via a Text to Speech engine called 'espeak'. <br>
+Also, it can play pre-recorded mp3 files via built in 'omxplayer'. 
+</p>
+<a href='https://youtu.be/sUkQxLoDAOk' target='_blank'>watch video</a>
+<br>
+
+<h3>Distance Sensor Controls</h3>
+<img src='img/range1.jpg'>
+
+<p>
+<txt>Code Location</txt>: <b>earthrover/range_sensor</b><
+br><br>
+The toggle button launches the python script 'earthrover/range_sensor/range_sensor.py' in background.<br>
+The measured distance value is shown on the Control Panel.
+</p>
+<img src='img/range2.jpg'>
+<p>
+In above picture, the distance measured by the sensor is 65.6 cm.<br>
+If the distance falls below 30cm, the robot is programmed to move back automatically<br>
+</p>
+<a href='https://youtu.be/Rh5vZQqYKRU' target='_blank'>watch video</a>
+<br>
+
+<hr>
+
+<!------------------ Javascript Robotics----------------------------->
+<h2 align='center'>Javascript Robotics</h2>
+
+<p>
+Javascript code running in the browser can access the hardware (accelerometer, microphone, orientation etc) of your mobile phone / laptop. 
+But, to be able to access these sensors, the webpage containing the javascript code must originate from a server with 'https' enabled. That means the Apache webserver running on Raspberry Pi must have https enabled.
+</p>
+
+<img src='img/javascript.jpg'>
+
+<br>
+
+<h3>Accelerometer Controls</h3>
+
+<p>
+<txt>Code Location</txt>: <b>earthrover/accelerometer</b>
+<br><br>
+Open the earthrover control panel using a mobile browser and press the 'Accelerometer' icon. The webpage with relevant Javascript code will appear and start capturing and sending the accelerometer data of your mobile phone to the server (Raspberry Pi).
+You can now control the robot by tilting the phone.
+</p>
+<a href='https://youtu.be/rF4B4HmekG0' target='_blank'>watch video</a>
+<br>
+
+<h3>Voice Controls</h3>
+
+<p>
+<txt>Code Location</txt>: <b>earthrover/voice_control</b>
+<br><br>
+Open the earthrover control panel using a mobile/Laptop browser (Chrome) and press the 'Voice Control' icon. The webpage with relevant Javascript code will appear which takes voice input and converts
+it to text and send to the server (Raspberry Pi).
+You can now control the robot by speaking the valid commands. The list of valid commands are described in the link below.
+</p>
+<a href='https://helloworld.co.in/article/voice-controlled-robot-using-raspberry-pi-speech-recognition-javascript-api' target='_blank'>read more</a>
+<br>
+
+
+<br>
+
+<h3>Javascript Compass</h3>
+<p>
+<txt>Code Location</txt>: <b>earthrover/compass</b>
+<br><br>
+Press the 'Compass' icon. The instructions to use are given on the webpage that appears.
+This is just an example to demonstrate how you can use the orientation sensor of the mobile phone to control the robot direction precisely. 
+
+</p>
+<a href='https://helloworld.co.in/article/compass-robot-javascript-mobile-sensor-control' target='_blank'>read more</a>
+
+
+<br>
+
+
+
+<hr>
+
+<!------------------ AI Robotics----------------------------->
+<h2 align='center'>AI Robotics</h2>
+Create Custom Models with ease: <a href='https://coral.ai/models/' target='_blank'>Teachable Machine</a><br><br>
+See various Pre-trained Models by Google Coral team: <a href='https://coral.ai/models/' target='_blank'>Pre-trained Models</a><br>
+<br><br>
+
+This section contains projects that involve deployment of a custom / pre-trained model on Raspberry Pi to achieve advanced functionalities.
+<br><br>
+<img src='img/ai.jpg'>
+<br>
+
+<h3>Gesture Controls</h3>
+<p>
+<txt>Code Location</txt>: <b>earthrover/tm</b><br><br>
+<txt>ML Model details</txt>: Custom Model created using Teachable Machine tool to recognise hand gestures.<br>
+<txt>Inference</txt>: On your Laptop's browser using tensorflow.js<br>
+<txt>Hardware Acceleration</txt>: Not implemented, since inference is taking place on browser.<br>
+<br><br>
+Using a laptop with web-cam, open chrome browser. Load the earthrover control panel and press the 'Gesture Controls' button. A page will appear with relevant functionality.<br>
+Press the start button, the web-cam will turn on and starts looking for the hand gestures. If a gesture is recognised, command corresponding to the gesture is sent to the server (Raspberry Pi) to actuate the GPIO pins. 
+
+You can notice that this button has a different color than rest of the buttons in this section. Because this is the only case where inference is happing on the browser. In other cases, inference is taking place on Raspberry Pi. 
+</p>
+<a href='https://helloworld.co.in/article/teachable-machine-gesture-controlled-robot-using-machine-learning-model' target='_blank'>read more</a>
+
+<br>
+
+<h3>Image Classification</h3>
+
+<p>
+<txt>Code Location</txt>: <b>earthrover/image_classification</b><br><br>
+<txt>ML Model details</txt>: Pre-trained Image Classification Model by coral.ai<br>
+<txt>Inference</txt>: On Raspberry Pi using Tensorflow Lite<br>
+<txt>Hardware Acceleration</txt>: Not Implemented
+<br><br>
+On the control panel, press the 'Image Classification' button. When this button is pressed, a python script 'image_recog_cv2.py' is launced in the background. 
+The camera view with results overlay can be accessed by by clicking <img src='/earthrover/control_panel/css/images/img_classification.png' width='50px'> button.
+Try to show different objects to the camera. You will see the results on browser. Also, the robot will speak out the name.<br>
+To stop the background script press the 'Image Classification' button once again. This will free up the camera for other tasks.
+</p>
+<a href='https://youtu.be/w5wBfVA_j0c' target='_blank'>watch video</a>
+
+<br>
+
+<h3>Object Detection</h3>
+
+<p>
+<txt>Code Location</txt>: <b>earthrover/object_detection</b><br><br>
+<txt>ML Model details</txt>: Pre-trained Object Detection Model by coral.ai<br>
+<txt>Inference</txt>: On Raspberry Pi using Tensorflow Lite<br>
+<txt>Hardware Acceleration</txt>: Improve inferencing speed by 10x by attaching USB Coral Accelerator and setting the variable 'edgetpu' to '1' in python file 'earthrover/util.py'
+<br><br>
+On the control panel, press the 'Object Detection' button. When this button is pressed, a python script 'object_detection_web2.py' is launced in the background. 
+A button <img src='/earthrover/control_panel/css/images/obj_detection.png' width='50px'> will appear. Click it to see the Web UI through which you can set object of interest.
+To stop the background script press the 'Object Detection' button once again. This will free up the camera for other tasks.
+</p>
+<a href='https://helloworld.co.in/article/ai-robot-object-detection-tensorflow-lite-raspberry-pi-live-stream-results-browser' target='_blank'>read more</a>
+
+<br>
+
+<h3>Object Tracking</h3>
+
+<p>
+<txt>Code Location</txt>: <b>earthrover/object_tracking</b><br><br>
+<txt>ML Model details</txt>: Pre-trained Object Detection Model by coral.ai<br>
+<txt>Inference</txt>: On Raspberry Pi using Tensorflow Lite<br>
+<txt>Hardware Acceleration</txt>: Improve inferencing speed by 10x by attaching USB Coral Accelerator and setting the variable 'edgetpu' to '1' in python file 'earthrover/util.py'
+<br><br>
+On the control panel, press the 'Object Tracking' button. When this button is pressed, a python script 'object_tracking.py' is launced in the background. 
+A button <img src='/earthrover/control_panel/css/images/obj_tracking.png' width='50px'> will appear. Click it to see the robot's camera view while it tracks an object.
+To stop the background script press the 'Object Tracking' button once again. This will free up the camera for other tasks.
+</p>
+<a href='https://helloworld.co.in/article/ai-robot-object-tracking-object-following-robot-using-tensorflow-lite' target='_blank'>read more</a>
+
+
+<h3>Human Following</h3>
+
+<p>
+<txt>Code Location</txt>: <b>earthrover/human_following</b><br><br>
+<txt>ML Model details</txt>: Pre-trained Object Detection Model by coral.ai<br>
+<txt>Inference</txt>: On Raspberry Pi using Tensorflow Lite<br>
+<txt>Hardware Acceleration</txt>: Improve inferencing speed by 10x by attaching USB Coral Accelerator and setting the variable 'edgetpu' to '1' in python file 'earthrover/util.py'
+<br><br>
+On the control panel, press the 'Human Following' button. When this button is pressed, a python script 'human_follower.py' is launced in the background. 
+A button <img src='/earthrover/control_panel/css/images/human_follower.png' width='50px'> will appear. Click it to see the robot's camera view while it tracks a person.
+To stop the background script press the 'Human Following' button once again. This will free up the camera for other tasks.
+</p>
+<a href='https://helloworld.co.in/article/ai-robot-human-following-robot-using-tensorflow-lite-raspberry-pi' target='_blank'>read more</a>
+<br><br><br>
+*Practical Observation : If the power supply to Raspberry Pi is not adequate, the FPS drops.
+</body>
+
+</div>
+</html>

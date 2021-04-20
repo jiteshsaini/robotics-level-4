@@ -23,7 +23,7 @@ $path=rtrim(dirname($_SERVER["PHP_SELF"]), "/\\"); //earthrover
 
 echo"<div align='center' id='box_outer'>";//------------------------
 	echo"<b align='center' style='font-size:40px;color:#0000b3'>Earth Rover</b>";
-	echo"<img style='float:right' src='/earthrover/control_panel/css/images/earthrover.png' height='60px'>";
+	echo"<a href='readme/' target='_blank'><img style='float:right' src='/earthrover/control_panel/css/images/earthrover.png' height='60px'></a>";
 	echo"<div align='center' class='box_inner'>";//------------------------
 		//Range Sensor block
 		echo"<div class='box_controls' style='width:15%'>";
