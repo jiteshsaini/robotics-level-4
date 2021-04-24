@@ -4,13 +4,16 @@ include_once '../vars.php';
 $light_id=$_POST["light_id"];
 $state=$_POST["state"];
 
+if ($state=='1') $state='dh';
+else $state='dl';
+
 if ($light_id=="camlight"){
-	system("gpio -g write $cameralight $state");
+	system("sudo raspi-gpio set $cameralight $state");
 }
 
 if ($light_id=="headlight"){
-	system("gpio -g write $headlight_right $state");
-	system("gpio -g write $headlight_left $state");
+	system("sudo raspi-gpio set $headlight_right $state");
+	system("sudo raspi-gpio set $headlight_left $state");
 }
 
 echo"$light_id, $state";
