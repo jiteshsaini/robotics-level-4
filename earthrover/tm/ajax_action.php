@@ -16,25 +16,10 @@ elseif ($msg=="backward"){
 	back();
 }
 elseif ($msg=="light_on"){
-	system("gpio -g write $cameralight 1");
-			
-}
-elseif ($msg=="speak"){
-	//speak();
-	$text="i love machine learning";
-	$gender="f";
-	$cmd="sudo python /var/www/html/earthrover/speaker/speaker_tts.py '".$text."' '".$gender."' &";
-	os.system($cmd);
+	system("sudo raspi-gpio set $cameralight dh");
 }
 else{
 	stop();
-	system("gpio -g write $cameralight 0");
+	system("sudo raspi-gpio set $cameralight dl");
 }
-
-/*
-$myFile = "testFile.txt";
-$fh = fopen($myFile, 'w') or die("can't open file");
-fwrite($fh, $msg);
-fclose($fh);
-*/
 ?>
