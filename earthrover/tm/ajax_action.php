@@ -3,23 +3,21 @@ include_once '../vars.php';
 	
 $msg=$_POST["message"];
 
-if ($msg=="left"){
-	left();
-}
-elseif ($msg=="right"){
-	right();
-}
-elseif ($msg=="forward"){
+if ($msg=="forward"){
 	forward();
+	set_gpio($cameralight,'0');
 }
 elseif ($msg=="backward"){
 	back();
+	set_gpio($cameralight,'0');
 }
 elseif ($msg=="light_on"){
-	system("sudo raspi-gpio set $cameralight dh");
+	stop();
+	set_gpio($cameralight,'1');
 }
 else{
 	stop();
-	system("sudo raspi-gpio set $cameralight dl");
+	set_gpio($cameralight,'0');
 }
+
 ?>
