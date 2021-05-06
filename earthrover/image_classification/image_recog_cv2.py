@@ -1,9 +1,5 @@
-# python3
-#
-# Copyright 2019 The TensorFlow Authors. All Rights Reserved.
-
-
-# Modified by: Jitesh Saini
+# Example code provided by TensorFlow Authors have been useful in creating this project.
+# Author: Jitesh Saini
 # Project: Earth Rover (Real Time Image classifiation)
 
 from tflite_runtime.interpreter import Interpreter
@@ -76,8 +72,8 @@ def action(pred,lbl):
         if (pred >= threshold):
                 percent=round(pred*100)
                 text_overlay= "Saw a " + lbl + ", i am " + str(percent) + "% sure"
-                ut.speak_tts(lbl,"f")
-                sleep(1)
+                #ut.speak_tts(lbl,"f")
+                #sleep(1)
                 #text_to_speech(lbl,"f")
                 ut.camera_light("ON")
                 
@@ -126,7 +122,8 @@ def main():
                     print(lbl, "=", pred)
                     
                     txt1=lbl + "(" + str(pred) + ")"
-                    cv2_im = cv2.putText(cv2_im, txt1, (30, 60 + j*20),font, 0.4, (9, 135, 0), 1)
+                    cv2_im = cv2.rectangle(cv2_im, (25,45 + j*35), (160, 65 + j*35), (0,0,0), -1)
+                    cv2_im = cv2.putText(cv2_im, txt1, (30, 60 + j*35),font, 0.5, (255, 255, 255), 1)
                     j=j+1
                     
                 pred_max=predictions[top_k_indices[0]]/255.0
@@ -140,7 +137,7 @@ def main():
                         break
                 
                 #cv2.imshow('Real-time Image Classification', cv2_im)
-                cv2_im = cv2.putText(cv2_im, text_overlay, (30, 40),font, 0.7, (0, 0, 255), 2)
+                cv2_im = cv2.putText(cv2_im, text_overlay, (60, 30),font, 0.8, (0, 0, 255), 2)
                 
                 ret, jpeg = cv2.imencode('.jpg', cv2_im)
                 pic = jpeg.tobytes()
