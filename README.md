@@ -18,6 +18,12 @@ This repo is an extension of previous [level](https://github.com/jiteshsaini/rob
 - Object Tracking
 - Human Following
 
+## Download the code and configure your Raspberry Pi
+
+I have created a bash script that installs all the packages / libraries required to run this code on your Raspberry Pi. The script also downloads the code of this repo along with ML models on your device automatically. Follow the instructions on the link given below to configure your Raspberry Pi:-
+
+<a href='https://helloworld.co.in/earthrover'>https://helloworld.co.in/earthrover</a>
+
 
 ## <a href='https://github.com/jiteshsaini/robotics-level-4/tree/main/earthrover/object_detection'>Object Detection</a>
 
