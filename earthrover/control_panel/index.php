@@ -199,6 +199,7 @@ echo"<div align='center' id='box_outer'>";//------------------------
 		echo"<span id='hw_1'></span>";
 		echo"<span style='margin-left:15%' id='hw_2'></span>";
 		echo"<span style='margin-left:15%' id='hw_3'></span>";
+		echo"<span style='margin-left:15%' id='hw_4'></span>";
 	echo"</div>";
 	
 echo"</div>";//--box_outer---------------------------------------------------
