@@ -110,6 +110,7 @@ function init(){
 	document.getElementById("hw_1").innerHTML="<a style='color:grey;text-decoration:none' href='https://helloworld.co.in' target='_blank'>helloworld.co.in</a>";
 	document.getElementById("hw_2").innerHTML="<a style='color:grey;text-decoration:none' href='https://github.com/jiteshsaini' target='_blank'>github.com/jiteshsaini</a>";
 	document.getElementById("hw_3").innerHTML="<a style='color:grey;text-decoration:none' href='https://www.youtube.com/channel/UC_2OyRNVCWCH8ipgmAoJ1mA' target='_blank'>YouTube</a>";
+	document.getElementById("hw_4").innerHTML="<a style='color:grey;text-decoration:none' href='https://www.buymeacoffee.com/helloworld10' target='_blank'>BuyMeCoffee</a>";
 	
 	console.log(">>>>");
 	$.post("/earthrover/control_panel/misc/hw.php",
