@@ -38,13 +38,18 @@ function camera(status)
 			enable_buttons();
 		}
 		
+		// Reload only after the server confirms the camera is ready.
+		// ajax_camera.php waits for the stream port to accept before it
+		// responds, so there is no fixed delay to race against.
+		document.getElementById("cam_spin").style.display="inline-block";
 		$.post("/earthrover/camera_lights/ajax_camera.php",
 		{
 		camera:status
 		}
-		);
-		sleep(1000);
-		location.reload();
+		).always(function(){
+			document.getElementById("cam_spin").style.display="none";
+			location.reload();
+		});
 }
 
 
@@ -62,11 +67,14 @@ function button_AI_action(id)
 		disable_buttons();
 		document.getElementById(id).disabled=false;
 		
-		$.post(path,{state: 1});
-				
-		sleep(2000);
-		
-		document.getElementById(id_img).style.display="block";
+		// ajax_master.php returns only once the stream port accepts, so the
+		// video link is revealed when the feed is genuinely ready. The old
+		// fixed sleep(2000) fired ~25s early and the iframe hit a dead port.
+		document.getElementById("ai_spin").style.display="inline-block";
+		$.post(path,{state: 1}).always(function(){
+			document.getElementById("ai_spin").style.display="none";
+			document.getElementById(id_img).style.display="block";
+		});
 					
 	}
 	else{

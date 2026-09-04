@@ -22,7 +22,7 @@ while 1:
 	else:
 		counter=0
 	
-	print (counter), distance
+	print(counter, distance)
 		
 	
 	

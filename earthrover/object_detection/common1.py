@@ -12,7 +12,7 @@ https://github.com/google-coral/examples-camera/tree/master/opencv
 """
 import numpy as np
 from PIL import Image
-import tflite_runtime.interpreter as tflite
+import ai_edge_litert.interpreter as tflite
 import platform
 
 
@@ -133,14 +133,18 @@ def append_text_img1(cv2_im, objs, labels, arr_dur, counter, selected_obj):
     height, width, channels = cv2_im.shape
     font=cv2.FONT_HERSHEY_SIMPLEX
     
-    cam=round(arr_dur[0]*1000,0)
-    inference=round(arr_dur[1]*1000,0)
-    other=round(arr_dur[2]*1000,0)
+    # int, not round(x, 0): round() returns a float, so these rendered as
+    # "Camera: 101.0ms". Milliseconds do not need a decimal place.
+    cam=int(round(arr_dur[0]*1000))
+    inference=int(round(arr_dur[1]*1000))
+    other=int(round(arr_dur[2]*1000))
     
     #total_duration=arr_dur[0] + arr_dur[1] + arr_dur[2]
     total_duration=cam+inference+other
     
-    fps=round(1000/total_duration,1)
+    # Guard the division: if all three round to 0 ms this raised
+    # ZeroDivisionError inside the render loop, which kills the video feed.
+    fps=round(1000/total_duration,1) if total_duration else 0.0
     
     cv2_im = cv2.rectangle(cv2_im, (0,0), (width, 24), (0,0,0), -1)
 

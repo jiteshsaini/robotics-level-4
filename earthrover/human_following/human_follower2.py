@@ -9,6 +9,9 @@ So there is no streaming of camera view. This is bare minimum human following ro
 """
 
 import common as cm
+# highgui removed: this runs against opencv-python-headless, which has no
+# window support. waitKey/imshow/destroyAllWindows raise cv2.error there,
+# and were no-ops in a windowless server loop anyway.
 import cv2
 import numpy as np
 from PIL import Image
@@ -20,12 +23,22 @@ sys.path.insert(0, '/var/www/html/earthrover')
 import util as ut
 ut.init_gpio()
 
-cap = cv2.VideoCapture(0)
+
+# cv2.VideoCapture cannot read the CSI camera on Bookworm/Trixie
+# (/dev/video0 is unicam, raw Bayer). camera_compat picks a working
+# backend: V4L2 for USB webcams, picamera2 for the ribbon camera.
+import camera_compat
+cap = camera_compat.VideoCapture(0)
 threshold=0.2
 top_k=5 #number of objects to be shown as detected
-edgetpu=1
+
+# This file used to set its own `edgetpu=1` and then load the edgetpu model
+# unconditionally, so it could not run at all without a Coral - and it ignored
+# util.py, unlike every other script here. Both now come from util.
+from util import edgetpu
 
 model_dir = '/var/www/html/all_models'
+model = 'mobilenet_ssd_v2_coco_quant_postprocess.tflite'
 model_edgetpu = 'mobilenet_ssd_v2_coco_quant_postprocess_edgetpu.tflite'
 lbl = 'coco_labels.txt'
 
@@ -150,7 +163,8 @@ def get_delay(deviation):
 
 def main():
   
-    interpreter, labels =cm.load_model(model_dir,model_edgetpu,lbl,edgetpu)
+    mdl = model_edgetpu if edgetpu == 1 else model
+    interpreter, labels =cm.load_model(model_dir,mdl,lbl,edgetpu)
     
     fps=1
    
@@ -181,7 +195,6 @@ def main():
         print("*********FPS: ",fps,"************")
 
     cap.release()
-    cv2.destroyAllWindows()
 
 if __name__ == '__main__':
     main()

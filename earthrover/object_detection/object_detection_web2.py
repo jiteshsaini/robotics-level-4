@@ -11,15 +11,21 @@ website: https://helloworld.co.in
 - You can select an object through Web GUI to generate alarm on a specific object.
 - Google Coral USB Accelerator can be used to accelerate the inferencing process.
 
-When Coral USB Accelerator is connected, amend line 14 of util.py as:-
-edgetpu = 1 
+The Coral USB Accelerator is detected automatically - there is nothing to edit.
+util.py looks for the accelerator on the USB bus and checks that libedgetpu is
+installed, and every script here takes the answer from it. The control panel
+shows which backend is in use next to "AI Robotics".
 
-When Coral USB Accelerator is not connected, amend line 14 of util.py as:-
-edgetpu = 0 
+To force one or the other (benchmarking, or hardware this misses):
+    EARTHROVER_EDGETPU=0   run on CPU
+    EARTHROVER_EDGETPU=1   force the accelerator
 
 """
 
 import common1 as cm
+# highgui removed: this runs against opencv-python-headless, which has no
+# window support. waitKey/imshow/destroyAllWindows raise cv2.error there,
+# and were no-ops in a windowless server loop anyway.
 import cv2
 import numpy as np
 from PIL import Image
@@ -30,7 +36,12 @@ sys.path.insert(0, '/var/www/html/earthrover')
 import util as ut
 ut.init_gpio()
 
-cap = cv2.VideoCapture(0)
+
+# cv2.VideoCapture cannot read the CSI camera on Bookworm/Trixie
+# (/dev/video0 is unicam, raw Bayer). camera_compat picks a working
+# backend: V4L2 for USB webcams, picamera2 for the ribbon camera.
+import camera_compat
+cap = camera_compat.VideoCapture(0)
 threshold=0.2
 top_k=5 #number of objects to be shown as detected
 
@@ -161,8 +172,6 @@ def main():
         start_t2=time.time()
         show_selected_object_counter(objs,labels)#counter  <<<<<<<
        
-        if cv2.waitKey(1) & 0xFF == ord('q'):
-            break
         
         
         cv2_im = cm.append_text_img1(cv2_im, objs, labels, arr_dur, counter,selected_obj)
@@ -184,7 +193,6 @@ def main():
         print("*********FPS: ",fps,"************")
 
     cap.release()
-    cv2.destroyAllWindows()
 
 
 if __name__ == '__main__':

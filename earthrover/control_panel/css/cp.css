@@ -151,3 +151,18 @@ button{
   visibility: visible;
   opacity: 1;
 }
+
+/* Waiting indicator.
+   Starting an AI worker takes ~6-8 s (model load, then Flask binds 2204) and
+   the camera server ~2.5 s. Both endpoints deliberately block until the port
+   really accepts, so the wait is real and the UI should say so
+   rather than look frozen. */
+.er-spin {
+  display: inline-block;
+  width: 18px; height: 18px;
+  border: 3px solid #cfcfe0;
+  border-top-color: #2a2;
+  border-radius: 50%;
+  animation: er-rot .7s linear infinite;
+}
+@keyframes er-rot { to { transform: rotate(360deg); } }

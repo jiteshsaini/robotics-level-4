@@ -10,16 +10,22 @@ website: https://helloworld.co.in
 - FLASK is used for streaming the robot's view over LAN (accessed via browser).
 - Google Coral USB Accelerator should be used to accelerate the inferencing process.
 
-When Coral USB Accelerator is connected, amend line 14 of util.py as:-
-edgetpu = 1 
+The Coral USB Accelerator is detected automatically - there is nothing to edit.
+util.py looks for the accelerator on the USB bus and checks that libedgetpu is
+installed, and every script here takes the answer from it. The control panel
+shows which backend is in use next to "AI Robotics".
 
-When Coral USB Accelerator is not connected, amend line 14 of util.py as:-
-edgetpu = 0 
+To force one or the other (benchmarking, or hardware this misses):
+    EARTHROVER_EDGETPU=0   run on CPU
+    EARTHROVER_EDGETPU=1   force the accelerator
 
 The code moves the robot in order to get closer to the person and bring the person towards center of the frame.
 """
 
 import common as cm
+# highgui removed: this runs against opencv-python-headless, which has no
+# window support. waitKey/imshow/destroyAllWindows raise cv2.error there,
+# and were no-ops in a windowless server loop anyway.
 import cv2
 import numpy as np
 from PIL import Image
@@ -31,7 +37,12 @@ sys.path.insert(0, '/var/www/html/earthrover')
 import util as ut
 ut.init_gpio()
 
-cap = cv2.VideoCapture(0)
+
+# cv2.VideoCapture cannot read the CSI camera on Bookworm/Trixie
+# (/dev/video0 is unicam, raw Bayer). camera_compat picks a working
+# backend: V4L2 for USB webcams, picamera2 for the ribbon camera.
+import camera_compat
+cap = camera_compat.VideoCapture(0)
 threshold=0.2
 top_k=5 #first five objects with prediction probability above threshhold (0.2) to be considered
 #edgetpu=0
@@ -233,8 +244,6 @@ def main():
         start_t2=time.time()
         track_object(objs,labels)#tracking  <<<<<<<
        
-        if cv2.waitKey(1) & 0xFF == ord('q'):
-            break
  
         cv2_im = append_text_img1(cv2_im, objs, labels, arr_dur, arr_track_data)
        # cv2.imshow('Object Tracking - TensorFlow Lite', cv2_im)
@@ -251,7 +260,6 @@ def main():
         print("*********FPS: ",fps,"************")
 
     cap.release()
-    cv2.destroyAllWindows()
 
 def append_text_img1(cv2_im, objs, labels, arr_dur, arr_track_data):
     height, width, channels = cv2_im.shape
@@ -263,15 +271,19 @@ def append_text_img1(cv2_im, objs, labels, arr_dur, arr_track_data):
     cv2_im = cv2.rectangle(cv2_im, (0,0), (width, 24), (0,0,0), -1)
    
     #write processing durations
-    cam=round(arr_dur[0]*1000,0)
-    inference=round(arr_dur[1]*1000,0)
-    other=round(arr_dur[2]*1000,0)
+    # int, not round(x, 0): round() returns a float, so these rendered as
+    # "Camera: 101.0ms". Milliseconds do not need a decimal place.
+    cam=int(round(arr_dur[0]*1000))
+    inference=int(round(arr_dur[1]*1000))
+    other=int(round(arr_dur[2]*1000))
     text_dur = 'Camera: {}ms   Inference: {}ms   other: {}ms'.format(cam,inference,other)
     cv2_im = cv2.putText(cv2_im, text_dur, (int(width/4)-30, 16),font, 0.4, (255, 255, 255), 1)
     
     #write FPS 
     total_duration=cam+inference+other
-    fps=round(1000/total_duration,1)
+    # Guard the division: if all three round to 0 ms this raised
+    # ZeroDivisionError inside the render loop, which kills the video feed.
+    fps=round(1000/total_duration,1) if total_duration else 0.0
     text1 = 'FPS: {}'.format(fps)
     cv2_im = cv2.putText(cv2_im, text1, (10, 20),font, 0.7, (150, 150, 255), 2)
    
@@ -284,7 +296,11 @@ def append_text_img1(cv2_im, objs, labels, arr_dur, arr_track_data):
     cv2_im = cv2.putText(cv2_im, str_tol, (10, height-8),font, 0.55, (150, 150, 255), 2)
   
     x_dev=arr_track_data[2]
-    str_x='X: {}'.format(x_dev)
+    # {:+.2f}: this was '{}' on a raw float, so it rendered as
+    # "X: -0.14000000000000012" and ran straight over the Y field and the
+    # direction text. The leading sign keeps the width constant between
+    # frames, so the row does not jitter.
+    str_x='X: {:+.2f}'.format(x_dev)
     if(abs(x_dev)<tolerance):
         color_x=(0,255,0)
     else:
@@ -292,7 +308,7 @@ def append_text_img1(cv2_im, objs, labels, arr_dur, arr_track_data):
     cv2_im = cv2.putText(cv2_im, str_x, (110, height-8),font, 0.55, color_x, 2)
     
     y_dev=arr_track_data[3]
-    str_y='Y: {}'.format(y_dev)
+    str_y='Y: {:+.2f}'.format(y_dev)
     if(abs(y_dev)>0.9):
         color_y=(0,255,0)
     else:

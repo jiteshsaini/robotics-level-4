@@ -4,7 +4,8 @@
 	} else {
 		$uri = 'http://';
 	}
-	$uri .= $_SERVER['HTTP_HOST'];
-	header('Location: '.$uri.'/earthrover/control_panel');
+	// relative on purpose: an absolute /earthrover/... sends the browser to
+	// whatever is installed at that path instead of this copy
+	header('Location: control_panel/');
 	exit;
 ?>

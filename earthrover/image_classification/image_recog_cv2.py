@@ -2,14 +2,24 @@
 # Author: Jitesh Saini
 # Project: Earth Rover (Real Time Image classifiation)
 
-from tflite_runtime.interpreter import Interpreter
+from ai_edge_litert.interpreter import Interpreter
 import numpy as np
 from PIL import Image
 from time import sleep
+# highgui removed: this runs against opencv-python-headless, which has no
+# window support. waitKey/imshow/destroyAllWindows raise cv2.error there,
+# and were no-ops in a windowless server loop anyway.
 import cv2
 import os
 
-cap = cv2.VideoCapture(0)
+
+# cv2.VideoCapture cannot read the CSI camera on Bookworm/Trixie
+# (/dev/video0 is unicam, raw Bayer). camera_compat picks a working
+# backend: V4L2 for USB webcams, picamera2 for the ribbon camera.
+import sys
+sys.path.insert(0, '/var/www/html/earthrover')
+import camera_compat
+cap = camera_compat.VideoCapture(0)
 
 font=cv2.FONT_HERSHEY_SIMPLEX
 text_overlay=""
@@ -121,7 +131,7 @@ def main():
                     lbl=labels[top_k_indices[i]]
                     print(lbl, "=", pred)
                     
-                    txt1=lbl + "(" + str(pred) + ")"
+                    txt1=lbl + " ({:.2f})".format(pred)   # str() gave 0.7 or 0.75 inconsistently
                     cv2_im = cv2.rectangle(cv2_im, (25,45 + j*35), (160, 65 + j*35), (0,0,0), -1)
                     cv2_im = cv2.putText(cv2_im, txt1, (30, 60 + j*35),font, 0.5, (255, 255, 255), 1)
                     j=j+1
@@ -133,8 +143,6 @@ def main():
                 
                 #take action based on maximum prediction value
                 action(pred_max,lbl_max)
-                if cv2.waitKey(1) & 0xFF == ord('q'):
-                        break
                 
                 #cv2.imshow('Real-time Image Classification', cv2_im)
                 cv2_im = cv2.putText(cv2_im, text_overlay, (60, 30),font, 0.8, (0, 0, 255), 2)
@@ -151,7 +159,6 @@ def main():
                 #sleep(0.5)
                 
         cap.release()
-        cv2.destroyAllWindows()
 
 if __name__ == '__main__':
         app.run(host='0.0.0.0', port=2204, threaded=True) # Run FLASK

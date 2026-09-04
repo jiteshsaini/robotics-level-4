@@ -7,9 +7,9 @@ website: https://helloworld.co.in
 <html>
 <head>        
    <title>Control Panel</title>
-   <link href="css/cp.css" rel="stylesheet" type="text/css">  
+   <link href="css/cp.css?v=<?php echo filemtime(__DIR__."/css/cp.css"); ?>" rel="stylesheet" type="text/css">  
    <script src="js/jquery.min.js"></script>        
-   <script src="js/cp.js"></script>        
+   <script src="js/cp.js?v=<?php echo filemtime(__DIR__."/js/cp.js"); ?>"></script>        
    <script>
 	
 	
@@ -31,7 +31,7 @@ echo"<div align='center' id='box_outer'>";//------------------------
 				echo"<label class='floatLabel'>Range Sensor</label><br>";
 				echo"<b id='range' style='float:right;color:blue;font-size:30px'></b>";
 				echo"<input style='height:40px' id='range_button' type='submit' onclick=toggle_rangeSensor('range_button'); value='OFF'/>";
-				echo"<script src='/earthrover/range_sensor/web/rangesensor.js'></script>";
+				echo"<script src='/earthrover/range_sensor/web/rangesensor.js?v=".filemtime(dirname(__DIR__)."/range_sensor/web/rangesensor.js")."'></script>";
 			echo"</zz>";
 		echo"</div>";
 		
@@ -73,7 +73,30 @@ echo"<div align='center' id='box_outer'>";//------------------------
 		//AI Robotics block
 		echo"<div class='box_controls' style='width:60%'>";
 			echo"<zz>";
-				echo"<label class='floatLabel' style='width: 100px;'>AI Robotics</label><br>";
+				// Which inference backend the AI features below will use.
+				// util.py decides this by detecting the accelerator; asking it
+				// here rather than reimplementing the check in PHP keeps one
+				// source of truth. ~110 ms, once per page load.
+				$er_edgetpu = trim((string) @shell_exec(
+					"python3 -c \"import sys; sys.path.insert(0,'/var/www/html/earthrover');"
+					. " from util import edgetpu; print(edgetpu)\" 2>/dev/null"));
+
+				if ($er_edgetpu === '1') {
+					$accel = "<span title='Coral USB Accelerator detected - about 57 ms per inference' style='color:#1a9e1a;font-size:12px;font-weight:600'>&#9679; Coral</span>";
+				} elseif ($er_edgetpu === '0') {
+					// Normal, not an error: no accelerator, or its runtime is absent.
+					$accel = "<span title='No Coral detected - running on CPU, about 230 ms per inference' style='color:#888;font-size:12px'>&#9679; CPU</span>";
+				} else {
+					// Distinct from CPU on purpose: this is a broken install
+					// (util.py missing or raising), not a hardware fact.
+					$accel = "<span title='Could not read the backend from util.py - check the install' style='color:#c00;font-size:12px;font-weight:600'>&#9679; unknown</span>";
+				}
+
+				// The indicator goes INSIDE the label: .floatLabel is positioned
+				// absolute (a floating caption over the box), so a sibling span
+				// drops into normal flow and lands on top of the button row.
+				// width:auto so a longer state ("unknown") is not clipped.
+				echo"<label class='floatLabel' style='width:auto;padding:0 6px;white-space:nowrap;'>AI Robotics &nbsp;$accel</label><br>";
 				
 				echo"<div style='float:left;width:88%;border:0px solid red'>";
 					
@@ -116,6 +139,9 @@ echo"<div align='center' id='box_outer'>";//------------------------
 				
 				//Display the Green button 
 				echo"<div style='float:left;width:10%;border:0px solid green'>";
+					// One spinner serves all four AI buttons - only one feature
+					// can run at a time (the camera has a single holder).
+					echo"<span id='ai_spin' class='er-spin' style='display:none;position:absolute;top:20px'></span>";
 					$style_img="display:none;position:absolute;top:1px";
 				
 					$href= 'http://'.$host.':2204';
@@ -157,6 +183,7 @@ echo"<div align='center' id='box_outer'>";//------------------------
 				echo"<input id='cam_on' type='submit' onclick=camera('on'); value='ON'/>";
 				echo"<input id='cam_off' type='submit' onclick=camera('off'); value='OFF'/>";
 				echo"<br>";
+				echo"<span id='cam_spin' class='er-spin' style='display:none'></span>";
 				echo"<txt> .</txt>";
 			echo"</zz>";
 		echo"</div>";
@@ -177,7 +204,7 @@ echo"<div align='center' id='box_outer'>";//------------------------
 		echo"<div class='box_controls'>";
 			echo"<zz>";
 				echo"<label class='floatLabel'>Speaker</label><br>";
-				echo"<script src='/earthrover/speaker/web/speaker.js'></script>";
+				echo"<script src='/earthrover/speaker/web/speaker.js?v=".filemtime(dirname(__DIR__)."/speaker/web/speaker.js")."'></script>";
 				echo"<div style='float:left;width:70%;border:0px solid blue'>";
 					echo"<input id='txt_tts' type='text' style='width:90%'><br>";
 					echo"<input id='radio1' type='radio' name='gender' value='male' checked> M ";

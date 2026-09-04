@@ -15,6 +15,9 @@ The code does following:-
 
 
 import common1 as cm
+# highgui removed: this runs against opencv-python-headless, which has no
+# window support. waitKey/imshow/destroyAllWindows raise cv2.error there,
+# and were no-ops in a windowless server loop anyway.
 import cv2
 import numpy as np
 from PIL import Image
@@ -23,7 +26,12 @@ import time
 import sys
 sys.path.insert(0, '/var/www/html/earthrover')
 
-cap = cv2.VideoCapture(0)
+
+# cv2.VideoCapture cannot read the CSI camera on Bookworm/Trixie
+# (/dev/video0 is unicam, raw Bayer). camera_compat picks a working
+# backend: V4L2 for USB webcams, picamera2 for the ribbon camera.
+import camera_compat
+cap = camera_compat.VideoCapture(0)
 threshold=0.2
 top_k=5 #number of objects to be shown as detected
 
@@ -129,8 +137,6 @@ def main():
         start_t2=time.time()
         show_selected_object_counter(objs,labels)#counter  <<<<<<<
        
-        if cv2.waitKey(1) & 0xFF == ord('q'):
-            break
             
         cv2_im = cm.append_text_img1(cv2_im, objs, labels, arr_dur, counter,selected_obj)
         #cv2.imshow('Object Detection - TensorFlow Lite', cv2_im)
@@ -151,7 +157,6 @@ def main():
         print("*********FPS: ",fps,"************")
 
     cap.release()
-    cv2.destroyAllWindows()
 
 
 if __name__ == '__main__':

@@ -6,7 +6,7 @@
 # Modified by: Jitesh Saini
 # Project: Earth Rover (Real Time Image classifiation)
 
-from tflite_runtime.interpreter import Interpreter
+from ai_edge_litert.interpreter import Interpreter
 import numpy as np
 import matplotlib.pyplot as plt
 from PIL import Image
