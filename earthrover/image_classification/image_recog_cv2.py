@@ -17,7 +17,8 @@ import os
 # (/dev/video0 is unicam, raw Bayer). camera_compat picks a working
 # backend: V4L2 for USB webcams, picamera2 for the ribbon camera.
 import sys
-sys.path.insert(0, '/var/www/html/earthrover')
+import os
+sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.realpath(__file__))))
 import camera_compat
 cap = camera_compat.VideoCapture(0)
 
@@ -67,7 +68,8 @@ threshold=0.35
 
 #----initialise GPIO----------------------------
 import sys
-sys.path.insert(0, '/var/www/html/earthrover')
+import os
+sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.realpath(__file__))))
 import util as ut
 ut.init_gpio()
 #-----------------------------------------------

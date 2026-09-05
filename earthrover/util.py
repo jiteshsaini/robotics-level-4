@@ -12,6 +12,34 @@ GPIO.setwarnings(False)
 import os, time
 import ctypes, glob, re
 
+# this file sits at the app root, so the tree can live anywhere
+APP = os.path.dirname(os.path.realpath(__file__))
+
+
+def setting(key, default):
+    #one value from config.txt, the file the web UI writes. Missing file or
+    #key gives the default, so the rover still runs without it.
+    try:
+        for line in open(APP + "/config.txt"):
+            k, _, v = line.partition("=")
+            if k.strip() == key:
+                return type(default)(v.strip())
+    except (OSError, ValueError):
+        pass
+    return default
+
+
+# How a frame is turned the right way up, per backend. Named the same way in
+# config.txt, so the web UI and both camera paths agree.
+FLIP_TRANSFORM = {                      # picamera2: (hflip, vflip)
+    "none": (0, 0), "rotate_180": (1, 1),
+    "horizontal_flip": (1, 0), "vertical_flip": (0, 1),
+}
+FLIP_CV2 = {                            # cv2.flip code; None means no call
+    "none": None, "rotate_180": -1,
+    "horizontal_flip": 1, "vertical_flip": 0,
+}
+
 # ---------------------------------------------------------------------------
 # Coral USB Accelerator: detected, not configured by hand.
 #
@@ -153,7 +181,8 @@ def stop():
 	GPIO.output(m2_2, False)
 
 def speak_tts(text,gender):
-	cmd="python /var/www/html/earthrover/speaker/speaker_tts.py '" + text + "' " + gender + " &"
+	cmd=("python3 " + os.path.dirname(os.path.realpath(__file__)) +
+	     "/speaker/speaker_tts.py '" + text + "' " + gender + " &")
 	os.system(cmd)
 	
 def camera_light(state):

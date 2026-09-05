@@ -6,7 +6,8 @@
 // The requested path is whitelisted to the speaker's own sounds directory:
 // this value comes from a POST and ends up in a command run as root, so it
 // must never be trusted as-is.
-$SOUND_DIR = "/var/www/html/earthrover/speaker/sounds";
+$APP = dirname(dirname(__DIR__));
+$SOUND_DIR = $APP . "/speaker/sounds";
 
 $req  = basename($_POST["rec_path"] ?? "");
 $file = $SOUND_DIR . "/" . $req;
@@ -25,7 +26,7 @@ if (@strpos(@file_get_contents("/proc/asound/cards"), "Headphones") !== false) {
 	$dev = " --audio-device=alsa/plughw:CARD=Headphones,DEV=0";
 }
 
-$cmd = "sudo mpv --no-video --really-quiet" . $dev . " " . escapeshellarg($file) . " > /var/www/html/earthrover/logs/speaker.log 2>&1 &";
+$cmd = "mpv --no-video --really-quiet" . $dev . " " . escapeshellarg($file) . " > " . $APP . "/logs/speaker.log 2>&1 &";
 system($cmd);
 
 echo "playing " . $req;

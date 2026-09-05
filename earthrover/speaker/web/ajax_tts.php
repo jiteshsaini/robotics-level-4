@@ -15,8 +15,9 @@ $gender = escapeshellarg(preg_match('/^[mf]$/', $gender) ? $gender : 'm');
 // on PHP 7 (undefined constant coerced to a string) but PHP 8 makes it fatal.
 // Output is redirected so the backgrounded child does not hold the web
 // server's stdout open and hang this request.
-$cmd = "sudo python /var/www/html/earthrover/speaker/speaker_tts.py " .
-       $text . " " . $gender . " > /var/www/html/earthrover/logs/speaker.log 2>&1 &";
+$APP = dirname(dirname(__DIR__));
+$cmd = "python3 " . $APP . "/speaker/speaker_tts.py " .
+       $text . " " . $gender . " > " . $APP . "/logs/speaker.log 2>&1 &";
 
 system($cmd);
 

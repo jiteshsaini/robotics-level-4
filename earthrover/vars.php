@@ -9,7 +9,18 @@ global $m1_1,$m1_2,$m2_1,$m2_2;
  
  $headlight_right = 18; //head light Right 
  $headlight_left = 27; //head light Left
- $cameralight = 17; //camera light 
+ $cameralight = 17; //camera light
+
+// pinctrl refuses to drive a pin that is not already an output - it answers
+// "Can't set pin value, not an output" and does nothing. Only the control
+// panel used to set the mode, so any page that moved the robot without the
+// panel having been loaded first failed silently.
+//
+// One call, and mode only: `op` without dh/dl leaves the pin's level alone,
+// so this is safe to repeat and will not switch the lights off mid-drive.
+exec("pinctrl set " . implode(",", array($m1_1, $m1_2, $m2_1, $m2_2,
+                                         $headlight_right, $headlight_left,
+                                         $cameralight)) . " op");
 
 //pwm pins are 20 & 21 (seperately handled in python). 
 //Rpi's Hardware PWM interferes with audio port.
@@ -43,16 +54,12 @@ function gpio_initialise(){
 }
 
 function set_speed($pwm_val){
-    $myFile = "/var/www/html/earthrover/control_panel/pwm/pwm1.txt";
+    $myFile = __DIR__ . "/control_panel/pwm/pwm1.txt";
     $fh = fopen($myFile, 'w') or die("can't open file");
     fwrite($fh, $pwm_val);
     fclose($fh);
 
-    /* append following lines in /etc/sudoers file for launching python script from PHP:-
-	pi ALL=(ALL) NOPASSWD: ALL
-	www-data ALL=(ALL) NOPASSWD: ALL
-    */
-    exec("sudo python /var/www/html/earthrover/control_panel/pwm/pwm_control.py");# launch Python script
+    exec("python3 " . __DIR__ . "/control_panel/pwm/pwm_control.py");# launch Python script
 
 }
 
@@ -110,7 +117,7 @@ function set_gpio($pin,$x){
 		case '0': $z='dl';break;
 		case 'output': $z='op';break;
 	}
-	$cmd="sudo raspi-gpio set $pin $z";
+	$cmd="pinctrl set $pin $z";
 	system($cmd);
 	//echo"$x: $cmd <br>";
 }

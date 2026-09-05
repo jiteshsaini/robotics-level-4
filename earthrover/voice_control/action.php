@@ -46,16 +46,16 @@ if($word[0] == "robot" and $sz>1 and $sz<=3){
 	elseif($word[1] == "lights"){
 		
 		if($word[2] == "on"){
-			system("gpio -g write $cameralight 1");
-			system("gpio -g write $headlight_right 1");
-			system("gpio -g write $headlight_left 1");
+			system("pinctrl set $cameralight dh");
+			system("pinctrl set $headlight_right dh");
+			system("pinctrl set $headlight_left dh");
 			
 			echo"[$time]: Lights switched ON<br>";
 		}
 		elseif ($word[2] == "off") {
-			system("gpio -g write $cameralight 0");
-			system("gpio -g write $headlight_right 0");
-			system("gpio -g write $headlight_left 0");
+			system("pinctrl set $cameralight dl");
+			system("pinctrl set $headlight_right dl");
+			system("pinctrl set $headlight_left dl");
 			
 			echo"[$time]: Lights switched OFF<br>";
 		}

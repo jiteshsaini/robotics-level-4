@@ -41,7 +41,7 @@ website: https://helloworld.co.in
 <div id='div_instructions'>
     <p>- Press 'Start' button and wait for the Webcam to start.</p>
     <p>- The model is generated through <a href='https://teachablemachine.withgoogle.com/train/image' target='_blank'>Teachale Machine</a> online tool by Google. Following gestures are recognised by the model:-</p>
-    <p><img src='/earthrover/control_panel/css/images/gestures_tm.jpg' height='250px'></p>
+    <p><img src='../control_panel/css/images/gestures_tm.jpg' height='250px'></p>
     <p>- Using your hand, make any of the 3 gestures shown above. Ensure that the backgroud is blank while you show hand gestures to web cam.</p>
     <p> When a gesture is recognised, a command is sent to the server i.e. Raspberry Pi from where this page is fetched. Based on the command received, GPIO pins of RPi are actuated</p>
     
@@ -55,7 +55,7 @@ website: https://helloworld.co.in
 <script src="js/tf.min.js"></script>
 <script src="js/teachablemachine-image.min.js"></script>
 
-<script src="/earthrover/control_panel/js/jquery.min.js"></script>
+<script src="../control_panel/js/jquery.min.js"></script>
 <script type="text/javascript">
     // More API functions here:
     // https://github.com/googlecreativelab/teachablemachine-community/tree/master/libraries/image
@@ -65,7 +65,7 @@ website: https://helloworld.co.in
     var prob = 0.9;
     
     // the link to your model provided by Teachable Machine export panel
-    const URL = "/earthrover/tm/";
+    const URL = "./";
 
     let model, webcam, labelContainer, maxPredictions;
 

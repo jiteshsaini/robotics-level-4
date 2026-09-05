@@ -3,7 +3,7 @@
 <head>        
    <title>Range Sensor</title>
    
-   <script src="/earthrover/js/jquery.min.js"></script>
+   <script src="../../control_panel/js/jquery.min.js"></script>
         
    
 </head> 

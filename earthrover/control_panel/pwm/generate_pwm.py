@@ -2,6 +2,7 @@
 ##########Created by: Jitesh Saini   #####################
 
 import RPi.GPIO as GPIO 
+import os
 from time import sleep  # import sleep function from time module  
   
 GPIO.setmode(GPIO.BCM)  # choose BCM numbering scheme  
@@ -16,7 +17,7 @@ pin20.start(0)              # start pin20 on 0 percent duty cycle (off)
 pin21.start(0)              # start pin21 on 0 percent duty cycle (off)  
 
 ###### read the disk file pwm1.txt for speed value#########################
-f0 = open("/var/www/html/earthrover/control_panel/pwm/pwm1.txt", "r+")
+f0 = open(os.path.dirname(os.path.realpath(__file__)) + "/pwm1.txt", "r+")
 str0 = f0.read(5)
 f0.close()
 str0=str0.strip()

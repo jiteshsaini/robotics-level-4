@@ -5,3 +5,9 @@ __pycache__/
 _design/
 earthrover/logs/*
 !earthrover/logs/.gitkeep
+
+# Live state, written by the robot as it runs. Not in the repo: the app is
+# developed in the folder Apache serves, so this would show as modified after
+# every change from the panel, and a personal stop distance would ship as
+# everyone's default.
+earthrover/config.txt

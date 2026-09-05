@@ -26,9 +26,32 @@ Usage:
     cap.release()
 """
 
+import os
+import sys
 import time
 import cv2
 
+# The web UI writes config.txt at the app root; this file sits there too.
+sys.path.insert(0, os.path.dirname(os.path.realpath(__file__)))
+try:
+    from util import setting, FLIP_CV2, FLIP_TRANSFORM
+except Exception:                      # util needs GPIO; keep working without it
+    FLIP_CV2 = {"none": None, "rotate_180": -1,
+                "horizontal_flip": 1, "vertical_flip": 0}
+    FLIP_TRANSFORM = {"none": (0, 0), "rotate_180": (1, 1),
+                      "horizontal_flip": (1, 0), "vertical_flip": (0, 1)}
+    def setting(key, default):
+        try:
+            path = os.path.dirname(os.path.realpath(__file__)) + "/config.txt"
+            for line in open(path):
+                k, _, v = line.partition("=")
+                if k.strip() == key:
+                    return type(default)(v.strip())
+        except (OSError, ValueError):
+            pass
+        return default
+
+CAM_INDEXES = 5        # /dev/video0..4, searched for a USB webcam
 DEFAULT_SIZE = (640, 480)
 WARMUP_SECONDS = 0.5      # AE/AWB settle time. Was 2.0; it is paid on every
                          # start, so it is 1.5s of the wait before the launch
@@ -43,17 +66,39 @@ class VideoCapture:
         self.error = None
         self._cap = None
         self._picam = None
+        self._flip = None               # cv2.flip code for the v4l2 path
         self.size = size
 
-        if self._try_v4l2(src):
+        # Which camera, and which way up, come from config.txt so that the
+        # video stream and the vision scripts agree rather than each guessing.
+        want = setting("camera", "auto")            # auto | USB_cam | RPI_cam
+
+        if want in ("auto", "USB_cam") and self._try_v4l2(src):
+            self._flip = FLIP_CV2.get(setting("flip_USB_cam", "none"))
             return
-        self._try_picamera2(size)
+        if want in ("auto", "RPI_cam"):
+            self._try_picamera2(size)
+        elif want == "USB_cam":
+            print("camera_compat: camera=USB_cam but no webcam delivered a frame")
 
     # ---- backends ----------------------------------------------------
 
     def _try_v4l2(self, src):
         """A real V4L2 capture device, i.e. a USB webcam. Must actually
-        yield a frame - on this OS /dev/video0 opens but never delivers."""
+        yield a frame - on this OS /dev/video0 opens but never delivers.
+
+        The webcam is not on a fixed index. A Pi numbers its own CSI receiver
+        and codec blocks as /dev/video* too, so a webcam typically lands on
+        video1 or later. Trying only the index we were handed found unicam,
+        got no frame, and fell through to the ribbon camera - so a USB camera
+        was never used even when one was plugged in.
+        """
+        for index in range(src, src + CAM_INDEXES):
+            if self._open_v4l2(index):
+                return True
+        return False
+
+    def _open_v4l2(self, src):
         try:
             # CAP_V4L2 explicitly. With a GStreamer-enabled OpenCV the default
             # backend builds a gst pipeline against unicam, which can never
@@ -68,6 +113,7 @@ class VideoCapture:
                     if ok and frame is not None:
                         self._cap = cap
                         self.backend = "v4l2"
+                        print("camera_compat: usb webcam on /dev/video%d" % src)
                         return True
                     time.sleep(0.1)
             cap.release()
@@ -78,11 +124,15 @@ class VideoCapture:
     def _try_picamera2(self, size):
         try:
             from picamera2 import Picamera2
+            from libcamera import Transform
             p = Picamera2()
+            # The sensor does the flip, so it costs nothing per frame.
+            h, v = FLIP_TRANSFORM.get(setting("flip_RPI_cam", "none"), (0, 0))
             # picamera2's "RGB888" is B,G,R in memory order - already what
             # OpenCV expects, so no cvtColor is needed on the hot path.
             p.configure(p.create_video_configuration(
-                main={"size": size, "format": "RGB888"}))
+                main={"size": size, "format": "RGB888"},
+                transform=Transform(hflip=h, vflip=v)))
             p.start()
             time.sleep(WARMUP_SECONDS)
             self._picam = p
@@ -100,7 +150,10 @@ class VideoCapture:
     def read(self):
         """Returns (ok, frame) with frame in BGR, like cv2.VideoCapture."""
         if self.backend == "v4l2":
-            return self._cap.read()
+            ok, frame = self._cap.read()
+            if ok and self._flip is not None:
+                frame = cv2.flip(frame, self._flip)
+            return ok, frame
         if self.backend == "picamera2":
             try:
                 return True, self._picam.capture_array()

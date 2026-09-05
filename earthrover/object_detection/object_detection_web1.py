@@ -24,7 +24,8 @@ from PIL import Image
 import time
 
 import sys
-sys.path.insert(0, '/var/www/html/earthrover')
+import os
+sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.realpath(__file__))))
 
 
 # cv2.VideoCapture cannot read the CSI camera on Bookworm/Trixie

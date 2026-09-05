@@ -32,7 +32,8 @@ from PIL import Image
 import time
 
 import sys
-sys.path.insert(0, '/var/www/html/earthrover')
+import os
+sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.realpath(__file__))))
 import util as ut
 ut.init_gpio()
 
@@ -53,7 +54,7 @@ lbl = 'coco_labels.txt'
 counter=0
 prev_val=0
 
-file_path="/var/www/html/earthrover/object_detection/web/"
+file_path = os.path.dirname(os.path.realpath(__file__)) + "/web/"
 selected_obj=""
 prev_val_obj=""
 

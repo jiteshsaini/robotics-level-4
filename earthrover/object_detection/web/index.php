@@ -52,7 +52,7 @@ Created by: Jitesh Saini
 	}
 	
    </style>
-   <script src="/earthrover/control_panel/js/jquery.min.js"></script>            
+   <script src="../../control_panel/js/jquery.min.js"></script>            
    <script>
 	function button_action(id)
 	{
@@ -108,7 +108,8 @@ Created by: Jitesh Saini
 //onload=alert('start the python script manually to stream video')
 $host=$_SERVER['SERVER_ADDR'];//192.168.1.20
 $link_vid= 'http://'.$host.':2204';
-$link_remote='http://'.$host.'/earthrover/control_panel/remote.php';
+$link_remote = 'http://' . $host . rtrim(dirname(dirname(dirname($_SERVER['PHP_SELF']))), '/')
+               . '/control_panel/remote.php';
 //echo"$link_remote";
 echo"<div id='box_outer'>";//------------------------
 	echo"<h2 align='center' style='color:darkblue'>Object Detection with TensorFlow Lite</h2>";

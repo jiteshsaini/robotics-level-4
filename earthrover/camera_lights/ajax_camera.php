@@ -18,14 +18,17 @@ if ($cam == "on") {
 	// Take the camera from whichever feature holds it - last button pressed wins,
 	// which is what the UI implies since you pick one mode at a time.
 	foreach ($ML_WORKERS as $w) {
-		system("sudo pkill -f " . escapeshellarg($w) . " > /dev/null 2>&1");
+		system("pkill -f " . escapeshellarg($w) . " > /dev/null 2>&1");
 	}
 	sleep(2);   // let libcamera release the device
 
 	// Output is redirected so the backgrounded process does not keep the HTTP
 	// connection open (PHP's system() otherwise waits on the child's inherited
 	// stdout, and this request would appear to hang).
-	system("sudo python3 /var/www/html/earthrover/camera_lights/cam_server.py > /dev/null 2>&1 &");
+	// to the log rather than /dev/null: a camera that fails to start
+	// should be able to say why
+	$app = dirname(__DIR__);
+	system("python3 -u " . __DIR__ . "/cam_server.py > " . $app . "/logs/camera.log 2>&1 &");
 
 	// picamera2 needs a couple of seconds to open the sensor and bind port 8000.
 	// Wait for the stream to actually accept before replying, so the UI reloads
@@ -46,7 +49,7 @@ if ($cam == "on") {
 }
 
 if ($cam == "off") {
-	system("sudo pkill -f cam_server.py");
+	system("pkill -f cam_server.py");
 	echo "camera: off";
 	exit;
 }

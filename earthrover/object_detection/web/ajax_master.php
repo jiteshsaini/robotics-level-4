@@ -8,14 +8,35 @@ set_time_limit(90);
 
 $state = $_POST["state"];
 
-exec("sudo python /var/www/html/earthrover/object_detection/master.py $state");
+exec("python3 " . dirname(dirname(__DIR__)) . "/object_detection/master.py $state");
 
 if ($state == "1") {
-	$deadline = time() + 60;
-	while (time() < $deadline) {
+	$app   = dirname(dirname(__DIR__));
+	$began = time();
+	$up    = false;
+
+	while (time() - $began < 60) {
 		$sock = @fsockopen("127.0.0.1", 2204, $errno, $errstr, 1);
-		if ($sock) { fclose($sock); break; }
+		if ($sock) { fclose($sock); $up = true; break; }
+
+		// Give up early if the worker is already gone. It used to wait the
+		// full minute and then report success anyway, so the panel revealed
+		// a video link pointing at a port nothing was listening on - which
+		// is what "refused to connect" was. The grace period is because the
+		// worker takes a moment to appear after master.py returns.
+		if (time() - $began > 3) {
+			exec("pgrep -f " . escapeshellarg("$app/[o]bject_detection/") . " > /dev/null 2>&1", $ignored, $rc);
+			if ($rc !== 0) { break; }
+		}
 		usleep(300000);   // 300 ms between probes
+	}
+
+	if (!$up) {
+		http_response_code(503);
+		$log  = "$app/logs/object_detection.log";
+		$tail = is_file($log) ? trim((string) @shell_exec("tail -n 4 " . escapeshellarg($log))) : "";
+		echo "could not start object detection" . ($tail !== "" ? ":\n\n" . $tail : ".");
+		exit;
 	}
 }
 

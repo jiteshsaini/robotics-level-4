@@ -4,7 +4,8 @@
 import time,os
 
 import sys
-sys.path.insert(0, '/var/www/html/earthrover')
+import os
+sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.realpath(__file__))))
 import util as ut
 
 local_path=os.path.dirname(os.path.realpath(__file__))
@@ -28,10 +29,10 @@ while 1:
 	
 	if(counter==3):
 		ut.speak_tts("restarting","m")
-		os.system("sudo pkill -f range_sensor.py")
+		os.system("pkill -f range_sensor.py")
 		print("stopped range_sensor.py !!!")
 		time.sleep(0.1)
-		os.system("python /var/www/html/earthrover/range_sensor/range_sensor.py &")
+		os.system("python3 " + local_path + "/range_sensor.py &")
 		print("started range_sensor.py !!!")
 
 		

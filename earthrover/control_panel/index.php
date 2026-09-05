@@ -23,7 +23,7 @@ $path=rtrim(dirname($_SERVER["PHP_SELF"]), "/\\"); //earthrover
 
 echo"<div align='center' id='box_outer'>";//------------------------
 	echo"<b align='center' style='font-size:40px;color:#0000b3'>Earth Rover</b>";
-	echo"<a href='readme/' target='_blank'><img style='float:right' src='/earthrover/control_panel/css/images/earthrover.png' height='60px'></a>";
+	echo"<a href='readme/' target='_blank'><img style='float:right' src='css/images/earthrover.png' height='60px'></a>";
 	echo"<div align='center' class='box_inner'>";//------------------------
 		//Range Sensor block
 		echo"<div class='box_controls' style='width:15%'>";
@@ -31,8 +31,9 @@ echo"<div align='center' id='box_outer'>";//------------------------
 				echo"<label class='floatLabel'>Range Sensor</label><br>";
 				echo"<b id='range' style='float:right;color:blue;font-size:30px'></b>";
 				echo"<input style='height:40px' id='range_button' type='submit' onclick=toggle_rangeSensor('range_button'); value='OFF'/>";
-				echo"<script src='/earthrover/range_sensor/web/rangesensor.js?v=".filemtime(dirname(__DIR__)."/range_sensor/web/rangesensor.js")."'></script>";
+				echo"<script src='../range_sensor/web/rangesensor.js?v=".filemtime(dirname(__DIR__)."/range_sensor/web/rangesensor.js")."'></script>";
 			echo"</zz>";
+			echo"<span class='gear' onclick=settings('range'); title='Settings'>&#9881;</span>";
 		echo"</div>";
 		
 		//Javascript Robotics block
@@ -44,9 +45,10 @@ echo"<div align='center' id='box_outer'>";//------------------------
 					$w1="30%"; //width of tooltip
 					$w2="80%"; //width of button inside tooltip
 					
-					$href_acc= 'https://'.$host."/earthrover/accelerometer";
-					$href_voice= 'https://'.$host."/earthrover/voice_control";
-					$href_obj= 'https://'.$host."/earthrover/compass";
+					$app_url = $host . rtrim(dirname(dirname($_SERVER['PHP_SELF'])), '/');
+					$href_acc = 'https://' . $app_url . "/accelerometer";
+					$href_voice = 'https://' . $app_url . "/voice_control";
+					$href_obj = 'https://' . $app_url . "/compass";
 					
 					//Accelerometer control
 					echo"<div class='tooltip' style='width:$w1'>
@@ -78,7 +80,7 @@ echo"<div align='center' id='box_outer'>";//------------------------
 				// here rather than reimplementing the check in PHP keeps one
 				// source of truth. ~110 ms, once per page load.
 				$er_edgetpu = trim((string) @shell_exec(
-					"python3 -c \"import sys; sys.path.insert(0,'/var/www/html/earthrover');"
+					"python3 -c \"import sys; sys.path.insert(0,'" . dirname(__DIR__) . "');"
 					. " from util import edgetpu; print(edgetpu)\" 2>/dev/null"));
 
 				if ($er_edgetpu === '1') {
@@ -103,7 +105,7 @@ echo"<div align='center' id='box_outer'>";//------------------------
 					$w1="19%"; //width of tooltip
 					$w2="85%"; //width of button inside tooltip
 					
-					$href= 'https://'.$host."/earthrover/tm/";
+					$href = 'https://' . $app_url . "/tm/";
 					
 					//Gesture control
 					echo"<div class='tooltip' style='width:$w1'>
@@ -147,7 +149,7 @@ echo"<div align='center' id='box_outer'>";//------------------------
 					$href= 'http://'.$host.':2204';
 					echo"<a id='img_object_tracking' style=$style_img href='$href' target='_blank'><img src='css/images/obj_tracking.png' height='60px'></a>";
 					
-					$href= 'http://'.$host."/earthrover/object_detection/web";
+					$href = 'http://' . $app_url . "/object_detection/web";
 					echo"<a id='img_object_detection' style=$style_img href='$href' target='_blank'><img src='css/images/obj_detection.png' height='60px'></a>";
 					
 					$href= 'http://'.$host.':2204';
@@ -186,6 +188,7 @@ echo"<div align='center' id='box_outer'>";//------------------------
 				echo"<span id='cam_spin' class='er-spin' style='display:none'></span>";
 				echo"<txt> .</txt>";
 			echo"</zz>";
+			echo"<span class='gear' onclick=settings('camera'); title='Settings'>&#9881;</span>";
 		echo"</div>";
 		
 		//Lights Controls block
@@ -204,7 +207,7 @@ echo"<div align='center' id='box_outer'>";//------------------------
 		echo"<div class='box_controls'>";
 			echo"<zz>";
 				echo"<label class='floatLabel'>Speaker</label><br>";
-				echo"<script src='/earthrover/speaker/web/speaker.js?v=".filemtime(dirname(__DIR__)."/speaker/web/speaker.js")."'></script>";
+				echo"<script src='../speaker/web/speaker.js?v=".filemtime(dirname(__DIR__)."/speaker/web/speaker.js")."'></script>";
 				echo"<div style='float:left;width:70%;border:0px solid blue'>";
 					echo"<input id='txt_tts' type='text' style='width:90%'><br>";
 					echo"<input id='radio1' type='radio' name='gender' value='male' checked> M ";
@@ -232,6 +235,15 @@ echo"<div align='center' id='box_outer'>";//------------------------
 echo"</div>";//--box_outer---------------------------------------------------
 
 ?>
+
+<!-- One box, shared by every gear. cp.js fills in the fields. -->
+<div id="cfg_bg" onclick="close_settings();"></div>
+<div id="cfg">
+	<label id="cfg_title"></label>
+	<div id="cfg_fields"></div>
+	<input type="submit" value="Save" onclick="save_settings();"/>
+	<input type="submit" value="Cancel" onclick="close_settings();"/>
+</div>
 
 
 </body>

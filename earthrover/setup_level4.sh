@@ -21,6 +21,9 @@
 #  that is the slow part - allow an hour or more on an older board. Nothing
 #  reboots by itself; the script tells you at the end if a restart is needed.
 #
+#  The web server drives the hardware through group membership (gpio, video,
+#  audio) and pinctrl - it is never given root.
+#
 #  Everything needed is installed by default, including Coral USB Accelerator
 #  support (harmless if you do not have one - it is detected at runtime) and a
 #  self-signed certificate for https.
@@ -289,29 +292,21 @@ G.setwarnings(False); G.setmode(G.BCM); G.setup(17, G.OUT)" 2>/dev/null; then
     bad=1
   fi
 
-  # --- GPIO: pinctrl and both shims ----------------------------------
+  # --- GPIO -----------------------------------------------------------
   command -v pinctrl >/dev/null && ok "pinctrl present" || { warn "pinctrl MISSING"; bad=1; }
-  for shim in raspi-gpio gpio; do
-    if command -v "$shim" >/dev/null; then
-      ok "$shim resolves to $(command -v "$shim")"
+
+  # --- the web server's rights ----------------------------------------
+  #     Group membership, not sudo: the panel needs the gpio, video and audio
+  #     devices, and each has a group. It used to be granted unrestricted
+  #     root, which made an unauthenticated web page the security boundary of
+  #     the whole device.
+  for g in gpio video audio; do
+    if id -nG www-data 2>/dev/null | has "$g"; then
+      ok "www-data in $g"
     else
-      warn "$shim not on PATH"; bad=1
+      warn "www-data NOT in $g - the web UI cannot use that hardware"; bad=1
     fi
   done
-
-  # --- sudoers: the web server needs root to drive the hardware ------
-  #     -n so this never blocks on a password prompt; if it cannot be read
-  #     without one, say so rather than claiming a failure.
-  if sudo -n -l -U www-data 2>/dev/null | has "NOPASSWD: ALL"; then
-    ok "www-data has sudo rights"
-  elif [ -r /etc/sudoers.d/earthrover ] && has www-data < /etc/sudoers.d/earthrover; then
-    ok "www-data grant present in /etc/sudoers.d/earthrover"
-  elif sudo -n true 2>/dev/null; then
-    warn "www-data has no sudo grant - the web UI cannot drive GPIO or start workers"
-    bad=1
-  else
-    warn "sudoers grant not checked (needs sudo; re-run after 'sudo -v')"
-  fi
 
   # --- camera --------------------------------------------------------
   CAM_LIST=$(rpicam-hello --list-cameras 2>/dev/null)
@@ -542,115 +537,7 @@ fi
 python3 -c "from ai_edge_litert.interpreter import Interpreter; print('  [ ok ] interpreter import verified')" \
   || warn "litert imported but interpreter unavailable"
 
-# 3. GPIO command-line shims
-#    The web UI shells out to 'gpio' (WiringPi) and 'raspi-gpio'. Both
-#    were removed from Raspberry Pi OS. 'pinctrl' replaces them and is
-#    argument-compatible with raspi-gpio, so thin shims keep the
-#    existing PHP working with no code changes.
-echo
-echo "=================================================="
-echo "  Installing GPIO shims (pinctrl backend)"
-echo "=================================================="
-
-# pinctrl drives every motor, light and PWM pin. It ships with Raspberry Pi OS,
-# but install it rather than giving up if a slimmed-down image lacks it.
-if ! command -v pinctrl >/dev/null; then
-  run_step "Installing raspi-utils (provides pinctrl)" \
-    sudo apt-get install -y raspi-utils
-  command -v pinctrl >/dev/null || die "pinctrl not found and raspi-utils would not install"
-fi
-
-if [ ! -e /usr/bin/raspi-gpio ]; then
-  sudo tee /usr/local/bin/raspi-gpio >/dev/null <<'SHIM'
-#!/bin/bash
-# Compatibility shim: raspi-gpio -> pinctrl (argument-compatible).
-exec /usr/bin/pinctrl "$@"
-SHIM
-  sudo chmod 755 /usr/local/bin/raspi-gpio
-  ok "raspi-gpio shim installed"
-else
-  ok "real raspi-gpio present, shim not needed"
-fi
-
-if [ ! -e /usr/bin/gpio ]; then
-  sudo tee /usr/local/bin/gpio >/dev/null <<'SHIM'
-#!/bin/bash
-# Compatibility shim: WiringPi 'gpio' -> pinctrl.
-# Supports the subset the Earthrover web UI uses:
-#   gpio -g write <pin> <0|1>
-#   gpio -g mode  <pin> <in|out>
-#   gpio -g read  <pin>
-[ "${1:-}" = "-g" ] && shift
-case "${1:-}" in
-  write)
-    if [ "${3:-0}" = "1" ]; then exec /usr/bin/pinctrl set "$2" op dh
-    else                          exec /usr/bin/pinctrl set "$2" op dl; fi ;;
-  mode)
-    case "${3:-}" in
-      out) exec /usr/bin/pinctrl set "$2" op ;;
-      in)  exec /usr/bin/pinctrl set "$2" ip ;;
-      *)   echo "gpio shim: unsupported mode '${3:-}'" >&2; exit 1 ;;
-    esac ;;
-  read) exec /usr/bin/pinctrl get "$2" ;;
-  *) echo "gpio shim: unsupported command '${1:-}'" >&2; exit 1 ;;
-esac
-SHIM
-  sudo chmod 755 /usr/local/bin/gpio
-  ok "gpio (WiringPi) shim installed"
-else
-  ok "real gpio present, shim not needed"
-fi
-
-# 4. Sudo rights for the web server
-#    The control panel drives GPIO, starts the camera server and the AI
-#    workers, and plays audio - all of which need root. This grants the
-#    web server unrestricted sudo, so any new feature works without
-#    editing this list.
-#
-#    Understand what that means before deploying this anywhere but a
-#    private LAN: it makes the PHP the security boundary of the whole
-#    device. A flaw in any page reachable over HTTP - and the panel has
-#    no authentication - becomes root on the Pi. On a machine that holds
-#    your wifi credentials and has a camera, treat the network it sits
-#    on as the thing protecting it.
-#
-#    Written as a drop-in file and checked with visudo, rather than
-#    appended to /etc/sudoers directly: a syntax error in the main file
-#    locks every user out of sudo, and this way is also idempotent.
-echo
-echo "=================================================="
-echo "  Granting sudo rights to www-data"
-echo "=================================================="
-
-TMPS=$(mktemp)
-cat > "$TMPS" <<'SUDOERS'
-# Earthrover - sudo rights for the web control panel.
-#
-# The panel needs root to drive GPIO, start the camera server and the AI
-# workers, and play audio. This is an unrestricted grant: whatever the PHP
-# runs, runs as root, and new features need no change here.
-#
-# The trade is that the web server becomes the security boundary of the whole
-# device, and the panel is unauthenticated by design. Keep it on a trusted
-# network.
-www-data ALL=(ALL) NOPASSWD: ALL
-SUDOERS
-
-if sudo visudo -c -f "$TMPS" >/dev/null 2>&1; then
-  sudo install -m 440 -o root -g root "$TMPS" /etc/sudoers.d/earthrover
-  ok "/etc/sudoers.d/earthrover installed and validated"
-else
-  warn "sudoers file failed validation - NOT installed (system left untouched)"
-fi
-rm -f "$TMPS"
-
-# Warn if the old blanket rule is still in /etc/sudoers from a previous run
-if sudo grep -qE '^(pi|www-data) ALL=\(ALL\) NOPASSWD: ALL' /etc/sudoers 2>/dev/null; then
-  warn "An old blanket 'NOPASSWD: ALL' rule exists in /etc/sudoers."
-  warn "Remove it with 'sudo visudo' - it grants the web server full root."
-fi
-
-# 5. Camera interface
+# 3. Camera interface
 #   
 echo
 echo "=================================================="
@@ -678,7 +565,7 @@ elif [ "$KERNEL_PENDING" -eq 1 ]; then
   warn "reboot, then re-check with:  bash $0 --verify"
 fi
 
-# 6. HTTPS certificate  (voice_control needs a secure context: the
+# 4. HTTPS certificate  (voice_control needs a secure context: the
 #    browser Web Speech API refuses to run over plain http)
 echo
 echo "=================================================="
@@ -726,7 +613,7 @@ if [ -f "$SSL_DIR/earthrover.crt" ]; then
   fi
 fi
 
-# 7. Coral USB Accelerator support (always installed; harmless without one)
+# 5. Coral USB Accelerator support (always installed; harmless without one)
 echo
 echo "=================================================="
 echo "  Installing Coral USB Accelerator support"
@@ -835,7 +722,24 @@ if [ "$DO_HEADLESS" -eq 1 ]; then
   fi
 fi
 
-# 8. Web-root permissions (if code is already there) + Apache
+# 6. The web server's hardware rights, and the web root
+#    Group membership rather than root: the panel drives GPIO, opens the
+#    camera and plays audio, and each of those has a group. It used to be
+#    given unrestricted sudo, which made an unauthenticated web page the
+#    security boundary of the whole device.
+echo
+echo "=================================================="
+echo "  Letting the web server use the hardware"
+echo "=================================================="
+for g in gpio video audio; do
+  sudo adduser www-data "$g" >/dev/null 2>&1 || true
+done
+if id -nG www-data | has gpio; then
+  ok "www-data in gpio, video and audio (takes effect when Apache restarts)"
+else
+  warn "could not add www-data to the hardware groups"
+fi
+
 fix_perms
 
 echo

@@ -3,7 +3,8 @@
 
 import time,sys,os
 
-sys.path.insert(0, '/var/www/html/earthrover')
+import os
+sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.realpath(__file__))))
 import util as ut
 
 #dynamically obtain path of current file

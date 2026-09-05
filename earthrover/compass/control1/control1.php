@@ -13,9 +13,9 @@ https://developer.mozilla.org/en-US/docs/Web/API/DeviceOrientationEvent
     
 <title>Control-1</title>
 
-<link rel="stylesheet" href="/earthrover/compass/robot_compass/css/app3.css">
-<script src="/earthrover/control_panel/js/jquery.min.js"></script>
-<script src="/earthrover/control_panel/js/remote.js"></script>  
+<link rel="stylesheet" href="../robot_compass/css/app3.css">
+<script src="../../control_panel/js/jquery.min.js"></script>
+<script src="../../control_panel/js/remote.js?v=<?php echo filemtime(__DIR__."/../../control_panel/js/remote.js"); ?>"></script>  
    
 <style>
 #btn_submit, #gif{
@@ -49,7 +49,7 @@ https://developer.mozilla.org/en-US/docs/Web/API/DeviceOrientationEvent
 	document.getElementById("gif").style.display = "block"; 
             
 	//alert(hh);
-	$.post("/earthrover/compass/turn_degrees.php",
+	$.post("../turn_degrees.php",
 	    {
              heading_cmd:hh
             },
@@ -165,7 +165,7 @@ https://developer.mozilla.org/en-US/docs/Web/API/DeviceOrientationEvent
 -->
 <div align='center' class='status'>
     <input id="btn_submit" type="submit" value="Turn" onclick="send_data()">
-    <img id="gif" src='/earthrover/compass/control2/load.gif' height='40px' style='display:none'>
+    <img id="gif" src='../control2/load.gif' height='40px' style='display:none'>
     <b style='color:yellow;font-size:80px;margin-bottom:1px' id="disp">hey</b>
     <b style='display:none' id="data"></b>
     
@@ -176,7 +176,7 @@ https://developer.mozilla.org/en-US/docs/Web/API/DeviceOrientationEvent
 </div>
 
     
-<script src="/earthrover/compass/robot_compass/js/app3.js"></script>
+<script src="../robot_compass/js/app3.js"></script>
 
 </body>
 

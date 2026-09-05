@@ -1,3 +1,8 @@
+// Endpoints resolved from this script's own URL, not the page's: the
+// same file is loaded from pages at different depths. The variable is
+// named per file because several of these load into one page.
+var SPK = document.currentScript.src.replace(/[^/]*$/, "");
+
 function button_tts()
 {
 	var str = document.getElementById("txt_tts").value;
@@ -14,7 +19,7 @@ function button_tts()
 	
 	console.log(gender);
 	//alert(str);
-	$.post("/earthrover/speaker/web/ajax_tts.php",
+	$.post(SPK + "ajax_tts.php",
     {
       str:str.toLowerCase(),
       gen:gender
@@ -32,7 +37,7 @@ function button_recording(no)
 	
 	console.log(path);
 	//alert(str);
-	$.post("/earthrover/speaker/web/ajax_omx.php",
+	$.post(SPK + "ajax_omx.php",
     {
       rec_path:path
     }

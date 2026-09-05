@@ -1,3 +1,8 @@
+// Endpoints resolved from this script's own URL, not the page's: the
+// same file is loaded from pages at different depths. The variable is
+// named per file because several of these load into one page.
+var RC = document.currentScript.src.replace(/js\/[^/]*$/, "");
+
 $(document).keydown(function(e){
     if (e.keyCode == 37)  
     	 button_direction('l');
@@ -15,7 +20,7 @@ $(document).keydown(function(e){
 function button_direction(val)
 {
 	console.log("button val:" + val);
-	$.post("ajax_direction.php",
+	$.post(RC + "ajax_direction.php",
     {
       direction: val
     }
@@ -26,7 +31,7 @@ function button_direction(val)
 function speed_slider(val)
 {
 	console.log("slider val:" + val);
-	$.post("ajax_speed.php",
+	$.post(RC + "ajax_speed.php",
     {
       speed:val
     }

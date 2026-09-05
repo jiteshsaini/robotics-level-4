@@ -1,3 +1,8 @@
+// Endpoints resolved from this script's own URL, not the page's: the
+// same file is loaded from pages at different depths. The variable is
+// named per file because several of these load into one page.
+var RNG = document.currentScript.src.replace(/[^/]*$/, "");
+
 var interval;
 function toggle_rangeSensor(id)
 	{
@@ -32,7 +37,7 @@ function toggle_rangeSensor(id)
 function rangeSensor(state)
 {	console.log("state: ", state);
 	
-	$.post("/earthrover/range_sensor/web/ajax_rangeSensor.php",
+	$.post(RNG + "ajax_rangeSensor.php",
 	{
 		state: state
 	}
@@ -41,7 +46,7 @@ function rangeSensor(state)
 }
 function get_range()
 	{
-		$.post("/earthrover/range_sensor/web/ajax_getRange.php",
+		$.post(RNG + "ajax_getRange.php",
 		{
 		//direction: dir
 		//speed:sp

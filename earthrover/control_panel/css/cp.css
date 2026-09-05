@@ -166,3 +166,56 @@ button{
   animation: er-rot .7s linear infinite;
 }
 @keyframes er-rot { to { transform: rotate(360deg); } }
+
+/* sits in the bottom-right corner of the box it configures, clear of the
+   buttons, which float */
+.box_controls { position: relative; }
+.box_controls .gear {
+	position: absolute;
+	right: 8px;
+	bottom: 4px;
+	font-size: 20px;
+	line-height: 1;
+	color: #999;
+	cursor: pointer;
+}
+.box_controls .gear:hover { color: #0000b3; }
+
+#cfg_bg {
+	display: none;
+	position: fixed;
+	top: 0; left: 0; right: 0; bottom: 0;
+	background: rgba(0,0,0,0.4);
+}
+#cfg {
+	display: none;
+	position: fixed;
+	top: 25%; left: 50%;
+	transform: translateX(-50%);
+	background: #fff;
+	border: 1px solid #999;
+	border-radius: 6px;
+	padding: 18px 22px;
+	text-align: center;
+	min-width: 260px;
+}
+#cfg > label { font-weight: bold; font-size: 15px; }
+.cfg_row {
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	gap: 14px;
+	margin: 10px 0;
+	font-size: 13px;
+}
+.cfg_row select, .cfg_row input[type=number] { padding: 3px; font-size: 14px; }
+#cfg input[type=submit] {
+	font-size: 14px;
+	padding: 5px 16px;
+	margin: 6px 4px 0;
+	border: 1px solid #999;
+	border-radius: 4px;
+	background: #f0f0f5;
+	cursor: pointer;
+}
+#cfg input[type=submit]:hover { background: #dcdcec; }
