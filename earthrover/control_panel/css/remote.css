@@ -2,7 +2,7 @@
    own - the panel's stylesheet does not reach it. */
 
 :root {
-	--ink:    #212834;
+	--ink:    #eef2f8;
 	--accent: #5b93ff;
 	--edge:   #9aa5b4;   /* the side the key sits on */
 }
@@ -19,7 +19,7 @@ body {
 	width: 100%;
 	height: 100%;
 	padding: 14px 10px;
-	background: linear-gradient(180deg, #a5aebc 0%, #8b95a4 100%);
+	background: linear-gradient(180deg, #5b7398 0%, #445b85 100%);
 	text-align: center;
 	float: left;
 }
@@ -37,7 +37,7 @@ body {
 	width: 30%;
 	height: 96%;
 	min-height: 66px;
-	border: 1px solid #7c8798;
+	border: 1px solid #7b93b2;
 	border-radius: 12px;
 	background: linear-gradient(180deg, #ffffff 0%, #e7ecf3 55%, #ccd4e0 100%);
 	color: #29303d;

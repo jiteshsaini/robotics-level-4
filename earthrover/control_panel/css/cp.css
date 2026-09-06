@@ -6,16 +6,16 @@
 :root {
 	--bg:      #f4f6fa;
 	--surface: #414957;
-	--line:    #6f7a89;
-	--ink:     #212834;
-	--muted:   #414b5a;
+	--line:    #35496d;
+	--ink:     #eef2f8;
+	--muted:   #c3cee2;
 	--accent:  #5b93ff;
 	--soft:    #ffffff;
 	--on:      #1fae5a;
 	--radius:  10px;
 	/* the metallic part: a light top edge and a dark bottom one, so every
 	   surface reads as a shallow brushed panel rather than a flat fill */
-	--sheen:   linear-gradient(180deg, #aab3c0 0%, #8f99a8 100%);
+	--sheen:   linear-gradient(180deg, #61799f 0%, #46608c 100%);
 	--shadow:  inset 0 1px 0 rgba(255,255,255,.18),
 	           0 2px 3px rgba(0,0,0,.16), 0 8px 20px rgba(16,24,40,.16);
 }
@@ -122,8 +122,8 @@ body {
 	top: -8px;
 	left: 12px;
 	padding: 0 8px;
-	background: #3f4855;
-	border: 1px solid #2b3340;
+	background: #26314c;
+	border: 1px solid #17203a;
 	border-radius: 999px;
 	color: #dfe5ee;
 	font-size: 11px;
@@ -149,7 +149,7 @@ body {
 	padding: 0 14px;
 	margin: 2px 4px;
 	float: none;
-	border: 1px solid #7c8798;
+	border: 1px solid #7b93b2;
 	border-radius: 8px;
 	background: linear-gradient(180deg, #f2f5f9 0%, #dde3ec 100%);
 	box-shadow: inset 0 1px 0 rgba(255,255,255,.95), 0 1px 2px rgba(0,0,0,.35);
@@ -174,6 +174,70 @@ button:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
 }
 
 #range_button { height: 34px; vertical-align: middle; }
+
+/* Camera and lights are states, not actions, and a button can only ever
+   describe one of the two. An <input> cannot carry a pseudo-element, so the
+   knob is a radial-gradient in the background and the state moves it across.
+   No markup changes: cp.js already sets .is-on, and value stays ON/OFF for
+   the handlers that read it.
+
+   The two are styled differently on purpose. The camera slides; the lights
+   light up. A lamp switch that glows is the obvious metaphor for a lamp, and
+   at a glance they read as different kinds of control rather than the same
+   control in two colours. */
+
+/* ---- camera: a sliding switch, and the largest control in its row ---- */
+#cam_btn {
+	box-sizing: border-box;
+	width: 92px;
+	height: 38px;
+	padding: 0 13px;
+	border-radius: 999px;
+	border: 1px solid #2f4468;
+	background-color: #8794ac;
+	background-image: radial-gradient(circle at 19px 50%,
+		#ffffff 0 13px, rgba(255,255,255,0) 14px);
+	box-shadow: inset 0 2px 5px rgba(0,0,0,.35);
+	color: #1c2333;
+	font-size: 12px;
+	letter-spacing: .6px;
+	text-align: right;
+	transition: background-color .15s;
+}
+#cam_btn.is-on {
+	background-color: #1fae5a;
+	background-image: radial-gradient(circle at calc(100% - 19px) 50%,
+		#ffffff 0 13px, rgba(255,255,255,0) 14px);
+	border-color: #16803f;
+	color: #ffffff;
+	text-align: left;
+}
+
+/* ---- lights: a rocker that lights, rather than a knob that travels ---- */
+#camlight, #headlight {
+	box-sizing: border-box;
+	width: 62px;
+	height: 34px;
+	padding: 0;
+	border-radius: 9px;
+	border: 1px solid #2f4468;
+	background: linear-gradient(180deg, #6c799a 0%, #55628a 100%);
+	box-shadow: inset 0 3px 6px rgba(0,0,0,.45), inset 0 -1px 0 rgba(255,255,255,.10);
+	color: #c3cee2;
+	font-size: 11px;
+	letter-spacing: .7px;
+	text-align: center;
+	transition: background .15s, color .15s, box-shadow .15s;
+}
+#camlight.is-on, #headlight.is-on {
+	background: linear-gradient(180deg, #ffd98a 0%, #f5a623 100%);
+	border-color: #c17e12;
+	color: #4a2f00;
+	box-shadow:
+		inset 0 1px 0 rgba(255,255,255,.75),
+		0 0 10px rgba(245,166,35,.75),
+		0 0 22px rgba(245,166,35,.45);
+}
 #range {
 	display: inline-block;
 	vertical-align: middle;
@@ -182,7 +246,7 @@ button:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
 	padding: 1px 0;
 	box-sizing: border-box;
 	background: #11151b;
-	border: 1px solid #7c8798;
+	border: 1px solid #7b93b2;
 	border-radius: 7px;
 	box-shadow: inset 0 2px 5px rgba(0,0,0,.6);
 	color: #6ef29a;
@@ -201,7 +265,7 @@ button {
 	height: 2.5rem;
 	min-width: 2rem;
 	padding: 0 8px;
-	border: 1px solid #7c8798;
+	border: 1px solid #7b93b2;
 	border-radius: 8px;
 	background: linear-gradient(180deg, #f2f5f9 0%, #dde3ec 100%);
 	box-shadow: inset 0 1px 0 rgba(255,255,255,.95), 0 1px 2px rgba(0,0,0,.35);
@@ -279,8 +343,8 @@ button img { vertical-align: middle; }
 .tooltip:hover .tooltiptext { visibility: visible; opacity: 1; }
 
 /* ---- speaker ---------------------------------------------------------- */
-.spk-text  { float: left; width: 68%; text-align: left; }
-.spk-clips { float: left; width: 28%; margin-left: 3%; }
+.spk-text  { float: left; width: 76%; text-align: left; }
+.spk-clips { float: left; width: 22%; margin-left: 2%; display: flex; gap: 5px; }
 #txt_tts {
 	width: 92%;
 	height: 30px;
@@ -295,8 +359,25 @@ button img { vertical-align: middle; }
 	font-size: 13px;
 }
 #txt_tts:focus { outline: none; border-color: var(--accent); }
-#tts, #rec1, #rec2 { height: 28px; font-size: 12px; }
-#rec1, #rec2 { width: 88%; margin: 0 0 6px; }
+#tts { height: 28px; font-size: 12px; }
+
+/* Two stored clips, played about once a demo. They were the same size as
+   the speech controls beside them, which is not what they are worth. */
+#rec1, #rec2 {
+	flex: 1;
+	min-width: 0;
+	width: auto;
+	height: 22px;
+	margin: 0;
+	padding: 0 4px;
+	font-size: 10.5px;
+	font-weight: 600;
+	color: #3a4453;
+	background: rgba(255,255,255,.5);
+	border-color: rgba(70,90,120,.4);
+	box-shadow: none;
+}
+#rec1:hover, #rec2:hover { background: #fff; }
 
 /* ---- video and pad ---------------------------------------------------- */
 .box_media {
@@ -314,11 +395,11 @@ button img { vertical-align: middle; }
 	border: 1px solid var(--line);
 	border-radius: var(--radius);
 	box-shadow: var(--shadow);
-	background: #9aa4b2;
+	background: #556d97;
 	height: auto;
 	margin: 0;
 }
-#box_video  { width: calc(72% - 5px); background: #929cab;
+#box_video  { width: calc(72% - 5px); background: #8d9ab0;
 	box-shadow: inset 0 2px 7px rgba(0,0,0,.30); }
 #box_remote { width: calc(28% - 5px); }
 
@@ -327,9 +408,10 @@ button img { vertical-align: middle; }
 	position: absolute;
 	right: 10px;
 	bottom: 8px;
-	font-size: 17px;
+	font-size: 21px;
 	line-height: 1;
-	color: #4a5563;
+	color: #d7e0f0;
+	text-shadow: 0 1px 2px rgba(0,0,0,.45);
 	cursor: pointer;
 }
 .box_controls .gear:hover { color: var(--accent); }
@@ -341,11 +423,14 @@ button img { vertical-align: middle; }
    look frozen. */
 .er-spin {
 	display: inline-block;
-	width: 18px; height: 18px;
-	border: 3px solid #7e8899;
-	border-top-color: var(--accent);
+	vertical-align: middle;
+	width: 26px; height: 26px;
+	border: 5px solid rgba(0,0,0,.30);
+	border-top-color: #ffd24a;
+	border-right-color: #ffd24a;
 	border-radius: 50%;
-	animation: er-rot .7s linear infinite;
+	box-shadow: 0 0 9px rgba(255,210,74,.55);
+	animation: er-rot .6s linear infinite;
 }
 @keyframes er-rot { to { transform: rotate(360deg); } }
 
@@ -439,10 +524,15 @@ button img { vertical-align: middle; }
 	margin-left: 7px;
 	padding: 1px 8px 2px;
 	border-radius: 999px;
-	font-size: 10.5px;
+	font-size: 11.5px;
 	font-weight: 800;
-	letter-spacing: .5px;
+	letter-spacing: .6px;
 }
-.accel-tpu { background: rgba(31,174,90,.20);  border: 1px solid #1fae5a; color: #6ee79c; }
+.accel-tpu {
+	background: rgba(31,174,90,.30);
+	border: 1px solid #3ada84;
+	color: #b6ffd4;
+	box-shadow: 0 0 0 3px rgba(31,174,90,.20), 0 0 12px rgba(45,220,130,.55);
+}
 .accel-cpu { background: rgba(190,200,220,.16); border: 1px solid #8b95a9; color: #dfe5ee; }
 .accel-bad { background: rgba(220,38,38,.22);  border: 1px solid #ef4444; color: #ff9d9d; }

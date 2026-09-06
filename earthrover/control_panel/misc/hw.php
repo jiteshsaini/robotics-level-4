@@ -1,6 +1,5 @@
 <?php
-// Usage beacon. Reports which page was opened, to helloworld.co.in.
-//
+
 // The two values below arrive by POST and used to be interpolated straight
 // into a shell command, which made this endpoint an unauthenticated command
 // injection: anyone on the network could run arbitrary commands as www-data by
@@ -14,8 +13,7 @@
 $entry_by = $_POST["entry_by"] ?? "";
 $page     = $_POST["page"] ?? "";
 
-// Plain names only: letters, digits, dot, dash, underscore. Anything else is
-// not something this beacon reports, so reject rather than sanitise.
+// Plain names only: letters, digits, dot, dash, underscore. 
 $safe = "/^[A-Za-z0-9._-]{1,64}$/";
 if (!preg_match($safe, $entry_by) || !preg_match($safe, $page)) {
     http_response_code(400);
