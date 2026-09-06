@@ -539,7 +539,37 @@ if [ -f "$SSL_DIR/earthrover.crt" ]; then
   fi
 fi
 
-# 5. Coral USB Accelerator support (always installed; harmless without one)
+# 5. The web server's hardware rights
+#    Group membership rather than root: the panel drives GPIO, opens the
+#    camera and plays audio, and each of those has a group. It used to be
+#    given unrestricted sudo, which made an unauthenticated web page the
+#    security boundary of the whole device.
+#
+#    plugdev is the one nobody guesses. libedgetpu1-std ships a udev rule
+#    handing the accelerator's USB node to that group, so a worker running as
+#    www-data cannot open the Coral without it: the process dies at model load
+#    with no Python traceback, and the motors it had already enabled keep
+#    running. This runs before the Coral step so the check there can exercise
+#    www-data's own path.
+echo
+echo "=================================================="
+echo "  Letting the web server use the hardware"
+echo "=================================================="
+WWW_GROUPS="gpio video audio plugdev"
+for g in $WWW_GROUPS; do
+  sudo adduser www-data "$g" >/dev/null 2>&1 || true
+done
+missing=""
+for g in $WWW_GROUPS; do
+  id -nG www-data | has "$g" || missing="$missing $g"
+done
+if [ -z "$missing" ]; then
+  ok "www-data in $WWW_GROUPS (takes effect when Apache restarts)"
+else
+  warn "www-data is NOT in:$missing - the web UI cannot use that hardware"
+fi
+
+# 6. Coral USB Accelerator support (always installed; harmless without one)
 echo
 echo "=================================================="
 echo "  Installing Coral USB Accelerator support"
@@ -595,13 +625,16 @@ if [ -n "$CORAL_DEB" ]; then
   # loaded fine too). Constructing an interpreter is the real test.
   CORAL_MODEL="$WEB/all_models/mobilenet_ssd_v2_coco_quant_postprocess_edgetpu.tflite"
   if [ -f "$CORAL_MODEL" ]; then
-    if python3 -c "
+    # As www-data, not as you: www-data is what runs the AI features, and
+    # it is the one the udev rule can shut out. cd /tmp because www-data
+    # cannot read a home directory.
+    if (cd /tmp && sudo -u www-data env HOME=/tmp python3 -c "
 from ai_edge_litert.interpreter import Interpreter, load_delegate
 d = load_delegate('libedgetpu.so.1', {})
 it = Interpreter(model_path='$CORAL_MODEL', experimental_delegates=[d])
 it.allocate_tensors()
-" >/dev/null 2>&1; then
-      ok "Coral verified: delegate binds and the model loads"
+") >/dev/null 2>&1; then
+      ok "Coral verified: www-data can bind the delegate and load the model"
       echo "      nothing to configure - it is detected automatically"
     else
       warn "Coral library installed, but a model will not load with it -"
@@ -626,24 +659,7 @@ else
   warn "without it the Coral cannot be used; the rover still runs on CPU"
 fi
 
-# 6. The web server's hardware rights, and the web root
-#    Group membership rather than root: the panel drives GPIO, opens the
-#    camera and plays audio, and each of those has a group. It used to be
-#    given unrestricted sudo, which made an unauthenticated web page the
-#    security boundary of the whole device.
-echo
-echo "=================================================="
-echo "  Letting the web server use the hardware"
-echo "=================================================="
-for g in gpio video audio; do
-  sudo adduser www-data "$g" >/dev/null 2>&1 || true
-done
-if id -nG www-data | has gpio; then
-  ok "www-data in gpio, video and audio (takes effect when Apache restarts)"
-else
-  warn "could not add www-data to the hardware groups"
-fi
-
+# 7. The web root
 make_state_files
 fix_perms
 
