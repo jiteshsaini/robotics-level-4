@@ -73,6 +73,18 @@ LOGFILE="/tmp/earthrover-setup-$(date +%Y%m%d-%H%M%S).log"
 # Never let apt stop on an interactive prompt.
 export DEBIAN_FRONTEND=noninteractive
 
+# The last thing printed, whichever mode ran. After the checks and not
+# before them: a screen of verify output scrolls the address out of sight.
+web_ui() {
+  echo
+  if [ -d "$WEB/earthrover" ]; then
+    echo "  Open the control panel:  http://$(hostname -I | awk '{print $1}')/earthrover"
+  else
+    echo "  Nothing to open yet - there is no code at $WEB/earthrover."
+  fi
+  echo
+}
+
 run_step() {
   local msg="$1"; shift
   echo
@@ -284,14 +296,14 @@ G.setwarnings(False); G.setmode(G.BCM); G.setup(17, G.OUT)" 2>/dev/null; then
   return $bad
 }
 if [ "$DO_VERIFY" -eq 1 ]; then
-  verify_all
-  exit $?
+  verify_all; rc=$?
+  web_ui
+  exit $rc
 fi
 
 if [ "$FIX_PERMS" -eq 1 ]; then
   fix_perms
-  echo
-  echo "Web UI: http://$(hostname -I | awk '{print $1}')/earthrover"
+  web_ui
   exit 0
 fi
 
@@ -697,6 +709,7 @@ echo
 # Levels 1-3 end every run with a pass/fail table; do the same here rather
 # than only under --verify, so an install says whether it worked.
 verify_all || true
+web_ui
 
 ID="$(grep -m1 ^Serial /proc/cpuinfo | sha256sum | cut -c1-16)"
 IP="$(hostname -I | awk '{print $1}')"
