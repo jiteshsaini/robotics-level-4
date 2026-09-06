@@ -46,9 +46,14 @@ PAGE="""\
 <head>
 <title>Rpi Cam-Server</title>
 </head>
+<style>
+html,body{height:100%;margin:0;background:#171a20}
+body{display:flex;align-items:center;justify-content:center}
+img{max-width:100%;max-height:100%;display:block}
+</style>
 <body>
 <!--<center><h1>Raspberry Pi - Surveillance Camera</h1></center>-->
-<center><img src="stream.mjpg" width="640" height="480"></center>
+<img src="stream.mjpg">
 <!--<input  type='submit' onclick=button_reload(); value='refresh'/>-->
 
 </body>
