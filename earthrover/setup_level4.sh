@@ -189,6 +189,45 @@ if [ "$SKIP_CODE" -eq 0 ] && [ "$FIX_PERMS" -eq 0 ] && [ "$DO_VERIFY" -eq 0 ]; t
   fi
 fi
 
+# Files the robot writes as it runs. They are not in the repo: the app is
+# developed in the folder Apache serves, so a personal speed or stop distance
+# would ship as everyone's default. Only created when absent, so re-running
+# the installer keeps your settings.
+make_state_files() {
+  local E="$WEB/earthrover"
+  [ -d "$E" ] || return 0
+  echo
+  echo "=================================================="
+  echo "  Creating the files the robot writes"
+  echo "=================================================="
+  sudo mkdir -p "$E/logs"
+  local entry path body
+  for entry in \
+      "control_panel/pwm/pwm1.txt|50" \
+      "range_sensor/web/range.txt|--" \
+      "compass/robot_compass/heading.txt|0" \
+      "object_detection/web/object_found.txt|0" \
+      "object_detection/web/object_cmd.txt|person"; do
+    path="$E/${entry%%|*}"
+    body="${entry#*|}"
+    if [ -e "$path" ]; then
+      ok "kept ${entry%%|*}"
+    else
+      printf '%s\n' "$body" | sudo tee "$path" >/dev/null
+      ok "created ${entry%%|*}"
+    fi
+  done
+
+  if [ -e "$E/config.txt" ]; then
+    ok "kept config.txt"
+  else
+    printf '%s\n' "# Settings the web UI can change. One key=value per line." \
+                   "camera=auto" "flip_RPI_cam=rotate_180" "flip_USB_cam=none" \
+                   "distance=30" | sudo tee "$E/config.txt" >/dev/null
+    ok "created config.txt"
+  fi
+}
+
 # Web-root ownership, also available alone with --fix-perms.
 fix_perms() {
   echo
@@ -721,6 +760,7 @@ else
   warn "could not add www-data to the hardware groups"
 fi
 
+make_state_files
 fix_perms
 
 echo

@@ -11,3 +11,12 @@ earthrover/logs/*
 # every change from the panel, and a personal stop distance would ship as
 # everyone's default.
 earthrover/config.txt
+
+# Live state the robot writes as it runs. setup_level4.sh creates them at
+# install; keeping them in the repo shipped one person's speed, stop distance
+# and tracked object as everyone else's defaults.
+earthrover/control_panel/pwm/pwm1.txt
+earthrover/range_sensor/web/range.txt
+earthrover/compass/robot_compass/heading.txt
+earthrover/object_detection/web/object_found.txt
+earthrover/object_detection/web/object_cmd.txt
