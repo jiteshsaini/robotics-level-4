@@ -59,7 +59,11 @@ function set_speed($pwm_val){
     fwrite($fh, $pwm_val);
     fclose($fh);
 
-    exec("python3 " . __DIR__ . "/control_panel/pwm/pwm_control.py");# launch Python script
+    // Run from /tmp: the GPIO library writes a small notification file in
+    // whatever folder a process starts in, and PHP starts its children in the
+    // directory of the script that launched them. Children inherit the cwd, so
+    // one cd covers the lot - without it those files land in the web tree.
+    exec("cd /tmp && python3 " . __DIR__ . "/control_panel/pwm/pwm_control.py");# launch Python script
 
 }
 
@@ -122,5 +126,46 @@ function set_gpio($pin,$x){
 	//echo"$x: $cmd <br>";
 }
 
-?>
+// Who owns the pins.
+//
+// Every worker that drives the robot claims the motor and light pins for its
+// lifetime, and only one process may hold a line. So collision avoidance and
+// the AI features cannot run together. The endpoints ask here first and refuse
+// with a message naming the feature in the way, rather than stopping it
+// behind the operator's back.
 
+$er_pin_holders = array(
+	"collision avoidance"  => "range_sensor/avoid_collision.py",
+	"object detection"     => "object_detection/object_detection_web2.py",
+	"object tracking"      => "object_tracking/object_tracking.py",
+	"human following"      => "human_following/human_follower.py",
+	"image classification" => "image_classification/image_recog_cv2.py",
+);
+
+// Which feature holds the pins, or "" if free. $want is skipped so a feature
+// is never blocked by itself.
+function er_pin_holder($want) {
+	global $er_pin_holders;
+	foreach ($er_pin_holders as $name => $path) {
+		if ($name === $want) { continue; }
+		// bracket: stops the pattern matching pgrep's own command line
+		$pattern = "[" . substr($path, 0, 1) . "]" . substr($path, 1);
+		exec("pgrep -f " . escapeshellarg($pattern) . " > /dev/null 2>&1", $out, $rc);
+		if ($rc === 0) { return $name; }
+	}
+	return "";
+}
+
+// Refuse with 409 and stop, if another feature holds the pins.
+function er_pin_guard($want) {
+	$busy = er_pin_holder($want);
+	if ($busy === "") { return; }
+	http_response_code(409);
+	echo "Cannot start " . $want . ".\n\n"
+	   . ucfirst($busy) . " is running and is holding the motor and light pins.\n"
+	   . "Only one feature can drive the pins at a time.\n\n"
+	   . "Turn " . $busy . " off first, then try again.";
+	exit;
+}
+
+?>

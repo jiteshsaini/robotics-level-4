@@ -8,7 +8,14 @@ set_time_limit(90);
 
 $state = $_POST["state"];
 
-exec("python3 " . dirname(dirname(__DIR__)) . "/object_detection/master.py $state");
+
+// Only one process may own the motor and light pins, so refuse with an
+// explanation rather than letting the worker die mid-start.
+require_once dirname(dirname(__DIR__)) . "/vars.php";
+if ($state == "1") { er_pin_guard("object detection"); }
+
+// From /tmp: the GPIO library drops a working file in the launch directory.
+exec("cd /tmp && python3 " . dirname(dirname(__DIR__)) . "/object_detection/master.py $state");
 
 if ($state == "1") {
 	$app   = dirname(dirname(__DIR__));
