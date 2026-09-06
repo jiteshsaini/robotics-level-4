@@ -8,7 +8,7 @@ website: https://helloworld.co.in
 <head>        
    <title>Remote</title>  
    <link href="css/remote.css?v=<?php echo filemtime(__DIR__."/css/remote.css"); ?>" rel="stylesheet" type="text/css">  
-   <script src="js/jquery.min.js"></script>  
+   <script src="js/post.js?v=<?php echo filemtime(__DIR__."/js/post.js"); ?>"></script>
    <script src="js/remote.js?v=<?php echo filemtime(__DIR__."/js/remote.js"); ?>"></script>  
              
 </head> 

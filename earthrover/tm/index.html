@@ -55,7 +55,7 @@ website: https://helloworld.co.in
 <script src="js/tf.min.js"></script>
 <script src="js/teachablemachine-image.min.js"></script>
 
-<script src="../control_panel/js/jquery.min.js"></script>
+<script src="../control_panel/js/post.js"></script>
 <script type="text/javascript">
     // More API functions here:
     // https://github.com/googlecreativelab/teachablemachine-community/tree/master/libraries/image
@@ -161,11 +161,7 @@ website: https://helloworld.co.in
 
     function send_data(msg){
         console.log(msg);
-        $.post("ajax_action.php",
-        {
-        message: msg
-        }
-        );
+        post("ajax_action.php", {message: msg});
    
     }
 

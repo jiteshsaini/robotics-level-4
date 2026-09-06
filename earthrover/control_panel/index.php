@@ -8,7 +8,7 @@ website: https://helloworld.co.in
 <head>        
    <title>Control Panel</title>
    <link href="css/cp.css?v=<?php echo filemtime(__DIR__."/css/cp.css"); ?>" rel="stylesheet" type="text/css">  
-   <script src="js/jquery.min.js"></script>        
+   <script src="js/post.js?v=<?php echo filemtime(__DIR__."/js/post.js"); ?>"></script>        
    <script src="js/cp.js?v=<?php echo filemtime(__DIR__."/js/cp.js"); ?>"></script>        
    <script>
 	

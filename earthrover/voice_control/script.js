@@ -1,19 +1,21 @@
+var noBrowserSupport = document.querySelector('.no-browser-support');
+
 try {
   var SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
   var recognition = new SpeechRecognition();
-  $('.no-browser-support').hide();
+  if (noBrowserSupport) noBrowserSupport.style.display = 'none';
 }
 catch(e) {
   console.error(e);
-  $('.no-browser-support').show();
+  if (noBrowserSupport) noBrowserSupport.style.display = '';
 }
 
 
-var noteTextarea = $('#note-textarea');
-var instructions = $('#recording-instructions');
+var noteTextarea = document.getElementById('note-textarea');
+var instructions = document.getElementById('recording-instructions');
 
-var btn_start = $('#start-record-btn');
-var btn_stop = $('#stop-record-btn');
+var btn_start = document.getElementById('start-record-btn');
+var btn_stop  = document.getElementById('stop-record-btn');
 var noteContent = '';
 
 
@@ -40,45 +42,39 @@ recognition.onresult = function(event) {
   // There is no official solution so far so we have to handle an edge case.
   var mobileRepeatBug = (current == 1 && transcript == event.results[0][0].transcript);
   console.log("mobile bug: " + mobileRepeatBug);
-  
+
   if(!mobileRepeatBug) {
-    
-    noteTextarea.html(transcript);
-   
+
+    noteTextarea.innerHTML = transcript;
+
     action(transcript);
-    
+
   }
-  
- 
+
 };
 
 function action(text){
 
 	console.log("text:" + text);
 
-	$.post("action.php",
-    {
-      txt: text
-    },
-    function(data,status){
-    document.getElementById("response").innerHTML = data;
-    });
+	post("action.php", {txt: text}, function(data){
+		document.getElementById("response").innerHTML = data;
+	});
 }
 
 
 recognition.onstart = function() { 
-  instructions.text('Voice recognition activated');
- 
+  instructions.textContent = 'Voice recognition activated';
 }
 
 recognition.onspeechend = function() {
-  instructions.text('Voice recognition turned off');
-  btn_start.css("background-color", "white");
+  instructions.textContent = 'Voice recognition turned off';
+  btn_start.style.backgroundColor = "white";
 }
 
 recognition.onerror = function(event) {
   if(event.error == 'no-speech') {
-    instructions.text('No speech was detected. Try again.');  
+    instructions.textContent = 'No speech was detected. Try again.';
   };
 }
 
@@ -86,20 +82,16 @@ recognition.onerror = function(event) {
     buttons
 ------------------------------*/
 
-$('#start-record-btn').on('click', function(e) {
+btn_start.addEventListener('click', function(e) {
 	console.log("start recog");
- 
   recognition.start();
-  btn_start.css("background-color", "green");
+  btn_start.style.backgroundColor = "green";
 });
 
 
-$('#stop-record-btn').on('click', function(e) {
+btn_stop.addEventListener('click', function(e) {
 	console.log("stop recog");
   recognition.stop();
-  instructions.text('Voice recognition stopped.');
-  btn_start.css("background-color", "white");
-   
+  instructions.textContent = 'Voice recognition stopped.';
+  btn_start.style.backgroundColor = "white";
 });
-
-

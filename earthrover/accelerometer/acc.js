@@ -45,7 +45,7 @@ function sleep(milliseconds) {
 function send_acc_data(xx,yy,zz)
 {
 	
-		$.post("ajax_acc.php",
+		post("ajax_acc.php",
 		{
 		acc_x: xx,
 		acc_y: yy,
@@ -53,3 +53,5 @@ function send_acc_data(xx,yy,zz)
 		}
 		);
 }
+
+

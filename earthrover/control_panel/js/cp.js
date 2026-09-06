@@ -23,12 +23,7 @@ function toggle_light(id)
 	}
 function set_lights(id,state)
 {
-		$.post(APP + "camera_lights/ajax_lights.php",
-		{
-		light_id: id,
-		state: state
-		}
-		);
+		post(APP + "camera_lights/ajax_lights.php", {light_id: id, state: state});
 
 }
 
@@ -49,11 +44,7 @@ function camera(status)
 		// ajax_camera.php does not answer until the stream port accepts, so
 		// there is no fixed delay to race here.
 		document.getElementById("cam_spin").style.display="inline-block";
-		$.post(APP + "camera_lights/ajax_camera.php",
-		{
-		camera:status
-		}
-		).always(function(){
+		post(APP + "camera_lights/ajax_camera.php", {camera: status}, function(){
 			document.getElementById("cam_spin").style.display="none";
 			enable_buttons();
 			var v = document.getElementById("box_video");
@@ -82,21 +73,26 @@ function button_AI_action(id)
 		// video link is revealed when the feed is genuinely ready. The old
 		// fixed sleep(2000) fired ~25s early and the iframe hit a dead port.
 		document.getElementById("ai_spin").style.display="inline-block";
-		$.post(path,{state: 1})
-			.done(function(){
-				document.getElementById(id_img).style.display="block";
+		// fetch directly, not post(): this is the one caller that needs the
+		// status. The server answers 409 or 503 with the reason in the body,
+		// and post() hands back the body either way.
+		fetch(path, {method: "POST", body: new URLSearchParams({state: 1})})
+			.then(function(r){
+				return r.text().then(function(text){ return {ok: r.ok, text: text}; });
 			})
-			.fail(function(xhr){
-				// the worker did not come up: say why rather than revealing a
-				// link to a port nothing is listening on
-				alert(xhr.responseText ||
-				      ("Could not start " + id.replace(/_/g, " ")));
+			.catch(function(){ return {ok: false, text: ""}; })
+			.then(function(res){
+				document.getElementById("ai_spin").style.display="none";
+				if (res.ok) {
+					document.getElementById(id_img).style.display="block";
+					return;
+				}
+				// say why, rather than revealing a link to a port nothing is
+				// listening on
+				alert(res.text || ("Could not start " + id.replace(/_/g, " ")));
 				document.getElementById(id).style.backgroundColor="white";
 				enable_buttons();
 				z = 1;
-			})
-			.always(function(){
-				document.getElementById("ai_spin").style.display="none";
 			});
 					
 	}
@@ -105,7 +101,7 @@ function button_AI_action(id)
 		z=1;
 		document.getElementById(id).style.backgroundColor="white";
 		enable_buttons();
-		$.post(path,{state: 0});
+		post(path, {state: 0});
 		
 		document.getElementById(id_img).style.display="none";
 	}
@@ -144,11 +140,7 @@ function init(){
 	document.getElementById("hw_4").innerHTML="<a style='color:grey;text-decoration:none' href='https://www.buymeacoffee.com/helloworld10' target='_blank'>BuyMeCoffee</a>";
 	
 	console.log(">>>>");
-	$.post(APP + "control_panel/misc/hw.php",
-		{
-		entry_by: 'control_panel',
-		page: 'index.php'
-		});
+	post(APP + "control_panel/misc/hw.php", {entry_by: "control_panel", page: "index.php"});
 }
 
 function sleep(milliseconds) {
@@ -201,7 +193,7 @@ function settings(which)
 
 	// then fill each one in as its current value comes back
 	cfg_open.fields.forEach(function(f){
-		$.post(APP + "ajax_settings.php", {key: f.key}, function(cur){
+		post(APP + "ajax_settings.php", {key: f.key}, function(cur){
 			var el = document.getElementById("cfg_" + f.key);
 			if (el) el.value = cur;
 		});
@@ -218,7 +210,12 @@ function save_settings()
 		var el = document.getElementById("cfg_" + f.key);
 		if (el) set[f.key] = el.value;
 	});
-	$.post(APP + "ajax_settings.php", {set: set}).always(close_settings);
+	var body = {};
+	cfg_open.fields.forEach(function(f){
+		var el = document.getElementById("cfg_" + f.key);
+		if (el) body["set[" + f.key + "]"] = el.value;
+	});
+	post(APP + "ajax_settings.php", body, close_settings);
 }
 
 function close_settings() { show_settings("none"); }

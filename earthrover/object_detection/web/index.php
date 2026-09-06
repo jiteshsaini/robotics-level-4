@@ -52,7 +52,7 @@ Created by: Jitesh Saini
 	}
 	
    </style>
-   <script src="../../control_panel/js/jquery.min.js"></script>            
+   <script src="../../control_panel/js/post.js"></script>            
    <script>
 	function button_action(id)
 	{
@@ -60,11 +60,7 @@ Created by: Jitesh Saini
 		label=label.toLowerCase(label);
 		console.log("label:" + label);
 		
-		$.post("object_cmd.php",
-		{
-		lbl: label
-		}
-		);
+		post("object_cmd.php", {lbl: label});
 		
 		console.log("id:" + id);
 		var i;

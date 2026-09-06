@@ -37,21 +37,12 @@ function toggle_rangeSensor(id)
 function rangeSensor(state)
 {	console.log("state: ", state);
 	
-	$.post(RNG + "ajax_rangeSensor.php",
-	{
-		state: state
-	}
-	);
+	post(RNG + "ajax_rangeSensor.php", {state: state});
 
 }
 function get_range()
 	{
-		$.post(RNG + "ajax_getRange.php",
-		{
-		//direction: dir
-		//speed:sp
-		},
-		function(data){
+		post(RNG + "ajax_getRange.php", {}, function(data){
 			//document.getElementById("range").innerHTML = data;
 			
 			if (data<=30)

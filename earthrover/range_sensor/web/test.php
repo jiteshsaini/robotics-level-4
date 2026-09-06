@@ -3,7 +3,7 @@
 <head>        
    <title>Range Sensor</title>
    
-   <script src="../../control_panel/js/jquery.min.js"></script>
+   <script src="../../control_panel/js/post.js"></script>
         
    
 </head> 

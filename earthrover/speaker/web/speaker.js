@@ -19,12 +19,7 @@ function button_tts()
 	
 	console.log(gender);
 	//alert(str);
-	$.post(SPK + "ajax_tts.php",
-    {
-      str:str.toLowerCase(),
-      gen:gender
-    }
-    );
+	post(SPK + "ajax_tts.php", {str: str.toLowerCase(), gen: gender});
 }
 
 function button_recording(no)
@@ -37,9 +32,5 @@ function button_recording(no)
 	
 	console.log(path);
 	//alert(str);
-	$.post(SPK + "ajax_omx.php",
-    {
-      rec_path:path
-    }
-    );
+	post(SPK + "ajax_omx.php", {rec_path: path});
 }
