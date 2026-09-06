@@ -26,10 +26,36 @@ document.addEventListener("keydown", function(e){
 });
 
 //---------DIRECTION---------------------------------
+
+// Which way the robot was last told to go. It stays down until STOP, because
+// STOP is the only thing that actually halts the rover - a key that popped
+// back up on its own would be claiming something untrue.
+//
+// Not :focus, which was the tempting way to do this: focus leaves the pad the
+// moment you touch a light or an AI button, and the key would pop up while the
+// robot was still driving.
+var DIR_KEY = {f: "FWD", l: "LEFT", r: "RIGHT", b: "BACK"};
+
+function show_direction(val)
+{
+	// The pad lives in an iframe. Reaching into it from the panel - same
+	// origin - is what keeps the arrow keys and the pad showing the same
+	// thing. On the compass pages there is neither, and this does nothing.
+	var frame = document.getElementById("box_remote");
+	var doc = frame ? frame.contentDocument : document;
+	if (!doc) { return; }
+
+	var keys = doc.querySelectorAll(".button");
+	for (var i = 0; i < keys.length; i++) {
+		keys[i].classList.toggle("is-driving", keys[i].value === DIR_KEY[val]);
+	}
+}
+
 function button_direction(val)
 {
 	console.log("button val:" + val);
 	post(RC + "ajax_direction.php", {direction: val});
+	show_direction(val);
 }
 
 //---------SPEED--------------------------------------

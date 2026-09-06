@@ -73,17 +73,19 @@ body {
 	border-color: #46536b;
 }
 
-/* The last key pressed keeps the focus, so it also shows which way the robot
-   was last told to go - until STOP takes the focus itself. */
-.button:focus-visible { outline: none; }
-.button:focus {
-	border-color: var(--accent);
+/* Latched: the key that is down is the command the robot is running.
+   remote.js adds the class and STOP clears it. */
+.button:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.button.is-driving {
+	transform: translateY(3px);
+	background: linear-gradient(180deg, #1d2430 0%, #262f3d 100%);
+	color: #7fb0ff;
+	border-color: #46536b;
 	box-shadow:
-		inset 0 1px 0 rgba(255,255,255,.28),
-		inset 0 -2px 4px rgba(0,0,0,.30),
-		0 5px 0 var(--edge),
-		0 7px 12px rgba(0,0,0,.45),
-		0 0 0 2px rgba(91,147,255,.45);
+		inset 0 2px 5px rgba(0,0,0,.55),
+		inset 0 -1px 0 rgba(255,255,255,.06),
+		0 0 0 var(--edge),
+		0 1px 3px rgba(0,0,0,.4);
 }
 
 /*------------slider-----------------------*/
