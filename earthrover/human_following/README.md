@@ -23,6 +23,7 @@ Robot detects presence of a person in camera frame using a Machine Learning mode
 The code of Human following robot is partially derived from the <a href='https://github.com/jiteshsaini/robotics-level-4/tree/main/earthrover/object_tracking'>Object Tracking code</a>. However, there is a difference in the method which calculates distance from the object to generate forward motion command.
 
 Both the files 'human_follower.py' and 'human_follower2.py' files are identical in logic. One implements FLASK and the other doesn't, as mentioned below.
+**The control panel runs `human_follower.py`** - the robot needs the stream.
 
 ### 'human_follower.py'
 This file performs human following and streams the robot view over LAN using FLASK (Python's micro Web Framework). 

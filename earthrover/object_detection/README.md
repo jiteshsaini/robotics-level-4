@@ -21,6 +21,10 @@ The ML model used in this project is placed in 'all_models' directory inside par
 The code in this project is based on Google-Coral Object Detection example available at:-<br>
 https://github.com/google-coral/examples-camera/tree/master/opencv
 
+**The control panel runs `object_detection_web2.py`.** The other two are
+earlier versions of the same project, kept because the article walks through
+them in order - each one adds something to the one before it.
+
 A brief description of the files used in this project is mentioned below.
 
 1. **object_detection.py**
