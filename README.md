@@ -95,14 +95,15 @@ sudo reboot
 
 | | |
 |---|---|
-| `bash setup_level4.sh --fix-perms` | re-apply ownership on code you placed yourself |
+| `bash setup_level4.sh --fix-perms` | re-apply web-root ownership without reinstalling |
 | `bash setup_level4.sh --verify` | check everything end to end, change nothing |
-| `bash setup_level4.sh --help` | the full list |
+| `bash setup_level4.sh --help` | the notes at the top of the script |
 
 `--verify` is the one to reach for when something misbehaves: it needs no
 password and touches nothing.
 
-Tested on **Raspberry Pi OS Trixie (Debian 13)** on a Raspberry Pi 3A+.
+Tested on **Raspberry Pi OS Trixie (Debian 13)**, on a Raspberry Pi 3A+ and
+a Raspberry Pi 4 Model B.
 
 ## What the script did
 
@@ -110,11 +111,14 @@ Tested on **Raspberry Pi OS Trixie (Debian 13)** on a Raspberry Pi 3A+.
 2. Installed Apache, PHP, the GPIO library, the camera stack, and the speech
    and audio tools.
 3. Installed the TensorFlow Lite runtime (`ai-edge-litert`) and OpenCV.
-4. Installed Coral USB Accelerator support — harmless if you do not have one.
-5. Fetched the code and models into `/var/www/html`.
-6. Gave the web server the group memberships and file ownership it needs.
-7. Generated a self-signed certificate and switched on https, which the
+4. Fetched the code and models into `/var/www/html`.
+5. Enabled the camera interface — `camera_auto_detect=1` in
+   `/boot/firmware/config.txt`. Along with a new kernel, this is why a run
+   sometimes ends by asking for a reboot.
+6. Generated a self-signed certificate and switched on https, which the
    phone-sensor pages require.
+7. Installed Coral USB Accelerator support — harmless if you do not have one.
+8. Gave the web server the group memberships and file ownership it needs.
 
 The GPIO library is `rpi-lgpio` rather than the older `RPi.GPIO`, because the
 older one does not work on a Raspberry Pi 5. `raspi-gpio` was removed from
