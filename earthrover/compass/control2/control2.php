@@ -56,7 +56,7 @@
         }
 
     </style>
-    <script src="../../control_panel/js/jquery.min.js"></script>
+    <script src="../jquery.min.js"></script>
     <script src="../../control_panel/js/remote.js?v=<?php echo filemtime(__DIR__."/../../control_panel/js/remote.js"); ?>"></script>  
     <link href="roundslider.min.css" rel="stylesheet" />
     <script src="roundslider.min.js"></script>
