@@ -9,7 +9,10 @@ website: https://helloworld.co.in
    <title>Control Panel</title>
    <link href="css/cp.css?v=<?php echo filemtime(__DIR__."/css/cp.css"); ?>" rel="stylesheet" type="text/css">  
    <script src="js/post.js?v=<?php echo filemtime(__DIR__."/js/post.js"); ?>"></script>        
-   <script src="js/cp.js?v=<?php echo filemtime(__DIR__."/js/cp.js"); ?>"></script>        
+   <script src="js/cp.js?v=<?php echo filemtime(__DIR__."/js/cp.js"); ?>"></script>
+   <!-- also loaded by the remote pad in the iframe; here so the arrow keys
+        work while the focus is anywhere on the panel -->
+   <script src="js/remote.js?v=<?php echo filemtime(__DIR__."/js/remote.js"); ?>"></script>        
    <script>
 	
 	
