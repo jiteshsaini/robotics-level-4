@@ -29,6 +29,7 @@ import threading
 import time
 from threading import Condition
 from http import server
+from urllib.parse import urlparse
 
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.realpath(__file__))))
 from util import setting, FLIP_CV2, FLIP_TRANSFORM
@@ -74,18 +75,21 @@ class StreamingOutput(io.BufferedIOBase):
 
 class StreamingHandler(server.BaseHTTPRequestHandler):
     def do_GET(self):
-        if self.path == '/':
+        # Path only: the control panel appends a cache-busting query when it
+        # re-points the video iframe, and an exact match on '/' would 404 it.
+        path = urlparse(self.path).path
+        if path == '/':
             self.send_response(301)
             self.send_header('Location', '/index.html')
             self.end_headers()
-        elif self.path == '/index.html':
+        elif path == '/index.html':
             content = PAGE.encode('utf-8')
             self.send_response(200)
             self.send_header('Content-Type', 'text/html')
             self.send_header('Content-Length', len(content))
             self.end_headers()
             self.wfile.write(content)
-        elif self.path == '/stream.mjpg':
+        elif path == '/stream.mjpg':
             self.send_response(200)
             self.send_header('Age', 0)
             self.send_header('Cache-Control', 'no-cache, private')

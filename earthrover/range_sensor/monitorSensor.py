@@ -4,7 +4,6 @@
 import time,os
 
 import sys
-import os
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.realpath(__file__))))
 import util as ut
 
@@ -18,15 +17,13 @@ while 1:
 	distance = f0.read(15);
 	f0.close()
 
-	if(distance==prev_distance):
+	# 999 is the "nothing in range" sentinel, not a frozen sensor: it is
+	# legitimately constant whenever nothing is in front of the rover.
+	if(distance==prev_distance and distance.strip()!="999"):
 		counter=counter+1
 	else:
 		counter=0
-	
-	print(counter, distance)
-		
-	
-	
+
 	if(counter==3):
 		ut.speak_tts("restarting","m")
 		os.system("pkill -f range_sensor.py")

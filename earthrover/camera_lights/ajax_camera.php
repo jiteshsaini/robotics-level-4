@@ -28,7 +28,11 @@ if ($cam == "on") {
 	// to the log rather than /dev/null: a camera that fails to start
 	// should be able to say why
 	$app = dirname(__DIR__);
-	system("python3 -u " . __DIR__ . "/cam_server.py > " . $app . "/logs/camera.log 2>&1 &");
+	// Run from /tmp: the GPIO library writes a small notification file in
+	// whatever folder a process starts in, and PHP starts its children in the
+	// directory of the script that launched them. Children inherit the cwd, so
+	// one cd covers the lot - without it those files land in the web tree.
+	system("cd /tmp && python3 -u " . __DIR__ . "/cam_server.py > " . $app . "/logs/camera.log 2>&1 &");
 
 	// picamera2 needs a couple of seconds to open the sensor and bind port 8000.
 	// Wait for the stream to actually accept before replying, so the UI reloads

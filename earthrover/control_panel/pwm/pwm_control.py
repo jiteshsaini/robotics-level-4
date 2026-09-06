@@ -9,5 +9,8 @@ print("stopped !!!")
 #time.sleep(0.1)
 
 print("starting pwm")
-os.system("python3 " + os.path.dirname(os.path.realpath(__file__)) + "/generate_pwm.py > /dev/null 2>&1 &")
+# From /tmp: the GPIO library drops a working file in the launch directory,
+# and the callers' cwd is not ours to rely on.
+os.system("cd /tmp && python3 " + os.path.dirname(os.path.realpath(__file__)) +
+          "/generate_pwm.py > /dev/null 2>&1 &")
 print("started !!!")

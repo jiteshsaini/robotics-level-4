@@ -80,7 +80,9 @@ echo"<div align='center' id='box_outer'>";//------------------------
 				// here rather than reimplementing the check in PHP keeps one
 				// source of truth. ~110 ms, once per page load.
 				$er_edgetpu = trim((string) @shell_exec(
-					"python3 -c \"import sys; sys.path.insert(0,'" . dirname(__DIR__) . "');"
+					// from /tmp: importing util pulls in RPi.GPIO, which drops a
+				// working file in the current directory
+				"cd /tmp && python3 -c \"import sys; sys.path.insert(0,'" . dirname(__DIR__) . "');"
 					. " from util import edgetpu; print(edgetpu)\" 2>/dev/null"));
 
 				if ($er_edgetpu === '1') {
@@ -168,10 +170,13 @@ echo"<div align='center' id='box_outer'>";//------------------------
 	//****************************************************************************
 	
 	$link_remote= 'http://'.$host.$path.'/'."remote.php";//http://192.168.1.20/earthrover/remote.php
-	$link_vid= 'http://'.$host.':8000';//http://192.168.1.20:8000
+	// An IPv6 literal needs brackets, or the URL is malformed and no browser
+	// can parse it.
+	$vid_host = (strpos($host, ':') !== false) ? '['.$host.']' : $host;
+	$link_vid= 'http://'.$vid_host.':8000';//http://192.168.1.20:8000
 	
 	echo"
-		<iframe src='$link_vid' id='box_video'></iframe>
+		<iframe src='$link_vid' id='box_video' data-src='$link_vid'></iframe>
 		<iframe src= '$link_remote' id='box_remote'></iframe>
 	";
 	//****************************************************************************

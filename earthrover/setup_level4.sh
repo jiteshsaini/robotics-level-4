@@ -1,42 +1,23 @@
 #!/bin/bash
-# =====================================================================
-#  Earthrover - ENVIRONMENT setup for Raspberry Pi OS 12/13
-#  (Bookworm / Trixie).  Successor to the 2021 Buster-only
-#  auto_install.sh, which stops at OS version 10.
+# Earthrover - setup for Raspberry Pi OS 12/13 (Bookworm / Trixie).
 #
-#  This installs the robot code AND everything it needs.
+# Installs the robot code and everything it needs. Run it as your normal user,
+# not with sudo - it calls sudo itself.
 #
-#  Fresh-card flow (run as the normal user, NOT with sudo - it calls sudo
-#  itself). See the README for the download command:
-#     1. bash setup_level4.sh --headless
-#     2. sudo reboot          (only if step 1 says a new kernel is waiting)
-#     3. bash /var/www/html/earthrover/setup_level4.sh --verify
+#   1. bash setup_level4.sh --headless
+#   2. sudo reboot          (only if step 1 says a kernel is waiting)
+#   3. bash /var/www/html/earthrover/setup_level4.sh --verify
 #
-#  The code and models are fetched from GitHub and placed in /var/www/html.
-#  An existing install is moved aside, not overwritten. Pass --no-code to set
-#  up the environment only and leave the web root alone.
+# Code and models come from GitHub into /var/www/html. An existing install is
+# moved aside, never overwritten. Step 1 updates the OS first, which on a fresh
+# card can take an hour or more.
 #
-#  Step 2 brings the whole OS up to date first, so the camera and vision
-#  packages are not installed against a much older kernel. On a fresh card
-#  that is the slow part - allow an hour or more on an older board. Nothing
-#  reboots by itself; the script tells you at the end if a restart is needed.
-#
-#  The web server drives the hardware through group membership (gpio, video,
-#  audio) and pinctrl - it is never given root.
-#
-#  Everything needed is installed by default, including Coral USB Accelerator
-#  support (harmless if you do not have one - it is detected at runtime) and a
-#  self-signed certificate for https.
-#
-#  Flags:
-#    --no-code     set up the environment only; do not fetch or install code
-#    --headless    disable the desktop and boot to console instead. Strongly
-#                  advised on 512 MB boards, where the desktop leaves the
-#                  vision features thrashing in swap. Not the default because
-#                  it also closes VNC, and that should be your choice.
-#    --fix-perms   set web-root ownership on code already in place, then exit
-#    --verify      check the environment end to end and exit; changes nothing
-# =====================================================================
+# Flags:
+#   --no-code     environment only; leave the web root alone
+#   --headless    boot to console instead of the desktop. Advised on 512 MB
+#                 boards. Not the default: it also closes VNC.
+#   --fix-perms   set web-root ownership on code already in place, then exit
+#   --verify      check the environment end to end and exit; changes nothing
 
 # Re-run under bash if this was started with sh.
 #

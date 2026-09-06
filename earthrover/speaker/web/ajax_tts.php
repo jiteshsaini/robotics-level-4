@@ -16,7 +16,8 @@ $gender = escapeshellarg(preg_match('/^[mf]$/', $gender) ? $gender : 'm');
 // Output is redirected so the backgrounded child does not hold the web
 // server's stdout open and hang this request.
 $APP = dirname(dirname(__DIR__));
-$cmd = "python3 " . $APP . "/speaker/speaker_tts.py " .
+// From /tmp: the GPIO library drops a working file in the launch directory.
+$cmd = "cd /tmp && python3 " . $APP . "/speaker/speaker_tts.py " .
        $text . " " . $gender . " > " . $APP . "/logs/speaker.log 2>&1 &";
 
 system($cmd);

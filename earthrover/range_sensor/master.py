@@ -34,8 +34,12 @@ if (status=="1"):
 	os.system("pkill -f avoid_collision.py")
 	time.sleep(0.2)
 
-	open(LOGFILE, "w").close()          # one fresh log per toggle
-	os.chmod(LOGFILE, 0o664)
+	try:
+		open(LOGFILE, "w").close()      # one fresh log per toggle
+		os.chmod(LOGFILE, 0o664)        # fails if someone else owns the file
+	except OSError as e:
+		# a log we cannot write is no reason to leave the sensor dead
+		print("log unavailable, carrying on -", e)
 
 	os.system("python3 -u " + local_path + "/range_sensor.py" + LOG)
 	time.sleep(1) #should be equal to settling time of range sensor

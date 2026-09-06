@@ -46,6 +46,7 @@ print("Waiting For Sensor To Settle")
 time.sleep(1) #settling time 
 
 prev_distance=0
+was_out_of_range=False
 
 while 1:
 	try:
@@ -86,7 +87,11 @@ while 1:
 		# leaves the last real reading on screen, which looks like a live
 		# value and is how the display came to appear frozen.
 		if distance > MAX_RANGE_CM:
-			print("Out of range - nothing detected within %d cm" % MAX_RANGE_CM)
+			# the transition, not every reading - an open room stays out of
+			# range indefinitely
+			if not was_out_of_range:
+				print("Out of range - nothing detected within %d cm" % MAX_RANGE_CM)
+				was_out_of_range = True
 			f1 = open(local_path+"/web/range.txt", "w")
 			f1.write(str(OUT_OF_RANGE))
 			f1.close()
@@ -94,14 +99,13 @@ while 1:
 			time.sleep(0.25)
 			continue
 		
+		was_out_of_range = False
 		diff = abs(distance - prev_distance)
-		print("diff: ", diff)
 		
 		if (diff < 10):
-			
-			print("Distance:",distance,"cm |||| Prev_Distance:",prev_distance,"cm")
-			#print distance,"cm"
-    
+			# no per-reading print: three workers share this log, and it is
+			# there for failures, not narration
+
 			# text mode, not "wb": Python 3 refuses str on a binary handle
 			f1 = open(local_path+"/web/range.txt", "w")
 			f1.write(str(distance))

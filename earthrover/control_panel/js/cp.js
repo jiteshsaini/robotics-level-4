@@ -42,9 +42,12 @@ function camera(status)
 			enable_buttons();
 		}
 		
-		// Reload only after the server confirms the camera is ready.
-		// ajax_camera.php waits for the stream port to accept before it
-		// responds, so there is no fixed delay to race against.
+		// Swap the iframe's source rather than reloading the page: a reload
+		// takes the rest of the panel with it, including the range sensor's
+		// polling, so the distance readout would stop when the camera started.
+		//
+		// ajax_camera.php does not answer until the stream port accepts, so
+		// there is no fixed delay to race here.
 		document.getElementById("cam_spin").style.display="inline-block";
 		$.post(APP + "camera_lights/ajax_camera.php",
 		{
@@ -52,7 +55,11 @@ function camera(status)
 		}
 		).always(function(){
 			document.getElementById("cam_spin").style.display="none";
-			location.reload();
+			enable_buttons();
+			var v = document.getElementById("box_video");
+			// cache-busted, or the browser reuses the dead connection
+			if (status=="on") v.src = v.dataset.src + "?t=" + Date.now();
+			else              v.src = "about:blank";
 		});
 }
 
