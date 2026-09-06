@@ -4,8 +4,13 @@ Author: Jitesh Saini
 Github: https://github.com/jiteshsaini
 website: https://helloworld.co.in
 -->
-<html>
-<head>        
+<!DOCTYPE html>
+<html lang="en">
+<head>
+   <meta charset="utf-8">
+   <!-- Without this the phone renders a ~980px desktop page and clips the
+        left edge - and a phone is what this robot is driven from. -->
+   <meta name="viewport" content="width=device-width, initial-scale=1">
    <title>Control Panel</title>
    <link href="css/cp.css?v=<?php echo filemtime(__DIR__."/css/cp.css"); ?>" rel="stylesheet" type="text/css">  
    <script src="js/post.js?v=<?php echo filemtime(__DIR__."/js/post.js"); ?>"></script>        
@@ -29,7 +34,7 @@ echo"<div align='center' id='box_outer'>";//------------------------
 	echo"<a href='readme/' target='_blank'><img style='float:right' src='css/images/earthrover.png' height='60px'></a>";
 	echo"<div align='center' class='box_inner'>";//------------------------
 		//Range Sensor block
-		echo"<div class='box_controls' style='width:15%'>";
+		echo"<div class='box_controls blk-range'>";
 			echo"<zz>";
 				echo"<label class='floatLabel'>Range Sensor</label><br>";
 				echo"<b id='range' style='float:right;color:blue;font-size:30px'></b>";
@@ -40,13 +45,11 @@ echo"<div align='center' id='box_outer'>";//------------------------
 		echo"</div>";
 		
 		//Javascript Robotics block
-		echo"<div class='box_controls' style='width:20%'>";
+		echo"<div class='box_controls blk-js'>";
 			echo"<zz>";
 				echo"<label class='floatLabel' style='width: 120px;'>Javascript Robotics</label><br>";
 				
-				echo"<div style='float:left;width:98%;border:0px solid red'>";
-					$w1="30%"; //width of tooltip
-					$w2="80%"; //width of button inside tooltip
+				echo"<div class='row-js'>";
 					
 					$app_url = $host . rtrim(dirname(dirname($_SERVER['PHP_SELF'])), '/');
 					$href_acc = 'https://' . $app_url . "/accelerometer";
@@ -54,20 +57,20 @@ echo"<div align='center' id='box_outer'>";//------------------------
 					$href_obj = 'https://' . $app_url . "/compass";
 					
 					//Accelerometer control
-					echo"<div class='tooltip' style='width:$w1'>
-						 <a href='$href_acc' target='_blank'><button style='width:$w2'><img src='css/images/acc.png' height='40px'></button></a>
+					echo"<div class='tooltip tt-js'>
+						 <a href='$href_acc' target='_blank'><button class='btn-fill'><img src='css/images/acc.png' height='40px'></button></a>
 					 	 <span class='tooltiptext'>Control the robot with your Mobile phone's Accelerometer data</a></span>
 					 	 </div>";
 					
 					//Voice control (Web Speech API)
-					echo"<div class='tooltip' style='width:$w1'>
-						<a href='$href_voice' target='_blank'><button style='width:$w2'><img src='css/images/speak.png' height='40px'></button></a>
+					echo"<div class='tooltip tt-js'>
+						<a href='$href_voice' target='_blank'><button class='btn-fill'><img src='css/images/speak.png' height='40px'></button></a>
 						<span class='tooltiptext'>Control the robot through Voice commands </span>
 						</div>";
 					
 					//Javascript Compass
-					echo"<div class='tooltip' style='width:$w1'>
-						<a href='$href_obj' target='_blank'><button style='width:$w2'><img src='css/images/compass.png' height='35px'></button></a>
+					echo"<div class='tooltip tt-js'>
+						<a href='$href_obj' target='_blank'><button class='btn-fill'><img src='css/images/compass.png' height='35px'></button></a>
 						<span class='tooltiptext'>Use mobile phone as Compass for the robot</span>
 						</div>";	
 					
@@ -76,7 +79,7 @@ echo"<div align='center' id='box_outer'>";//------------------------
 		echo"</div>";
 
 		//AI Robotics block
-		echo"<div class='box_controls' style='width:60%'>";
+		echo"<div class='box_controls blk-ai'>";
 			echo"<zz>";
 				// Which inference backend the AI features below will use.
 				// util.py decides this by detecting the accelerator; asking it
@@ -105,47 +108,45 @@ echo"<div align='center' id='box_outer'>";//------------------------
 				// width:auto so a longer state ("unknown") is not clipped.
 				echo"<label class='floatLabel' style='width:auto;padding:0 6px;white-space:nowrap;'>AI Robotics &nbsp;$accel</label><br>";
 				
-				echo"<div style='float:left;width:88%;border:0px solid red'>";
+				echo"<div class='row-ai'>";
 					
-					$w1="19%"; //width of tooltip
-					$w2="85%"; //width of button inside tooltip
 					
 					$href = 'https://' . $app_url . "/tm/";
 					
 					//Gesture control
-					echo"<div class='tooltip' style='width:$w1'>
-						<a href='$href' target='_blank'><button style='width:$w2;background-color:#fcfcc5'>Gesture Controls</button></a>
+					echo"<div class='tooltip tt-ai'>
+						<a href='$href' target='_blank'><button class='btn-fill btn-gesture'>Gesture Controls</button></a>
 						<span class='tooltiptext'>Model generated using Teachable Machine. Control the robot using hand gestures.</span>
 						</div>";	
 					
 					//Image Classification
-					echo"<div class='tooltip' style='width:$w1'>
-						<button id='image_classification' onclick=button_AI_action(id); style='width:$w2'>Image Classification</button>
+					echo"<div class='tooltip tt-ai'>
+						<button id='image_classification' onclick=button_AI_action(id); class='btn-fill'>Image Classification</button>
 						<span class='tooltiptext'>Real-time Image Classification</span>
 						</div>";	
 					
 					//Object Detection
-					echo"<div class='tooltip' style='width:$w1'>
-						<button id='object_detection' onclick=button_AI_action(id); style='width:$w2'>Object Detection</button>
+					echo"<div class='tooltip tt-ai'>
+						<button id='object_detection' onclick=button_AI_action(id); class='btn-fill'>Object Detection</button>
 						<span class='tooltiptext'>Robot Detects a selected object and raises alarm</span>
 						</div>";
 						
 					//Object Tracking
-					echo"<div class='tooltip' style='width:$w1'>
-						<button id='object_tracking' onclick=button_AI_action(id); style='width:$w2'>Object Tracking</button>
+					echo"<div class='tooltip tt-ai'>
+						<button id='object_tracking' onclick=button_AI_action(id); class='btn-fill'>Object Tracking</button>
 						<span class='tooltiptext'>Robot tracks and follows a small object such as ball</span>
 						</div>";
 					
 					//Human Following
-					echo"<div class='tooltip' style='width:$w1'>
-						<button id='human_following' onclick=button_AI_action(id); style='width:$w2'>Human Following</button>
+					echo"<div class='tooltip tt-ai'>
+						<button id='human_following' onclick=button_AI_action(id); class='btn-fill'>Human Following</button>
 						<span class='tooltiptext'>Robot tracks and follows a human </span>
 						</div>";
 					
 				echo"</div>";
 				
 				//Display the Green button 
-				echo"<div style='float:left;width:10%;border:0px solid green'>";
+				echo"<div class='row-ai-status'>";
 					// One spinner serves all four AI buttons - only one feature
 					// can run at a time (the camera has a single holder).
 					echo"<span id='ai_spin' class='er-spin' style='display:none;position:absolute;top:20px'></span>";
@@ -178,16 +179,18 @@ echo"<div align='center' id='box_outer'>";//------------------------
 	$vid_host = (strpos($host, ':') !== false) ? '['.$host.']' : $host;
 	$link_vid= 'http://'.$vid_host.':8000';//http://192.168.1.20:8000
 	
-	echo"
+	// Wrapped so the pair can wrap onto separate lines on a narrow screen.
+	// The ids stay on the iframes themselves - cp.js swaps #box_video's src.
+	echo"<div class='box_media'>
 		<iframe src='$link_vid' id='box_video' data-src='$link_vid'></iframe>
 		<iframe src= '$link_remote' id='box_remote'></iframe>
-	";
+	</div>";
 	//****************************************************************************
 	
 	echo"<div align='center' class='box_inner'>";//------------------------
 		
 		//Camera Controls block
-		echo"<div class='box_controls' style='width:14%'>";
+		echo"<div class='box_controls blk-cam'>";
 			echo"<zz>";
 				echo"<label class='floatLabel'>Camera</label><br>";
 				echo"<input id='cam_on' type='submit' onclick=camera('on'); value='ON'/>";
@@ -200,7 +203,7 @@ echo"<div align='center' id='box_outer'>";//------------------------
 		echo"</div>";
 		
 		//Lights Controls block
-		echo"<div class='box_controls' style='width:14%'>";
+		echo"<div class='box_controls blk-lights'>";
 			echo"<zz>";
 				echo"<label class='floatLabel'>Lights</label><br>";
 				echo"<input id='camlight' type='submit' onclick=toggle_light('camlight'); value='OFF'/>";
@@ -212,17 +215,17 @@ echo"<div align='center' id='box_outer'>";//------------------------
 		echo"</div>";
 		
 		//Sound Controls block
-		echo"<div class='box_controls'>";
+		echo"<div class='box_controls blk-speaker'>";
 			echo"<zz>";
 				echo"<label class='floatLabel'>Speaker</label><br>";
 				echo"<script src='../speaker/web/speaker.js?v=".filemtime(dirname(__DIR__)."/speaker/web/speaker.js")."'></script>";
-				echo"<div style='float:left;width:70%;border:0px solid blue'>";
+				echo"<div class='spk-text'>";
 					echo"<input id='txt_tts' type='text' style='width:90%'><br>";
 					echo"<input id='radio1' type='radio' name='gender' value='male' checked> M ";
 					echo"<input type='radio' name='gender' value='female'> F ";
 					echo"<input id='tts' type='submit' onclick=button_tts(); value='speak' style='width:30%;height:20px;margin-left:5%'/>";
 				echo"</div>";
-				echo"<div style='float:left;width:25%;margin-left:2%;border:0px solid red'>";
+				echo"<div class='spk-clips'>";
 					echo"<input id='rec1' type='submit' onclick=button_recording(1); value='horn' style='width:80%;height:20px;margin-bottom:3%'/>";
 					echo"<input id='rec2' type='submit' onclick=button_recording(2); value='siren' style='width:80%;height:20px'/>";
 				echo"</div>";
