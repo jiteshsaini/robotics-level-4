@@ -149,8 +149,7 @@ def main():
             break
         
         cv2_im = frame
-        cv2_im = cv2.flip(cv2_im, 0)
-        cv2_im = cv2.flip(cv2_im, 1)
+        # orientation comes from config.txt, applied when the camera opens
 
         cv2_im_rgb = cv2.cvtColor(cv2_im, cv2.COLOR_BGR2RGB)
         pil_im = Image.fromarray(cv2_im_rgb)
