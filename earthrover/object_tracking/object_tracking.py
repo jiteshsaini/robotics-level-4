@@ -92,10 +92,10 @@ pin21 = GPIO.PWM(21, 100)    # create object pin21 for PWM on port 21 at 100 Her
 
 #set speed to maximum value
 val=100
-pin20.start(val)              # start pin20 on 0 percent duty cycle (off)  
-pin21.start(val)              # start pin21 on 0 percent duty cycle (off)  
-    
-print("speed set to: ", val)
+# Started in main(), once the model has loaded - not here. Loading the model is
+# the step most likely to fail, and starting the PWM at import meant a failure
+# there left both motors enabled at full duty with nothing alive to stop them.
+# GPIO.setup above drives the pins low, so they are inert until start().
 #---------------------------------------------------------------
 
     
@@ -255,6 +255,12 @@ def main():
          mdl = model
         
     interpreter, labels =cm.load_model(model_dir,mdl,lbl,edgetpu)
+
+    # The motors stay disabled until here. Everything above can fail without
+    # the robot moving; nothing below is expected to.
+    pin20.start(val)
+    pin21.start(val)
+    print("speed set to: ", val)
     
     fps=1
     arr_dur=[0,0,0]
