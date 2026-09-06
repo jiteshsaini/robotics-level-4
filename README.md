@@ -43,7 +43,7 @@ Some things worth knowing before you build this level:
 
 - **512 MB boards need the desktop off.** On a Pi 3A+ with the desktop
   running, the detector ends up in swap and manages about 0.1 FPS instead of
-  10. The installer's `--headless` flag turns the desktop off for you.
+  10. See *Turning the desktop off* below.
 - Everything from level 3's pin map applies unchanged.
 
 ## Install
@@ -59,10 +59,6 @@ bash setup_level4.sh
 ```
 
 **Not with `sudo`** — the script calls `sudo` itself, and says so if you try.
-
-On a 512 MB board add `--headless`, which boots to the console instead of
-the desktop: with the desktop running the vision features end up in swap.
-It also closes VNC, so it is not the default.
 
 Downloading first, rather than piping into a shell, lets you read the script
 before it runs.
@@ -81,11 +77,24 @@ date before installing the camera and vision packages, so they are not built
 against an older kernel. Nothing reboots by itself — it tells you at the end if
 a restart is needed.
 
+### Turning the desktop off
+
+Worth doing only on a 512 MB board such as the Pi 3A+, where the desktop is
+the difference between a detector that runs and one that lives in swap. The
+installer points this out when it finds such a board, but does not do it for
+you, because it also closes VNC:
+
+```bash
+sudo systemctl set-default multi-user.target
+sudo systemctl disable lightdm
+sudo systemctl disable --now wayvnc
+sudo reboot
+```
+
 ### Other ways to run it
 
 | | |
 |---|---|
-| `bash setup_level4.sh --no-code` | set up the environment only, leave the web root alone |
 | `bash setup_level4.sh --fix-perms` | re-apply ownership on code you placed yourself |
 | `bash setup_level4.sh --verify` | check everything end to end, change nothing |
 | `bash setup_level4.sh --help` | the full list |
@@ -106,7 +115,6 @@ Tested on **Raspberry Pi OS Trixie (Debian 13)** on a Raspberry Pi 3A+.
 6. Gave the web server the group memberships and file ownership it needs.
 7. Generated a self-signed certificate and switched on https, which the
    phone-sensor pages require.
-8. Optionally switched the desktop off (`--headless`).
 
 The GPIO library is `rpi-lgpio` rather than the older `RPi.GPIO`, because the
 older one does not work on a Raspberry Pi 5. `raspi-gpio` was removed from
