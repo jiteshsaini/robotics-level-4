@@ -77,9 +77,12 @@ ut.init_gpio()
 def action(pred,lbl):
         global text_overlay
         
+        # The indicator LED, not the camera light: this is a "recognised
+        # something" signal, and the camera light is illumination the operator
+        # controls from the panel.
         if (pred < threshold):
                 text_overlay = "__"
-                ut.camera_light("OFF")
+                ut.red_light("OFF")
                 
         if (pred >= threshold):
                 percent=round(pred*100)
@@ -87,7 +90,7 @@ def action(pred,lbl):
                 #ut.speak_tts(lbl,"f")
                 #sleep(1)
                 #text_to_speech(lbl,"f")
-                ut.camera_light("ON")
+                ut.red_light("ON")
                 
 def input_image_size(interpreter):
     """Returns input image size as (width, height, channels) tuple."""

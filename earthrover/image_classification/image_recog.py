@@ -50,7 +50,7 @@ def action(pred,lbl):
         
         if (pred < threshold):
                 camera.annotate_text = "___"
-                ut.camera_light("OFF")
+                ut.red_light("OFF")
                 
         if (pred >= threshold):
                 percent=round(pred*100)
@@ -62,12 +62,12 @@ def action(pred,lbl):
                 
         if (pred >= threshold and lbl=="mouse"):
                 print(lbl)
-                ut.camera_light("ON")
+                ut.red_light("ON")
                 move_back()
                 
         if (pred >= threshold and lbl=="tennis ball"):
                 print(lbl)
-                ut.camera_light("ON")
+                ut.red_light("ON")
                 move_forward()
 
 

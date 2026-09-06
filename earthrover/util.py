@@ -140,13 +140,11 @@ def init_gpio():
 	GPIO.setup(m1_2,GPIO.OUT)
 	GPIO.setup(m2_1,GPIO.OUT)
 	GPIO.setup(m2_2,GPIO.OUT)
-	GPIO.setup(cam_light,GPIO.OUT)
-	GPIO.setup(headlight_right,GPIO.OUT)
-	GPIO.setup(headlight_left,GPIO.OUT)
-	# NOT sp_light (9). speaker_tts.py claims that line while it talks, and
-	# under rpi-lgpio a second claim raises "GPIO not allocated" - which took
-	# down every caller of this function that started mid-sentence.
-	# red_light() claims it on demand instead.
+	# Motors only. Claiming a line drives it low, so listing the lights here
+	# switched them off whenever a worker started - the panel button still
+	# read ON while the lamp was dark. The light helpers claim on demand
+	# instead, which is also what sp_light (9) does: speaker_tts.py holds that
+	# line while it talks, and a second claim raises "GPIO not allocated".
 	
 
 def back():
@@ -186,22 +184,16 @@ def speak_tts(text,gender):
 	os.system(cmd)
 	
 def camera_light(state):
-	if(state=="ON"):
-		GPIO.output(cam_light, True)
-		#print("light on")
-	else:
-		GPIO.output(cam_light, False)
-		#print("light off")
+	GPIO.setmode(GPIO.BCM)
+	GPIO.setup(cam_light, GPIO.OUT)      # claim on first use, no-op after
+	GPIO.output(cam_light, state=="ON")
 		
 def head_lights(state):
-	if(state=="ON"):
-		GPIO.output(headlight_left, True)
-		GPIO.output(headlight_right, True)
-		#print("light on")
-	else:
-		GPIO.output(headlight_left, False)
-		GPIO.output(headlight_right, False)
-		#print("light off")
+	GPIO.setmode(GPIO.BCM)
+	GPIO.setup(headlight_left, GPIO.OUT)    # claim on first use, no-op after
+	GPIO.setup(headlight_right, GPIO.OUT)
+	GPIO.output(headlight_left, state=="ON")
+	GPIO.output(headlight_right, state=="ON")
 		
 def red_light(state):
 	# GPIO 9 is shared with speaker_tts.py and is decorative on both sides:
