@@ -4,27 +4,27 @@
    layout at every width. */
 
 :root {
-	--bg:      #22262e;
-	--surface: #333945;
-	--line:    #4a5261;
-	--ink:     #e9edf4;
-	--muted:   #a2abbb;
+	--bg:      #f4f6fa;
+	--surface: #414957;
+	--line:    #6f7a89;
+	--ink:     #212834;
+	--muted:   #414b5a;
 	--accent:  #5b93ff;
-	--soft:    #414a5a;
+	--soft:    #ffffff;
 	--on:      #1fae5a;
 	--radius:  10px;
 	/* the metallic part: a light top edge and a dark bottom one, so every
 	   surface reads as a shallow brushed panel rather than a flat fill */
-	--sheen:   linear-gradient(180deg, #3b4250 0%, #2e343f 100%);
-	--shadow:  inset 0 1px 0 rgba(255,255,255,.07),
-	           0 1px 2px rgba(0,0,0,.35), 0 6px 16px rgba(0,0,0,.22);
+	--sheen:   linear-gradient(180deg, #aab3c0 0%, #8f99a8 100%);
+	--shadow:  inset 0 1px 0 rgba(255,255,255,.18),
+	           0 2px 3px rgba(0,0,0,.16), 0 8px 20px rgba(16,24,40,.16);
 }
 
 body {
 	margin: 0;
 	padding: 12px;
 	background: var(--bg);
-	background-image: linear-gradient(180deg, #262b34 0%, #1d2128 100%);
+	background-image: linear-gradient(180deg, #f8fafc 0%, #eceff5 100%);
 	background-attachment: fixed;
 	color: var(--ink);
 	font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
@@ -55,13 +55,13 @@ body {
 	font-weight: 800;
 	text-transform: uppercase;
 	letter-spacing: .34em;
-	color: #c3ccdb;
+	color: #3f4855;
 	background: linear-gradient(180deg,
-		#ffffff 0%, #dfe6f0 38%, #939dae 51%, #cfd7e4 66%, #f3f7fc 100%);
+		#3f4855 0%, #232a34 44%, #8e99aa 52%, #2b3340 60%, #5a6474 100%);
 	-webkit-background-clip: text;
 	background-clip: text;
 	-webkit-text-fill-color: transparent;
-	filter: drop-shadow(0 1px 0 rgba(0,0,0,.55)) drop-shadow(0 3px 5px rgba(0,0,0,.45));
+	filter: drop-shadow(0 1px 0 rgba(255,255,255,.55)) drop-shadow(0 2px 3px rgba(0,0,0,.32));
 }
 
 /* It links to the connection details, and nothing said so. */
@@ -70,16 +70,16 @@ body {
 	top: 0;
 	right: 0;
 	display: inline-block;
-	padding: 4px 8px;
+	padding: 3px 5px;
 	border: 1px solid var(--line);
-	border-radius: 10px;
+	border-radius: 9px;
 	background: var(--sheen);
 	box-shadow: var(--shadow);
 	line-height: 0;
 	transition: transform .12s, border-color .12s;
 }
 .brand-link:hover { transform: translateY(-2px); border-color: var(--accent); }
-.brand-logo { display: block; }
+.brand-logo { display: block; height: 38px; }
 
 /* ---- rows and blocks ------------------------------------------------
    Widths are here rather than in style= attributes on the PHP echoes, so
@@ -122,10 +122,10 @@ body {
 	top: -8px;
 	left: 12px;
 	padding: 0 8px;
-	background: #2b313b;
-	border: 1px solid var(--line);
+	background: #3f4855;
+	border: 1px solid #2b3340;
 	border-radius: 999px;
-	color: var(--muted);
+	color: #dfe5ee;
 	font-size: 11px;
 	font-weight: 600;
 	letter-spacing: .3px;
@@ -149,11 +149,11 @@ body {
 	padding: 0 14px;
 	margin: 2px 4px;
 	float: none;
-	border: 1px solid #5a6373;
+	border: 1px solid #7c8798;
 	border-radius: 8px;
-	background: linear-gradient(180deg, #4b5464 0%, #3c4453 100%);
-	box-shadow: inset 0 1px 0 rgba(255,255,255,.10), 0 1px 2px rgba(0,0,0,.3);
-	color: var(--ink);
+	background: linear-gradient(180deg, #f2f5f9 0%, #dde3ec 100%);
+	box-shadow: inset 0 1px 0 rgba(255,255,255,.95), 0 1px 2px rgba(0,0,0,.35);
+	color: #29303d;
 	font: inherit;
 	font-size: 13px;
 	font-weight: 600;
@@ -177,32 +177,32 @@ button:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
 #range {
 	display: inline-block;
 	vertical-align: middle;
-	width: 84px;
+	width: 94px;
 	margin: 0 8px 0 0;
-	padding: 3px 0;
+	padding: 1px 0;
 	box-sizing: border-box;
 	background: #11151b;
-	border: 1px solid #5a6373;
+	border: 1px solid #7c8798;
 	border-radius: 7px;
 	box-shadow: inset 0 2px 5px rgba(0,0,0,.6);
 	color: #6ef29a;
-	font-size: 18px;
+	font-size: 25px;
 	font-weight: 700;
 	font-variant-numeric: tabular-nums;
-	line-height: 1.25;
+	line-height: 1.16;
 	text-align: center;
 }
-#range:empty::before { content: "--"; color: #4a5261; }
+#range:empty::before { content: "--"; color: #46505f; }
 
 button {
 	height: 2.5rem;
 	min-width: 2rem;
 	padding: 0 8px;
-	border: 1px solid #5a6373;
+	border: 1px solid #7c8798;
 	border-radius: 8px;
-	background: linear-gradient(180deg, #4b5464 0%, #3c4453 100%);
-	box-shadow: inset 0 1px 0 rgba(255,255,255,.10), 0 1px 2px rgba(0,0,0,.3);
-	color: var(--ink);
+	background: linear-gradient(180deg, #f2f5f9 0%, #dde3ec 100%);
+	box-shadow: inset 0 1px 0 rgba(255,255,255,.95), 0 1px 2px rgba(0,0,0,.35);
+	color: #29303d;
 	font: inherit;
 	font-size: 12.5px;
 	font-weight: 600;
@@ -213,13 +213,8 @@ button {
 }
 button:hover { background: var(--soft); border-color: var(--accent); }
 button.is-on { background: var(--on); border-color: var(--on); color: #fff; }
-.tt-js .btn-fill {
-	background: linear-gradient(180deg, #e9edf4 0%, #cbd3e0 100%);
-	border-color: #9aa4b6;
-}
-.tt-js .btn-fill:hover { background: linear-gradient(180deg,#f4f7fb 0%,#dae1ec 100%); }
-.btn-gesture { background: linear-gradient(180deg,#6b6136 0%,#564d29 100%); border-color:#7d7140; }
-.btn-gesture:hover { background: linear-gradient(180deg,#7c7040 0%,#645a31 100%); }
+.btn-gesture { background: linear-gradient(180deg,#fdf6d2 0%,#f6ea9f 100%); border-color:#d9c86a; }
+.btn-gesture:hover { background: linear-gradient(180deg,#fffbe6 0%,#faf1bb 100%); }
 button img { vertical-align: middle; }
 
 /* ---- rows inside the blocks ------------------------------------------ */
@@ -291,8 +286,8 @@ button img { vertical-align: middle; }
 	margin-bottom: 6px;
 	border: 1px solid var(--line);
 	border-radius: 8px;
-	background: #262b34;
-	color: var(--ink);
+	background: #2f3644;
+	color: #eef2f8;
 	font: inherit;
 	font-size: 13px;
 }
@@ -316,11 +311,12 @@ button img { vertical-align: middle; }
 	border: 1px solid var(--line);
 	border-radius: var(--radius);
 	box-shadow: var(--shadow);
-	background: #2b313b;
+	background: #9aa4b2;
 	height: auto;
 	margin: 0;
 }
-#box_video  { width: calc(72% - 5px); background: #171a20; }
+#box_video  { width: calc(72% - 5px); background: #929cab;
+	box-shadow: inset 0 2px 7px rgba(0,0,0,.30); }
 #box_remote { width: calc(28% - 5px); }
 
 /* ---- the gear, the spinner, the footer -------------------------------- */
@@ -330,7 +326,7 @@ button img { vertical-align: middle; }
 	bottom: 8px;
 	font-size: 17px;
 	line-height: 1;
-	color: #7d8698;
+	color: #4a5563;
 	cursor: pointer;
 }
 .box_controls .gear:hover { color: var(--accent); }
@@ -343,7 +339,7 @@ button img { vertical-align: middle; }
 .er-spin {
 	display: inline-block;
 	width: 18px; height: 18px;
-	border: 3px solid #4a5261;
+	border: 3px solid #7e8899;
 	border-top-color: var(--accent);
 	border-radius: 50%;
 	animation: er-rot .7s linear infinite;
@@ -355,13 +351,13 @@ button img { vertical-align: middle; }
 	top: 6px;
 	left: 2px;
 	margin: 0;
-	color: var(--muted);
+	color: #39414e;
 	font-size: 10.5px;
 	text-align: left;
 	line-height: 1.7;
 }
 .hw-row span { margin: 0 12px 0 0; }
-.hw-link { color: var(--muted); text-decoration: none; }
+.hw-link { color: #39414e; text-decoration: none; }
 .hw-link:hover { color: var(--accent); }
 
 /* ---- settings dialog --------------------------------------------------- */
@@ -398,8 +394,8 @@ button img { vertical-align: middle; }
 	padding: 5px 7px;
 	border: 1px solid var(--line);
 	border-radius: 7px;
-	background: #262b34;
-	color: var(--ink);
+	background: #2f3644;
+	color: #eef2f8;
 	font: inherit;
 	font-size: 13px;
 }
@@ -432,8 +428,18 @@ button img { vertical-align: middle; }
 	.hw-row span { margin: 0 7px; }
 }
 
-/* backend indicator, inside the AI block's caption */
-.accel { font-size: 10px; font-weight: 700; }
-.accel-tpu { color: var(--on); }
-.accel-cpu { color: var(--muted); }
-.accel-bad { color: #dc2626; }
+/* Which backend the AI features will use, in the AI block's caption. Its
+   own chip rather than a word in the caption: it is the difference between
+   57 ms and 230 ms an inference, and it was too quiet to notice. */
+.accel {
+	display: inline-block;
+	margin-left: 7px;
+	padding: 1px 8px 2px;
+	border-radius: 999px;
+	font-size: 10.5px;
+	font-weight: 800;
+	letter-spacing: .5px;
+}
+.accel-tpu { background: rgba(31,174,90,.20);  border: 1px solid #1fae5a; color: #6ee79c; }
+.accel-cpu { background: rgba(190,200,220,.16); border: 1px solid #8b95a9; color: #dfe5ee; }
+.accel-bad { background: rgba(220,38,38,.22);  border: 1px solid #ef4444; color: #ff9d9d; }

@@ -27,6 +27,15 @@ function set_lights(id,state)
 
 }
 
+// The button carries the state, so it has to be told what happened - and
+// only once the server says so, because ajax_camera.php does not answer
+// until the stream port really accepts.
+function camera_toggle()
+{
+	var b = document.getElementById("cam_btn");
+	camera(b.value == "OFF" ? "on" : "off");
+}
+
 function camera(status)
 {
 		//alert(status);
@@ -47,6 +56,10 @@ function camera(status)
 		post(APP + "camera_lights/ajax_camera.php", {camera: status}, function(){
 			document.getElementById("cam_spin").style.display="none";
 			enable_buttons();
+			var b = document.getElementById("cam_btn");
+			b.value = (status == "on") ? "ON" : "OFF";
+			b.classList.toggle("is-on", status == "on");
+
 			var v = document.getElementById("box_video");
 			// cache-busted, or the browser reuses the dead connection
 			if (status=="on") v.src = v.dataset.src + "?t=" + Date.now();
@@ -115,7 +128,7 @@ function disable_buttons(){
 	document.getElementById("object_tracking").disabled=true;
 	document.getElementById("human_following").disabled=true;
 	document.getElementById("image_classification").disabled=true;
-	document.getElementById("cam_on").disabled=true;
+	document.getElementById("cam_btn").disabled=true;
 	
 	//document.getElementById(id).disabled=false;
 	
@@ -128,7 +141,7 @@ function enable_buttons(){
 	document.getElementById("object_tracking").disabled=false;
 	document.getElementById("human_following").disabled=false;
 	document.getElementById("image_classification").disabled=false;
-	document.getElementById("cam_on").disabled=false;
+	document.getElementById("cam_btn").disabled=false;
 	
 	
 }

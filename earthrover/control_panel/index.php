@@ -193,11 +193,10 @@ echo"<div align='center' id='box_outer'>";//------------------------
 		echo"<div class='box_controls blk-cam'>";
 			echo"<zz>";
 				echo"<label class='floatLabel'>Camera</label><br>";
-				echo"<input id='cam_on' type='submit' onclick=camera('on'); value='ON'/>";
-				echo"<input id='cam_off' type='submit' onclick=camera('off'); value='OFF'/>";
-				echo"<br>";
+				// One button: the camera has two states, and a button can show one
+				// of them. Two buttons could only ever show neither.
+				echo"<input id='cam_btn' type='submit' onclick=camera_toggle(); value='OFF'/>";
 				echo"<span id='cam_spin' class='er-spin' style='display:none'></span>";
-				echo"<txt> .</txt>";
 			echo"</zz>";
 			echo"<span class='gear' onclick=settings('camera'); title='Settings'>&#9881;</span>";
 		echo"</div>";

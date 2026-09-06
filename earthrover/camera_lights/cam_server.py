@@ -47,7 +47,7 @@ PAGE="""\
 <title>Rpi Cam-Server</title>
 </head>
 <style>
-html,body{height:100%;margin:0;background:#171a20}
+html,body{height:100%;margin:0;background:#929cab}
 body{display:flex;align-items:center;justify-content:center}
 img{max-width:100%;max-height:100%;display:block}
 </style>
