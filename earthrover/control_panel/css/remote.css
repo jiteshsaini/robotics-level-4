@@ -1,66 +1,122 @@
-#box_outer{
-	background-color:#f6f6ff;
+/* The direction pad. Rendered inside an iframe, so this is a page of its
+   own - the panel's stylesheet does not reach it. */
+
+:root {
+	--ink:    #e9edf4;
+	--accent: #5b93ff;
+	--edge:   #1b1f26;   /* the side the key sits on */
+}
+
+body {
+	margin: 0;
+	font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+	             "Helvetica Neue", Arial, sans-serif;
+	color: var(--ink);
+}
+
+#box_outer {
+	box-sizing: border-box;
+	width: 100%;
+	height: 100%;
+	padding: 14px 10px;
+	background: linear-gradient(180deg, #333945 0%, #2a2f39 100%);
 	text-align: center;
-	width:100%;
-	//height:100vh;
-	float:left;
-	//border:1px solid green;
-	//padding:1%
+	float: left;
 }
 
-.box_row{
-//border:1px solid red;
-width:100%;
-height:20%;
+.box_row {
+	width: 100%;
+	height: 22%;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	gap: 8px;
 }
 
-.button{
-border-width:2px; 
-border-radius:15px;
-width:30%;
-height:100%;
-background-color:#93fbff;
-font-size: 20px;
+.button {
+	width: 30%;
+	height: 94%;
+	min-height: 56px;
+	border: 1px solid #59637a;
+	border-radius: 12px;
+	background: linear-gradient(180deg, #59647a 0%, #444d60 55%, #3c4457 100%);
+	color: var(--ink);
+	font: inherit;
+	font-size: 15px;
+	font-weight: 700;
+	letter-spacing: .4px;
+	cursor: pointer;
+	/* The key sits 5px above its own shadow: an inset highlight along the top,
+	   a solid slab underneath for the side of the key, then a cast shadow. */
+	box-shadow:
+		inset 0 1px 0 rgba(255,255,255,.28),
+		inset 0 -2px 4px rgba(0,0,0,.30),
+		0 5px 0 var(--edge),
+		0 7px 12px rgba(0,0,0,.45);
+	transform: translateY(-2px);
+	transition: transform .05s ease-out, box-shadow .05s ease-out, filter .12s;
+}
+.button:hover { filter: brightness(1.12); }
+
+/* Pressed: the key travels down onto its slab, which collapses to nothing.
+   Worth the detail - this is a movement command and the robot answers a
+   moment later, so the button has to acknowledge the press by itself. */
+.button:active {
+	transform: translateY(3px);
+	box-shadow:
+		inset 0 2px 5px rgba(0,0,0,.55),
+		inset 0 -1px 0 rgba(255,255,255,.06),
+		0 0 0 var(--edge),
+		0 1px 3px rgba(0,0,0,.4);
+	background: linear-gradient(180deg, #1d2430 0%, #262f3d 100%);
+	color: #7fb0ff;
+	border-color: #46536b;
 }
 
-#box_outer input[type="submit"]:hover {
-  background: #1ad1ff;
-  //text-shadow: 0 1px 3px rgba(70, 93, 41, 0.7);
+/* The last key pressed keeps the focus, so it also shows which way the robot
+   was last told to go - until STOP takes the focus itself. */
+.button:focus-visible { outline: none; }
+.button:focus {
+	border-color: var(--accent);
+	box-shadow:
+		inset 0 1px 0 rgba(255,255,255,.28),
+		inset 0 -2px 4px rgba(0,0,0,.30),
+		0 5px 0 var(--edge),
+		0 7px 12px rgba(0,0,0,.45),
+		0 0 0 2px rgba(91,147,255,.45);
 }
 
 /*------------slider-----------------------*/
-.slidecontainer {
-  width: 100%;
-}
+.slidecontainer { width: 100%; padding: 0 6px; box-sizing: border-box; }
 
 .slider {
-  -webkit-appearance: none;
-  width: 100%;
-  height: 25px;
-  background: #d3d3d3;
-  outline: none;
-  opacity: 0.7;
-  -webkit-transition: .2s;
-  transition: opacity .2s;
-}
-
-.slider:hover {
-  opacity: 1;
+	-webkit-appearance: none;
+	appearance: none;
+	width: 100%;
+	height: 6px;
+	border-radius: 999px;
+	background: #20242c;
+	box-shadow: inset 0 1px 3px rgba(0,0,0,.6);
+	outline: none;
 }
 
 .slider::-webkit-slider-thumb {
-  -webkit-appearance: none;
-  appearance: none;
-  width: 25px;
-  height: 25px;
-  background: #4CAF50;
-  cursor: pointer;
+	-webkit-appearance: none;
+	appearance: none;
+	width: 22px;
+	height: 22px;
+	border: 2px solid #fff;
+	border-radius: 50%;
+	background: var(--accent);
+	box-shadow: 0 1px 4px rgba(16,24,40,.3);
+	cursor: pointer;
 }
-
 .slider::-moz-range-thumb {
-  width: 25px;
-  height: 25px;
-  background: #4CAF50;
-  cursor: pointer;
+	width: 22px;
+	height: 22px;
+	border: 2px solid #fff;
+	border-radius: 50%;
+	background: var(--accent);
+	box-shadow: 0 1px 4px rgba(16,24,40,.3);
+	cursor: pointer;
 }
-

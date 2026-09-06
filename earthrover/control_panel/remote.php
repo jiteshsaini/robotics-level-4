@@ -4,8 +4,11 @@ Author: Jitesh Saini
 Github: https://github.com/jiteshsaini
 website: https://helloworld.co.in
 -->
-<html>
-<head>        
+<!DOCTYPE html>
+<html lang="en">
+<head>
+   <meta charset="utf-8">
+   <meta name="viewport" content="width=device-width, initial-scale=1">
    <title>Remote</title>  
    <link href="css/remote.css?v=<?php echo filemtime(__DIR__."/css/remote.css"); ?>" rel="stylesheet" type="text/css">  
    <script src="js/post.js?v=<?php echo filemtime(__DIR__."/js/post.js"); ?>"></script>

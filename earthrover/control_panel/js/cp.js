@@ -10,13 +10,13 @@ function toggle_light(id)
 		//alert(button_caption);
 		if(button_caption=="OFF"){
 			document.getElementById(id).value="ON";
-			document.getElementById(id).style.backgroundColor="#66ff66";
+			document.getElementById(id).classList.add("is-on");
 			//alert("hi");
 			set_lights(id,1);
 		}
 		if(button_caption=="ON"){
 			document.getElementById(id).value="OFF";
-			document.getElementById(id).style.backgroundColor="white";
+			document.getElementById(id).classList.remove("is-on");
 			set_lights(id,0);
 		}
 			
@@ -65,7 +65,7 @@ function button_AI_action(id)
 	if (z==1){
 		console.log(id + " ON !!!!!!!!!!!!");
 		z=z+1;
-		document.getElementById(id).style.backgroundColor="#66ff66";//#66ff66
+		document.getElementById(id).classList.add("is-on");
 		disable_buttons();
 		document.getElementById(id).disabled=false;
 		
@@ -90,7 +90,7 @@ function button_AI_action(id)
 				// say why, rather than revealing a link to a port nothing is
 				// listening on
 				alert(res.text || ("Could not start " + id.replace(/_/g, " ")));
-				document.getElementById(id).style.backgroundColor="white";
+				document.getElementById(id).classList.remove("is-on");
 				enable_buttons();
 				z = 1;
 			});
@@ -99,7 +99,7 @@ function button_AI_action(id)
 	else{
 		console.log(id + " OFF ###########");
 		z=1;
-		document.getElementById(id).style.backgroundColor="white";
+		document.getElementById(id).classList.remove("is-on");
 		enable_buttons();
 		post(path, {state: 0});
 		

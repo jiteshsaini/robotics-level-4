@@ -30,15 +30,15 @@ $host=$_SERVER['SERVER_ADDR'];//192.168.1.20
 $path=rtrim(dirname($_SERVER["PHP_SELF"]), "/\\"); //earthrover
 
 echo"<div align='center' id='box_outer'>";//------------------------
-	echo"<b align='center' style='font-size:40px;color:#0000b3'>Earth Rover</b>";
-	echo"<a href='readme/' target='_blank'><img style='float:right' src='css/images/earthrover.png' height='60px'></a>";
+	echo"<b class='brand'>Earth Rover</b>";
+	echo"<a href='readme/' target='_blank' class='brand-link' title='Rover connection details'><img class='brand-logo' src='css/images/earthrover.png' height='60px'></a>";
 	echo"<div align='center' class='box_inner'>";//------------------------
 		//Range Sensor block
 		echo"<div class='box_controls blk-range'>";
 			echo"<zz>";
 				echo"<label class='floatLabel'>Range Sensor</label><br>";
-				echo"<b id='range' style='float:right;color:blue;font-size:30px'></b>";
-				echo"<input style='height:40px' id='range_button' type='submit' onclick=toggle_rangeSensor('range_button'); value='OFF'/>";
+				echo"<b id='range'></b>";
+				echo"<input id='range_button' type='submit' onclick=toggle_rangeSensor('range_button'); value='OFF'/>";
 				echo"<script src='../range_sensor/web/rangesensor.js?v=".filemtime(dirname(__DIR__)."/range_sensor/web/rangesensor.js")."'></script>";
 			echo"</zz>";
 			echo"<span class='gear' onclick=settings('range'); title='Settings'>&#9881;</span>";
@@ -47,7 +47,7 @@ echo"<div align='center' id='box_outer'>";//------------------------
 		//Javascript Robotics block
 		echo"<div class='box_controls blk-js'>";
 			echo"<zz>";
-				echo"<label class='floatLabel' style='width: 120px;'>Javascript Robotics</label><br>";
+				echo"<label class='floatLabel'>Javascript Robotics</label><br>";
 				
 				echo"<div class='row-js'>";
 					
@@ -92,21 +92,21 @@ echo"<div align='center' id='box_outer'>";//------------------------
 					. " from util import edgetpu; print(edgetpu)\" 2>/dev/null"));
 
 				if ($er_edgetpu === '1') {
-					$accel = "<span title='Coral USB Accelerator detected - about 57 ms per inference' style='color:#1a9e1a;font-size:12px;font-weight:600'>&#9679; Coral</span>";
+					$accel = "<span class='accel accel-tpu' title='Coral USB Accelerator detected - about 57 ms per inference'>&#9679; Coral</span>";
 				} elseif ($er_edgetpu === '0') {
 					// Normal, not an error: no accelerator, or its runtime is absent.
-					$accel = "<span title='No Coral detected - running on CPU, about 230 ms per inference' style='color:#888;font-size:12px'>&#9679; CPU</span>";
+					$accel = "<span class='accel accel-cpu' title='No Coral detected - running on CPU, about 230 ms per inference'>&#9679; CPU</span>";
 				} else {
 					// Distinct from CPU on purpose: this is a broken install
 					// (util.py missing or raising), not a hardware fact.
-					$accel = "<span title='Could not read the backend from util.py - check the install' style='color:#c00;font-size:12px;font-weight:600'>&#9679; unknown</span>";
+					$accel = "<span class='accel accel-bad' title='Could not read the backend from util.py - check the install'>&#9679; unknown</span>";
 				}
 
 				// The indicator goes INSIDE the label: .floatLabel is positioned
 				// absolute (a floating caption over the box), so a sibling span
 				// drops into normal flow and lands on top of the button row.
 				// width:auto so a longer state ("unknown") is not clipped.
-				echo"<label class='floatLabel' style='width:auto;padding:0 6px;white-space:nowrap;'>AI Robotics &nbsp;$accel</label><br>";
+				echo"<label class='floatLabel'>AI Robotics &nbsp;$accel</label><br>";
 				
 				echo"<div class='row-ai'>";
 					
@@ -149,8 +149,8 @@ echo"<div align='center' id='box_outer'>";//------------------------
 				echo"<div class='row-ai-status'>";
 					// One spinner serves all four AI buttons - only one feature
 					// can run at a time (the camera has a single holder).
-					echo"<span id='ai_spin' class='er-spin' style='display:none;position:absolute;top:20px'></span>";
-					$style_img="display:none;position:absolute;top:1px";
+					echo"<span id='ai_spin' class='er-spin' style='display:none'></span>";
+					$style_img="display:none";
 				
 					$href= 'http://'.$host.':2204';
 					echo"<a id='img_object_tracking' style=$style_img href='$href' target='_blank'><img src='css/images/obj_tracking.png' height='60px'></a>";
@@ -220,14 +220,14 @@ echo"<div align='center' id='box_outer'>";//------------------------
 				echo"<label class='floatLabel'>Speaker</label><br>";
 				echo"<script src='../speaker/web/speaker.js?v=".filemtime(dirname(__DIR__)."/speaker/web/speaker.js")."'></script>";
 				echo"<div class='spk-text'>";
-					echo"<input id='txt_tts' type='text' style='width:90%'><br>";
+					echo"<input id='txt_tts' type='text'><br>";
 					echo"<input id='radio1' type='radio' name='gender' value='male' checked> M ";
 					echo"<input type='radio' name='gender' value='female'> F ";
-					echo"<input id='tts' type='submit' onclick=button_tts(); value='speak' style='width:30%;height:20px;margin-left:5%'/>";
+					echo"<input id='tts' type='submit' onclick=button_tts(); value='speak'/>";
 				echo"</div>";
 				echo"<div class='spk-clips'>";
-					echo"<input id='rec1' type='submit' onclick=button_recording(1); value='horn' style='width:80%;height:20px;margin-bottom:3%'/>";
-					echo"<input id='rec2' type='submit' onclick=button_recording(2); value='siren' style='width:80%;height:20px'/>";
+					echo"<input id='rec1' type='submit' onclick=button_recording(1); value='horn'/>";
+					echo"<input id='rec2' type='submit' onclick=button_recording(2); value='siren'/>";
 				echo"</div>";
 				
 			echo"</zz>";
@@ -236,11 +236,11 @@ echo"<div align='center' id='box_outer'>";//------------------------
 		
 	echo"</div>";
 	
-	echo"<div align='center' style='margin-top:50px;margin-bottom:10px' class='box_inner'>";//------------------------
+	echo"<div class='hw-row'>";//------------------------
 		echo"<span id='hw_1'></span>";
-		echo"<span style='margin-left:15%' id='hw_2'></span>";
-		echo"<span style='margin-left:15%' id='hw_3'></span>";
-		echo"<span style='margin-left:15%' id='hw_4'></span>";
+		echo"<span id='hw_2'></span>";
+		echo"<span id='hw_3'></span>";
+		echo"<span id='hw_4'></span>";
 	echo"</div>";
 	
 echo"</div>";//--box_outer---------------------------------------------------
