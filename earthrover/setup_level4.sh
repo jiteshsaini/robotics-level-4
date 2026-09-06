@@ -13,9 +13,6 @@
 # card can take an hour or more.
 #
 # Flags:
-#   --no-code     environment only; leave the web root alone
-#   --headless    boot to console instead of the desktop. Advised on 512 MB
-#                 boards. Not the default: it also closes VNC.
 #   --fix-perms   set web-root ownership on code already in place, then exit
 #   --verify      check the environment end to end and exit; changes nothing
 
@@ -36,8 +33,8 @@ fi
 set -uo pipefail
 
 WEB="/var/www/html"
-# --headless is the only real choice here; the other two select a mode and exit.
-DO_HEADLESS=0; FIX_PERMS=0; DO_VERIFY=0; SKIP_CODE=0
+# Both select a mode and exit; a plain run installs everything.
+FIX_PERMS=0; DO_VERIFY=0
 
 # Set when something needs a restart to take effect. Initialised here, not in
 # the section that first sets it: the upgrade below can set it long before the
@@ -47,8 +44,6 @@ KERNEL_PENDING=0
 
 while [ $# -gt 0 ]; do
   case "$1" in
-    --no-code)    SKIP_CODE=1 ;;
-    --headless)   DO_HEADLESS=1 ;;
     --fix-perms)  FIX_PERMS=1 ;;
     --verify)     DO_VERIFY=1 ;;
     -h|--help)    sed -n '2,/^# ===/p' "$0"; exit 0 ;;
@@ -118,20 +113,10 @@ echo "  RAM:   ${MEM} MB"
 if [ "$MEM" -lt 600 ] && [ "$(systemctl get-default 2>/dev/null)" = "graphical.target" ]; then
   warn "Only ${MEM} MB RAM and the DESKTOP is running."
   warn "On this board that is the difference between ~0.1 and ~10 FPS: the"
-  warn "detector ends up living in swap. Re-run with --headless, or later:"
+  warn "detector ends up living in swap. To boot to the console instead:"
   warn "    sudo systemctl set-default multi-user.target"
   warn "    sudo systemctl disable lightdm ; sudo systemctl disable --now wayvnc"
   warn "    sudo reboot"
-fi
-
-# NOTE: the robot code is deliberately NOT required here. This script sets up
-# the environment; the code is placed by hand at $WEB/earthrover afterwards.
-if [ -d "$WEB/earthrover" ]; then
-  ok "robot code already present at $WEB/earthrover"
-else
-  echo "  robot code not yet at $WEB/earthrover - that is fine, this sets up"
-  echo "  the environment only. Copy the code there afterwards, then re-run"
-  echo "  with --fix-perms."
 fi
 
 # --verify changes nothing, so it must not demand a password. Everything
@@ -225,15 +210,22 @@ fix_perms() {
 
 # Verification. Changes nothing. Each check tests behaviour, not presence:
 # a package can install cleanly and still not work.
+# Four checks, and only four.
+#
+# Most of what this script does it can confirm by doing: the groups it just
+# added, the files it just moved, the service it just restarted. Re-reporting
+# those is noise that hides the ones that matter. What an install genuinely
+# cannot promise is that a package which unpacked cleanly actually works - so
+# that is all this asks.
 verify_all() {
   echo
   echo "=================================================="
   echo "  Verifying the environment"
   echo "=================================================="
   local bad=0
-  local model="$WEB/all_models/mobilenet_ssd_v2_coco_quant_postprocess_edgetpu.tflite"
 
-  # --- OpenCV: present, and the LIGHT build --------------------------
+  # OpenCV, and the LIGHT build: Debian's carries a GUI stack the robot never
+  # opens, at ~11 s per worker start and ~69 MB of RSS.
   if python3 -c "import cv2" 2>/dev/null; then
     if python3 -c "
 import cv2, sys
@@ -251,17 +243,17 @@ except cv2.error:
     warn "OpenCV not importable"; bad=1
   fi
 
-  # --- LiteRT: the interpreter must actually construct ---------------
+  # The module importing is not enough - the interpreter class has to come
+  # with it, and that is what every AI feature builds first.
   if python3 -c "from ai_edge_litert.interpreter import Interpreter" 2>/dev/null; then
     ok "ai-edge-litert interpreter importable"
   else
     warn "ai-edge-litert missing or broken"; bad=1
   fi
 
-  # --- GPIO from Python ----------------------------------------------
-  #     Import it for real. The package being installed is not proof: the wrong
-  #     one installs perfectly well and then fails at import on a Pi 5, which
-  #     would leave every check here green while the motors were dead.
+  # GPIO for real. The wrong package installs perfectly well and then fails at
+  # import on a Pi 5, which would leave everything else green while the motors
+  # were dead.
   if python3 -c "
 import RPi.GPIO as G
 G.setwarnings(False); G.setmode(G.BCM); G.setup(17, G.OUT)" 2>/dev/null; then
@@ -272,49 +264,8 @@ G.setwarnings(False); G.setmode(G.BCM); G.setup(17, G.OUT)" 2>/dev/null; then
     bad=1
   fi
 
-  # --- GPIO -----------------------------------------------------------
-  command -v pinctrl >/dev/null && ok "pinctrl present" || { warn "pinctrl MISSING"; bad=1; }
-
-  # --- the web server's rights ----------------------------------------
-  #     Group membership, not sudo: the panel needs the gpio, video and audio
-  #     devices, and each has a group. It used to be granted unrestricted
-  #     root, which made an unauthenticated web page the security boundary of
-  #     the whole device.
-  for g in gpio video audio; do
-    if id -nG www-data 2>/dev/null | has "$g"; then
-      ok "www-data in $g"
-    else
-      warn "www-data NOT in $g - the web UI cannot use that hardware"; bad=1
-    fi
-  done
-
-  # --- camera --------------------------------------------------------
-  CAM_LIST=$(rpicam-hello --list-cameras 2>/dev/null)
-  if [[ "$CAM_LIST" == *:* ]]; then
-    ok "camera detected: $(printf '%s\n' "$CAM_LIST" | awk '/^[0-9]+ *:/{print $3; exit}')"
-  else
-    warn "no camera detected - check the ribbon seating"; bad=1
-  fi
-
-  # --- apache --------------------------------------------------------
-  if systemctl is-active --quiet apache2; then
-    ok "apache2 running"
-  else
-    warn "apache2 not running"; bad=1
-  fi
-
-  # --- memory / session ----------------------------------------------
-  local tgt; tgt=$(systemctl get-default 2>/dev/null)
-  local mem; mem=$(free -m | awk '/Mem:/{print $2}')
-  if [ "$mem" -lt 600 ] && [ "$tgt" = "graphical.target" ]; then
-    warn "${mem} MB RAM with the desktop running - vision features will crawl (--headless)"
-  else
-    ok "session: $tgt, ${mem} MB RAM"
-  fi
-
-  # --- which backend the AI features will use ------------------------
-  #     Shown so that a Coral which was not picked up is visible here, rather
-  #     than appearing later as unexplained slowness.
+  # Which backend the robot will actually use. A Coral that was not picked up
+  # shows here, rather than later as unexplained slowness.
   if [ -f "$WEB/earthrover/util.py" ]; then
     ER_TPU=$(python3 -c "import sys; sys.path.insert(0,'$WEB/earthrover'); from util import edgetpu; print(edgetpu)" 2>/dev/null)
     case "$ER_TPU" in
@@ -322,65 +273,6 @@ G.setwarnings(False); G.setmode(G.BCM); G.setup(17, G.OUT)" 2>/dev/null; then
       0) ok "util.py resolves edgetpu=0 - running on CPU (~230 ms/inference)" ;;
       *) warn "could not read edgetpu from util.py - the AI features may not start"; bad=1 ;;
     esac
-  fi
-
-  # --- Coral -----------------------------------------------------------
-  #     Ask util.py for the device IDs rather than grepping lsusb for "google".
-  #     Ask util.py for the device IDs instead of grepping lsusb for "Google".
-  #     The accelerator reports 1a6e:089a until its firmware is loaded and only
-  #     then 18d1:9302, so a name match misses one that was just plugged in.
-  ER_CORAL_HW=""
-  if [ -f "$WEB/earthrover/util.py" ]; then
-    ER_CORAL_HW=$(python3 - <<PYCORAL 2>/dev/null
-import sys, glob
-sys.path.insert(0, "$WEB/earthrover")
-import util
-ids = util._coral_usb_ids()
-for v in glob.glob("/sys/bus/usb/devices/*/idVendor"):
-    try:
-        vid = open(v).read().strip().lower()
-        pid = open(v[:-len("idVendor")] + "idProduct").read().strip().lower()
-    except OSError:
-        continue
-    if (vid, pid) in ids:
-        print("%s:%s" % (vid, pid)); break
-PYCORAL
-)
-  fi
-
-  if [ -n "$ER_CORAL_HW" ]; then
-    ok "Coral accelerator present on the USB bus ($ER_CORAL_HW)"
-    if [ -f "$model" ]; then
-      if python3 -c "
-from ai_edge_litert.interpreter import Interpreter, load_delegate
-d = load_delegate('libedgetpu.so.1', {})
-it = Interpreter(model_path='$model', experimental_delegates=[d])
-it.allocate_tensors()" >/dev/null 2>&1; then
-        ok "Coral verified: delegate binds and the model loads"
-      else
-        warn "Coral found, but the interpreter would not build - libedgetpu and"
-        warn "ai-edge-litert are mismatched. Auto-detection cannot see this, so"
-        warn "the AI features would try the accelerator and crash."
-        warn "Run on CPU until the versions match:  export EARTHROVER_EDGETPU=0"
-        bad=1
-      fi
-    else
-      warn "Coral present but $model is missing - place the models, then re-verify"
-    fi
-  else
-    ok "no Coral accelerator on the USB bus - the AI features will run on CPU"
-  fi
-
-  # --- the code itself -----------------------------------------------
-  if [ -d "$WEB/earthrover" ]; then
-    local owner; owner=$(stat -c '%U:%G' "$WEB/earthrover")
-    if [ "$owner" = "www-data:www-data" ]; then
-      ok "code present at $WEB/earthrover, owned by $owner"
-    else
-      warn "code present but owned by $owner - run: bash $0 --fix-perms"; bad=1
-    fi
-  else
-    warn "no code at $WEB/earthrover yet"
   fi
 
   echo
@@ -391,7 +283,6 @@ it.allocate_tensors()" >/dev/null 2>&1; then
   fi
   return $bad
 }
-
 if [ "$DO_VERIFY" -eq 1 ]; then
   verify_all
   exit $?
@@ -522,7 +413,7 @@ python3 -c "from ai_edge_litert.interpreter import Interpreter; print('  [ ok ] 
 #   Levels 1-3 install their own code in one command. This script used to stop
 #   at the environment and leave a manual `cp -r`, which is the step people
 #   gave up on - on the level that is hardest to install.
-if [ "$SKIP_CODE" -eq 0 ] && [ "$FIX_PERMS" -eq 0 ] && [ "$DO_VERIFY" -eq 0 ]; then
+if [ "$DO_VERIFY" -eq 0 ] && [ "$FIX_PERMS" -eq 0 ]; then
   echo
   echo "=================================================="
   echo "  Installing the robot code"
@@ -532,7 +423,7 @@ if [ "$SKIP_CODE" -eq 0 ] && [ "$FIX_PERMS" -eq 0 ] && [ "$DO_VERIFY" -eq 0 ]; t
   # pulled out from under itself mid-run. The README says to download it
   # separately for exactly this reason.
   case "$(readlink -f "$0")" in
-    "$WEB"/earthrover/*) die "Run the downloaded copy, not $WEB/earthrover/$(basename "$0") - this replaces that folder. See the README, or pass --no-code." ;;
+    "$WEB"/earthrover/*) die "Run the downloaded copy, not $WEB/earthrover/$(basename "$0") - this replaces that folder." ;;
   esac
 
   CODE_TMP="$(mktemp -d)"
@@ -723,28 +614,6 @@ else
   warn "without it the Coral cannot be used; the rover still runs on CPU"
 fi
 
-# 7b. Optional: drop the desktop
-#     On a 512 MB board the desktop session is the difference between a
-#     detector that runs and one that lives in swap. Measured on a Pi 3A+:
-#     camera capture 8466 ms with the desktop up, 10 ms without.
-#     Opt-in, because this is your machine and it also closes VNC.
-if [ "$DO_HEADLESS" -eq 1 ]; then
-  echo
-  echo "=================================================="
-  echo "  Disabling the desktop session"
-  echo "=================================================="
-  sudo systemctl set-default multi-user.target >/dev/null 2>&1
-  sudo systemctl disable lightdm >/dev/null 2>&1
-  sudo systemctl disable --now wayvnc >/dev/null 2>&1
-  if [ "$(systemctl get-default 2>/dev/null)" = "multi-user.target" ]; then
-    ok "default target is now multi-user.target (takes effect after reboot)"
-    ok "wayvnc disabled - this also closes the VNC port on 5900"
-    REBOOT_NEEDED=1
-  else
-    warn "could not change the default target - check that sudo succeeded"
-  fi
-fi
-
 # 6. The web server's hardware rights, and the web root
 #    Group membership rather than root: the panel drives GPIO, opens the
 #    camera and plays audio, and each of those has a group. It used to be
@@ -781,44 +650,23 @@ echo "  Done"
 echo "=================================================="
 
 if [ -d "$WEB/earthrover" ]; then
-  echo "  Web control panel:   http://$IP/earthrover      <-- use this"
-  echo
-  echo "  Voice control only:  https://$IP/earthrover"
-  echo "     Voice control needs https (the browser Speech API refuses to run"
-  echo "     on plain http). The camera view does NOT appear on the https page:"
-  echo "     browsers block the http video stream inside an https page. So use"
-  echo "     http for driving, and https only for voice control."
-  echo
-  echo "  Code location:      $WEB/earthrover"
+  echo "  Web control panel:  http://$IP/earthrover      <-- use this"
+  echo "  Voice control:      https://$IP/earthrover"
+  echo "     Voice needs https: the browser Speech API refuses plain http. The"
+  echo "     camera view is absent there, because browsers block an http video"
+  echo "     stream inside an https page. Drive on http, use https for voice."
 else
-  echo "  The ENVIRONMENT is ready. The code is not installed yet."
-  echo
-  echo "  Next steps:"
-  echo "    1. sudo cp -r ~/Downloads/earthrover  $WEB/"
-  echo "       sudo cp -r ~/Downloads/all_models  $WEB/"
-  echo "    2. bash $0 --fix-perms"
-  echo "    3. bash $0 --verify"
-  echo
-  echo "  Then the control panel is at:  http://$IP/earthrover"
+  echo "  The environment is ready, but the code did not install - see the"
+  echo "  warnings above. Running this script again is safe."
 fi
 echo
-echo "  Full install log:   $LOGFILE"
-echo "  Feature logs:       $WEB/earthrover/logs/<feature>.log"
-echo "                      (object_detection, object_tracking, human_following,"
-echo "                       image_classification, speaker) - the first place to"
-echo "                      look when an AI feature misbehaves. Not in /tmp:"
-echo "                      Apache gives itself a private /tmp, so anything it"
-echo "                      writes there is invisible from a normal shell."
-echo
-if [ "$MEM" -lt 600 ] && [ "$(systemctl get-default 2>/dev/null)" = "graphical.target" ]; then
-echo "  ** With ${MEM} MB RAM and the desktop running, the vision features will"
-echo "     crawl (they end up in swap). Re-run with --headless. **"
-echo
-fi
-echo "  Coral:              runtime installed. Nothing to configure - an"
-echo "                      accelerator is detected automatically, and the"
-echo "                      control panel shows which backend is in use next"
-echo "                      to \"AI Robotics\". EARTHROVER_EDGETPU=0 forces CPU."
+echo "  Code:               $WEB/earthrover"
+echo "  Install log:        $LOGFILE"
+echo "  Feature logs:       $WEB/earthrover/logs/<feature>.log - the first"
+echo "                      place to look when an AI feature misbehaves. Not"
+echo "                      /tmp: Apache gives itself a private one."
+echo "  Coral:              detected automatically; the panel shows which"
+echo "                      backend is in use. EARTHROVER_EDGETPU=0 forces CPU."
 echo "  Re-apply ownership: bash $0 --fix-perms"
 echo "  Re-check anything:  bash $0 --verify"
 echo
