@@ -149,46 +149,6 @@ fi
 
 REPO="https://github.com/jiteshsaini/robotics-level-4.git"
 
-# Installing the code
-#
-#   Levels 1-3 install their own code in one command. This script used to stop
-#   at the environment and leave a manual `cp -r`, which is the step people
-#   gave up on - on the level that is hardest to install.
-if [ "$SKIP_CODE" -eq 0 ] && [ "$FIX_PERMS" -eq 0 ] && [ "$DO_VERIFY" -eq 0 ]; then
-  echo
-  echo "=================================================="
-  echo "  Installing the robot code"
-  echo "=================================================="
-
-  # Refuse to replace the tree we are running from - the script would be
-  # pulled out from under itself mid-run. The README says to download it
-  # separately for exactly this reason.
-  case "$(readlink -f "$0")" in
-    "$WEB"/earthrover/*) die "Run the downloaded copy, not $WEB/earthrover/$(basename "$0") - this replaces that folder. See the README, or pass --no-code." ;;
-  esac
-
-  CODE_TMP="$(mktemp -d)"
-  trap 'rm -rf "$CODE_TMP"' EXIT
-  if sudo git clone --depth 1 "$REPO" "$CODE_TMP/repo" >/dev/null 2>&1; then
-    if [ -d "$CODE_TMP/repo/earthrover" ]; then
-      for d in earthrover all_models; do
-        [ -d "$CODE_TMP/repo/$d" ] || continue
-        if [ -e "$WEB/$d" ]; then
-          B="$WEB/$d.backup_$(date +%Y%m%d_%H%M%S)"
-          sudo mv "$WEB/$d" "$B"
-          ok "existing $d moved to $(basename "$B")"
-        fi
-        sudo mv "$CODE_TMP/repo/$d" "$WEB/$d"
-        ok "installed $WEB/$d"
-      done
-    else
-      warn "no 'earthrover' folder in the repo - nothing installed"
-    fi
-  else
-    warn "could not fetch the code; continuing with the environment only"
-  fi
-fi
-
 # Files the robot writes as it runs. They are not in the repo: the app is
 # developed in the folder Apache serves, so a personal speed or stop distance
 # would ship as everyone's default. Only created when absent, so re-running
@@ -556,6 +516,46 @@ else
 fi
 python3 -c "from ai_edge_litert.interpreter import Interpreter; print('  [ ok ] interpreter import verified')" \
   || warn "litert imported but interpreter unavailable"
+
+# Installing the code
+#
+#   Levels 1-3 install their own code in one command. This script used to stop
+#   at the environment and leave a manual `cp -r`, which is the step people
+#   gave up on - on the level that is hardest to install.
+if [ "$SKIP_CODE" -eq 0 ] && [ "$FIX_PERMS" -eq 0 ] && [ "$DO_VERIFY" -eq 0 ]; then
+  echo
+  echo "=================================================="
+  echo "  Installing the robot code"
+  echo "=================================================="
+
+  # Refuse to replace the tree we are running from - the script would be
+  # pulled out from under itself mid-run. The README says to download it
+  # separately for exactly this reason.
+  case "$(readlink -f "$0")" in
+    "$WEB"/earthrover/*) die "Run the downloaded copy, not $WEB/earthrover/$(basename "$0") - this replaces that folder. See the README, or pass --no-code." ;;
+  esac
+
+  CODE_TMP="$(mktemp -d)"
+  trap 'rm -rf "$CODE_TMP"' EXIT
+  if sudo git clone --depth 1 "$REPO" "$CODE_TMP/repo" >/dev/null 2>&1; then
+    if [ -d "$CODE_TMP/repo/earthrover" ]; then
+      for d in earthrover all_models; do
+        [ -d "$CODE_TMP/repo/$d" ] || continue
+        if [ -e "$WEB/$d" ]; then
+          B="$WEB/$d.backup_$(date +%Y%m%d_%H%M%S)"
+          sudo mv "$WEB/$d" "$B"
+          ok "existing $d moved to $(basename "$B")"
+        fi
+        sudo mv "$CODE_TMP/repo/$d" "$WEB/$d"
+        ok "installed $WEB/$d"
+      done
+    else
+      warn "no 'earthrover' folder in the repo - nothing installed"
+    fi
+  else
+    warn "could not fetch the code; continuing with the environment only"
+  fi
+fi
 
 # 3. Camera interface
 #   
