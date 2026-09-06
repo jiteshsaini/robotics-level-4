@@ -15,6 +15,7 @@ https://developer.mozilla.org/en-US/docs/Web/API/DeviceOrientationEvent
 
 <link rel="stylesheet" href="../robot_compass/css/app3.css">
 <script src="../jquery.min.js"></script>
+<script src="../../control_panel/js/post.js?v=<?php echo filemtime(__DIR__."/../../control_panel/js/post.js"); ?>"></script>
 <script src="../../control_panel/js/remote.js?v=<?php echo filemtime(__DIR__."/../../control_panel/js/remote.js"); ?>"></script>  
    
 <style>
