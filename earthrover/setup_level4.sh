@@ -537,7 +537,10 @@ if [ "$SKIP_CODE" -eq 0 ] && [ "$FIX_PERMS" -eq 0 ] && [ "$DO_VERIFY" -eq 0 ]; t
 
   CODE_TMP="$(mktemp -d)"
   trap 'rm -rf "$CODE_TMP"' EXIT
-  if sudo git clone --depth 1 "$REPO" "$CODE_TMP/repo" >/dev/null 2>&1; then
+  # Not under sudo: the clone only writes into our own temp folder, and a
+  # root-owned one cannot be removed by the cleanup trap above, which runs
+  # as the invoking user. Only the move into the web root needs root.
+  if git clone --depth 1 "$REPO" "$CODE_TMP/repo" >/dev/null 2>&1; then
     if [ -d "$CODE_TMP/repo/earthrover" ]; then
       for d in earthrover all_models; do
         [ -d "$CODE_TMP/repo/$d" ] || continue
