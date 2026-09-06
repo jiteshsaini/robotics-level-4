@@ -44,13 +44,14 @@ function gpio_initialise(){
 	global $cameralight,$headlight_left,$headlight_right;
 
 	//====Lights============
+	// Mode only. This runs on every load of the remote pad, and it used to
+	// switch all three lights off with it - so the lights could not survive
+	// a page reload, and a second phone opening the panel went dark on the
+	// first. The motors above are zeroed on purpose: a page arriving is a
+	// good moment to stop the robot. A lamp is not the same case.
 	set_gpio($headlight_right,'output');
 	set_gpio($headlight_left,'output');
 	set_gpio($cameralight,'output');
-	
-	set_gpio($headlight_right,'0');
-	set_gpio($headlight_left,'0');
-	set_gpio($cameralight,'0');
 }
 
 function set_speed($pwm_val){

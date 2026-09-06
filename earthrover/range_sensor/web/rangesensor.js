@@ -4,58 +4,58 @@
 var RNG = document.currentScript.src.replace(/[^/]*$/, "");
 
 var interval;
+
 function toggle_rangeSensor(id)
 	{
-		
-		//alert(id);
 		console.log("toggle_rangeSensor button clicked");
 		button_caption=document.getElementById(id).value;
-		//alert(button_caption);
+
 		if(button_caption=="OFF"){
 			rangeSensor(1);
-			
-			document.getElementById(id).value="ON";
-			document.getElementById(id).style.backgroundColor="#66ff66";
-			//alert("hi");
-			interval=window.setInterval(get_range, 500); //timer for initiating ajax request 
-
-			
-			
+			show_range_on(id);
 		}
 		if(button_caption=="ON"){
 			rangeSensor(0);
 			document.getElementById(id).value="OFF";
-			document.getElementById(id).style.backgroundColor="white";
-			
+			document.getElementById(id).classList.remove("is-on");
+
 			clearInterval(interval);
 			document.getElementById("range").innerHTML="";
-			
-			
 		}
-			
 	}
-function rangeSensor(state)
-{	console.log("state: ", state);
-	
-	post(RNG + "ajax_rangeSensor.php", {state: state});
 
+// The button on and the readout polling, without sending the start command:
+// used when the sensor is already running and this page has just arrived.
+function show_range_on(id)
+	{
+		document.getElementById(id).value="ON";
+		document.getElementById(id).classList.add("is-on");
+		clearInterval(interval);
+		interval=window.setInterval(get_range, 500);
+	}
+
+function resume_rangeSensor()
+	{
+		show_range_on("range_button");
+	}
+
+function rangeSensor(state)
+{
+	console.log("state: ", state);
+	post(RNG + "ajax_rangeSensor.php", {state: state});
 }
+
 function get_range()
 	{
 		post(RNG + "ajax_getRange.php", {}, function(data){
-			//document.getElementById("range").innerHTML = data;
-			
-			if (data<=30)
-				document.getElementById("range").style.color="red";
-			else if(data > 30 && data <= 60) 
-				document.getElementById("range").style.color="orange";
-			else
-				document.getElementById("range").style.color="blue";
-			
-			if (data>400)
-				document.getElementById("range").innerHTML = "-";
-			else
-				document.getElementById("range").innerHTML = data;
-				
+			// How close it is, as a class. Set here as an inline style it beat
+			// the stylesheet, and plain blue was hard to read on the readout.
+			var el = document.getElementById("range");
+			el.classList.remove("near", "mid");
+			if (data <= 30)                   el.classList.add("near");
+			else if (data > 30 && data <= 60) el.classList.add("mid");
+
+			// 400 cm is past what the sensor can measure, not a distance
+			el.innerHTML = (data > 400) ? "-" : data;
 		});
 	}

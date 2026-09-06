@@ -193,6 +193,9 @@ button:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
 	text-align: center;
 }
 #range:empty::before { content: "--"; color: #46505f; }
+/* how close it is; rangesensor.js sets the class */
+#range.mid  { color: #ffb340; }
+#range.near { color: #ff6b6b; }
 
 button {
 	height: 2.5rem;

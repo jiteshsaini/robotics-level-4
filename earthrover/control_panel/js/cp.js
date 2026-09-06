@@ -154,6 +154,49 @@ function init(){
 	
 	console.log(">>>>");
 	post(APP + "control_panel/misc/hw.php", {entry_by: "control_panel", page: "index.php"});
+
+	// The rover keeps running when the page does not. Ask what is on and show
+	// that, rather than opening everything at OFF and hoping.
+	post(APP + "control_panel/misc/state.php", {}, function(data){
+		var s;
+		try { s = JSON.parse(data); } catch (e) { return; }
+
+		if (s.camera) {
+			var b = document.getElementById("cam_btn");
+			b.value = "ON";
+			b.classList.add("is-on");
+			var v = document.getElementById("box_video");
+			v.src = v.dataset.src + "?t=" + Date.now();
+		}
+
+		show_light("camlight",  s.camlight);
+		show_light("headlight", s.headlight);
+
+		if (s.ai) {
+			var a = document.getElementById(s.ai);
+			if (a) {
+				a.classList.add("is-on");
+				disable_buttons();
+				a.disabled = false;
+				z = 2;                    // so the next press stops it
+			}
+			var img = document.getElementById("img_" + s.ai);
+			if (img) { img.style.display = "block"; }
+		}
+
+		// rangesensor.js owns the polling timer, so it restores itself
+		if (s.range && typeof resume_rangeSensor === "function") {
+			resume_rangeSensor();
+		}
+	});
+}
+
+function show_light(id, on)
+{
+	var b = document.getElementById(id);
+	if (!b) { return; }
+	b.value = on ? "ON" : "OFF";
+	b.classList.toggle("is-on", !!on);
 }
 
 function sleep(milliseconds) {
