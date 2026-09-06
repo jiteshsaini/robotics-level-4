@@ -4,7 +4,7 @@
 # Installs the robot code and everything it needs. Run it as your normal user,
 # not with sudo - it calls sudo itself.
 #
-#   1. bash setup_level4.sh --headless
+#   1. bash setup_level4.sh
 #   2. sudo reboot          (only if step 1 says a kernel is waiting)
 #   3. bash /var/www/html/earthrover/setup_level4.sh --verify
 #

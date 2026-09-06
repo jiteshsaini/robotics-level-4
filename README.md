@@ -55,12 +55,14 @@ curl -fsSL https://raw.githubusercontent.com/jiteshsaini/robotics-level-4/main/e
 ```
 
 ```bash
-bash setup_level4.sh --headless
+bash setup_level4.sh
 ```
 
 **Not with `sudo`** — the script calls `sudo` itself, and says so if you try.
-Drop `--headless` if you want to keep the desktop, but on a 512 MB board you
-do not.
+
+On a 512 MB board add `--headless`, which boots to the console instead of
+the desktop: with the desktop running the vision features end up in swap.
+It also closes VNC, so it is not the default.
 
 Downloading first, rather than piping into a shell, lets you read the script
 before it runs.
