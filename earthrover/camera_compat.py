@@ -1,28 +1,29 @@
 """
-camera_compat.py - a drop-in replacement for cv2.VideoCapture.
+camera_compat.py - a stand-in for cv2.VideoCapture.
 
-Why this exists
----------------
-The rover's vision scripts were written for Raspberry Pi OS Buster, where the
-`bcm2835-v4l2` kernel module presented the CSI ribbon camera as an ordinary
-V4L2 device. `cv2.VideoCapture(0)` therefore just worked.
+This file exists so the AI code did not have to be rewritten.
 
-That module was removed in Bullseye. On Bookworm/Trixie `/dev/video0` is
-`unicam` - the raw Bayer CSI receiver - so `cv2.VideoCapture(0)` opens the
-device but `read()` never returns a frame. (Verified with 190 MB free, so it
-is not a memory problem: OpenCV yields nothing while picamera2 captures fine.)
+Object detection, object tracking, human following and image classification
+were all written years ago against OpenCV, and every one of them opens the
+camera the same way: cv2.VideoCapture(0). That worked on Raspberry Pi OS
+Buster, where the bcm2835-v4l2 module made the ribbon camera look like an
+ordinary V4L2 device.
 
-Rather than rewrite the capture loop in seven scripts, this class exposes the
-same slice of the cv2.VideoCapture API those scripts actually use, and picks a
-backend that works on the hardware present:
+Bullseye removed that module. On Bookworm and Trixie /dev/video0 is unicam,
+the raw Bayer receiver - OpenCV opens it and then read() never returns a
+frame. The camera itself is fine: picamera2 captures from it without trouble.
 
-  1. V4L2 through OpenCV - so USB webcams keep working exactly as before
-  2. picamera2           - for the CSI ribbon camera
+So this class offers the few cv2.VideoCapture methods those scripts use, and
+chooses a backend behind them:
 
-Usage:
+  V4L2 through OpenCV   for a USB webcam
+  picamera2             for the CSI ribbon camera
+
+In the scripts themselves, only the import line changed.
+
     import camera_compat
     cap = camera_compat.VideoCapture(0)
-    ret, frame = cap.read()     # frame is BGR, as OpenCV expects
+    ret, frame = cap.read()     # BGR, as OpenCV expects
     cap.release()
 """
 
@@ -53,13 +54,12 @@ except Exception:                      # util needs GPIO; keep working without i
 
 CAM_INDEXES = 5        # /dev/video0..4, searched for a USB webcam
 DEFAULT_SIZE = (640, 480)
-WARMUP_SECONDS = 0.5      # AE/AWB settle time. Was 2.0; it is paid on every
-                         # start, so it is 1.5s of the wait before the launch
-                         # button appears.
+WARMUP_SECONDS = 0.5      # let exposure and white balance settle before the
+                          # first frame. Every worker start waits this long.
 
 
 class VideoCapture:
-    """Mimics the part of cv2.VideoCapture the rover scripts use."""
+    """The part of cv2.VideoCapture the rover scripts actually use."""
 
     def __init__(self, src=0, size=DEFAULT_SIZE):
         self.backend = None
@@ -69,8 +69,8 @@ class VideoCapture:
         self._flip = None               # cv2.flip code for the v4l2 path
         self.size = size
 
-        # Which camera, and which way up, come from config.txt so that the
-        # video stream and the vision scripts agree rather than each guessing.
+        # Which camera, and which way up, both come from config.txt, so the
+        # video stream and the AI scripts agree instead of each deciding.
         want = setting("camera", "auto")            # auto | USB_cam | RPI_cam
 
         if want in ("auto", "USB_cam") and self._try_v4l2(src):
@@ -84,14 +84,12 @@ class VideoCapture:
     # ---- backends ----------------------------------------------------
 
     def _try_v4l2(self, src):
-        """A real V4L2 capture device, i.e. a USB webcam. Must actually
-        yield a frame - on this OS /dev/video0 opens but never delivers.
+        """Look for a USB webcam, and prove it by reading a frame.
 
-        The webcam is not on a fixed index. A Pi numbers its own CSI receiver
-        and codec blocks as /dev/video* too, so a webcam typically lands on
-        video1 or later. Trying only the index we were handed found unicam,
-        got no frame, and fell through to the ribbon camera - so a USB camera
-        was never used even when one was plugged in.
+        A Pi numbers its own CSI receiver and codec blocks as /dev/video* as
+        well, so a webcam is rarely on video0. Checking only the index we were
+        handed found unicam, which opens but never delivers, and the webcam
+        went unused even when one was plugged in.
         """
         for index in range(src, src + CAM_INDEXES):
             if self._open_v4l2(index):
@@ -100,12 +98,9 @@ class VideoCapture:
 
     def _open_v4l2(self, src):
         try:
-            # CAP_V4L2 explicitly. With a GStreamer-enabled OpenCV the default
-            # backend builds a gst pipeline against unicam, which can never
-            # deliver a frame - it failed slowly (7.4s measured under memory
-            # pressure) before falling through to picamera2. V4L2 is also the
-            # correct backend for the USB webcams this probe exists to serve:
-            # it fails in 0.35s here and opens a real webcam normally.
+            # Ask for V4L2 by name. Left to choose, an OpenCV built with
+            # GStreamer builds a pipeline against unicam instead, which never
+            # delivers a frame and is slow about giving up.
             cap = cv2.VideoCapture(src, cv2.CAP_V4L2)
             if cap.isOpened():
                 for _ in range(3):
@@ -128,8 +123,8 @@ class VideoCapture:
             p = Picamera2()
             # The sensor does the flip, so it costs nothing per frame.
             h, v = FLIP_TRANSFORM.get(setting("flip_RPI_cam", "none"), (0, 0))
-            # picamera2's "RGB888" is B,G,R in memory order - already what
-            # OpenCV expects, so no cvtColor is needed on the hot path.
+            # picamera2 calls it RGB888, but the bytes are in B,G,R order,
+            # which is what OpenCV wants. No conversion per frame.
             p.configure(p.create_video_configuration(
                 main={"size": size, "format": "RGB888"},
                 transform=Transform(hflip=h, vflip=v)))
