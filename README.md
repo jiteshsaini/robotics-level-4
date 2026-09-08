@@ -19,6 +19,20 @@ network round trip — and what the model sees drives the motors.
 Everything from the earlier levels is still here: camera, lights, distance
 sensor, speaker, the direction pad, and the phone-sensor pages.
 
+<p align="center">
+   <img src="https://raw.githubusercontent.com/jiteshsaini/files/main/img/earthrover_control_panel.png">
+</p>
+
+One page drives all of it. The five ML projects run along the top, the live
+camera feed fills the middle, and the direction pad and speed sit on the right,
+with the distance reading, the lights and the speaker around the edges. Reload
+the page and the controls come back as you left them — they report what the
+robot is actually doing, not what was last clicked.
+
+The green badge beside **AI ROBOTICS** says which backend the models will use:
+**Coral USB Accelerator** when one is plugged in, **CPU** when it is not. It
+asks the same code the robot does, so the badge and the rover cannot disagree.
+
 ## The five ML projects
 
 | Project | What the robot does |
@@ -37,7 +51,8 @@ Everything from level 3, plus:
 
 - **Google Coral USB Accelerator** — optional. The models run on the CPU
   without one; the Coral makes them roughly ten times faster. It is detected
-  at runtime, so the same code works either way.
+  at runtime, so the same code works either way, and the badge on the control
+  panel above tells you which one is in use.
 
 Some things worth knowing before you build this level:
 
