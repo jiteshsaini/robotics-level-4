@@ -92,7 +92,7 @@ echo"<div align='center' id='box_outer'>";//------------------------
 					. " from util import edgetpu; print(edgetpu)\" 2>/dev/null"));
 
 				if ($er_edgetpu === '1') {
-					$accel = "<span class='accel accel-tpu' title='Coral USB Accelerator detected - about 57 ms per inference'>&#9679; Coral</span>";
+					$accel = "<span class='accel accel-tpu' title='Coral USB Accelerator detected - about 57 ms per inference'>&#9679; Coral USB Accelerator</span>";
 				} elseif ($er_edgetpu === '0') {
 					// Normal, not an error: no accelerator, or its runtime is absent.
 					$accel = "<span class='accel accel-cpu' title='No Coral detected - running on CPU, about 230 ms per inference'>&#9679; CPU</span>";
@@ -106,7 +106,10 @@ echo"<div align='center' id='box_outer'>";//------------------------
 				// absolute (a floating caption over the box), so a sibling span
 				// drops into normal flow and lands on top of the button row.
 				// width:auto so a longer state ("unknown") is not clipped.
-				echo"<label class='floatLabel'>AI Robotics &nbsp;$accel</label><br>";
+				// The chip sits beside the caption, not inside it: one bar holds
+				// both, so the indicator reads as its own thing rather than as
+				// part of the block's name.
+				echo"<div class='floatBar'><label class='floatLabel'>AI Robotics</label>$accel</div><br>";
 				
 				echo"<div class='row-ai'>";
 					
@@ -205,11 +208,11 @@ echo"<div align='center' id='box_outer'>";//------------------------
 		echo"<div class='box_controls blk-lights'>";
 			echo"<zz>";
 				echo"<label class='floatLabel'>Lights</label><br>";
-				echo"<input id='camlight' type='submit' onclick=toggle_light('camlight'); value='OFF'/>";
-				echo"<input id='headlight' type='submit' onclick=toggle_light('headlight'); value='OFF'/>";
-				echo"<br>";
-				echo"<txt>Camera</txt>";
-				echo"<txt>Front</txt>";
+				// Each switch carries its own caption. On a line of their own the
+				// two captions read as one phrase - "Camera Front" - instead of
+				// as two labels belonging to two switches.
+				echo"<span class='lamp'><input id='camlight' type='submit' onclick=toggle_light('camlight'); value='OFF'/><txt>Camera</txt></span>";
+				echo"<span class='lamp'><input id='headlight' type='submit' onclick=toggle_light('headlight'); value='OFF'/><txt>Front</txt></span>";
 			echo"</zz>";
 		echo"</div>";
 		
