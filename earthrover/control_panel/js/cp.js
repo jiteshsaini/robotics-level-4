@@ -214,10 +214,15 @@ function sleep(milliseconds) {
 // camera and a USB webcam are rarely mounted the same way up.
 var FLIP = ["none", "rotate_180", "horizontal_flip", "vertical_flip"];
 var SETTINGS = {
+	// A head row is a divider, not a setting. Both cameras get their own
+	// section because two rows labelled "image" side by side is how you end
+	// up flipping the camera you are not using.
 	camera: {title: "Camera", fields: [
-		{key: "camera",       label: "Source",        opts: ["auto", "USB_cam", "RPI_cam"]},
-		{key: "flip_RPI_cam", label: "RPI_cam image", opts: FLIP},
-		{key: "flip_USB_cam", label: "USB_cam image", opts: FLIP}
+		{key: "camera", label: "Source", opts: ["auto", "USB_cam", "RPI_cam"]},
+		{head: "RPI_cam", note: "ribbon", id: "rpi"},
+		{key: "flip_RPI_cam", label: "Orientation", opts: FLIP},
+		{head: "USB_cam", note: "webcam", id: "usb"},
+		{key: "flip_USB_cam", label: "Orientation", opts: FLIP}
 	]},
 	range: {title: "Range sensor", fields: [
 		{key: "distance", label: "Stop distance (cm)", min: 5, max: 400}
@@ -232,8 +237,20 @@ function settings(which)
 
 	// Build every row first, in order. Appending them from the AJAX callbacks
 	// instead would order them by whichever reply arrived first.
-	var html = "";
+	// Rows before the first heading are shared. Each heading opens a column
+	// and the rows after it belong to it, so the two cameras end up beside
+	// each other rather than in one list where they read as four settings.
+	var top = "", cols = "", open = false;
 	cfg_open.fields.forEach(function(f){
+		if (f.head) {
+			if (open) { cols += "</div>"; }
+			cols += "<div class='cfg_col' id='cfg_col_" + f.id + "'>" +
+			        "<div class='cfg_head'>" + f.head +
+			        "<span class='cfg_note' id='cfg_note_" + f.id + "'>" +
+			        f.note + "</span></div>";
+			open = true;
+			return;
+		}
 		var input;
 		if (f.opts) {
 			input = "<select id='cfg_" + f.key + "'>";
@@ -243,33 +260,62 @@ function settings(which)
 			input = "<input id='cfg_" + f.key + "' type='number' min='" + f.min +
 			        "' max='" + f.max + "'/>";
 		}
-		html += "<div class='cfg_row'><span>" + f.label + "</span>" + input + "</div>";
+		var row = "<div class='cfg_row'><span>" + f.label + "</span>" + input + "</div>";
+		if (open) { cols += row; } else { top += row; }
 	});
-	document.getElementById("cfg_fields").innerHTML = html;
+	if (open) { cols += "</div>"; }
+	document.getElementById("cfg_fields").innerHTML =
+		top + (cols ? "<div class='cfg_cols'>" + cols + "</div>" : "");
+
+	var src = document.getElementById("cfg_camera");
+	if (src) { src.onchange = update_cam_focus; }
 
 	// then fill each one in as its current value comes back
 	cfg_open.fields.forEach(function(f){
+		if (f.head) { return; }
 		post(APP + "ajax_settings.php", {key: f.key}, function(cur){
 			var el = document.getElementById("cfg_" + f.key);
-			if (el) el.value = cur;
+			if (el) { el.value = cur; }
+			if (f.key == "camera") { update_cam_focus(); }
 		});
 	});
+
+	// Only the ribbon camera can be detected honestly: libcamera enumerates
+	// it whether or not it is streaming. A USB webcam that enumerates may
+	// still never deliver a frame, so it is not claimed either way.
+	if (which == "camera") {
+		post(APP + "ajax_settings.php", {probe: "rpi"}, function(found){
+			var el = document.getElementById("cfg_note_rpi");
+			if (el) { el.innerHTML = (found == "1") ? "ribbon - detected" : "ribbon - not detected"; }
+		});
+	}
+
 	show_settings("block");
+}
+
+// Which camera the source setting will actually use. "auto" can use either -
+// camera_compat tries the webcam first and falls back to the ribbon - so
+// under auto neither fades. Naming one fades the other.
+function update_cam_focus()
+{
+	var src = document.getElementById("cfg_camera");
+	if (!src) { return; }
+	var pick = src.value;
+	[["rpi", "RPI_cam"], ["usb", "USB_cam"]].forEach(function(p){
+		var col = document.getElementById("cfg_col_" + p[0]);
+		if (col) { col.classList.toggle("faded", pick != "auto" && pick != p[1]); }
+	});
 }
 
 function save_settings()
 {
 	// one request for the whole box: a request per field raced each other,
 	// and only the last one to arrive survived
-	var set = {};
-	cfg_open.fields.forEach(function(f){
-		var el = document.getElementById("cfg_" + f.key);
-		if (el) set[f.key] = el.value;
-	});
 	var body = {};
 	cfg_open.fields.forEach(function(f){
+		if (f.head) { return; }
 		var el = document.getElementById("cfg_" + f.key);
-		if (el) body["set[" + f.key + "]"] = el.value;
+		if (el) { body["set[" + f.key + "]"] = el.value; }
 	});
 	post(APP + "ajax_settings.php", body, close_settings);
 }

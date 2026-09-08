@@ -11,6 +11,29 @@ $ALLOWED = array(
 	"distance"      => "/^[0-9]{1,3}$/",
 );
 
+// Is a ribbon camera bound? Read from sysfs, which opens no device.
+//
+// NOT rpicam-hello --list-cameras. That answers correctly even while the
+// camera is streaming, but answering is not free: it has libcamera touch a
+// sensor another process is holding, and the live preview visibly jumps and
+// shifts colour. Opening the settings box should not disturb the picture the
+// settings box is about.
+//
+// Only v4l-subdev entries are considered. A CSI sensor registers one; a USB
+// webcam does not, so this cannot mistake a webcam for the ribbon camera.
+// The Pi's own blocks are named unicam/bcm2835/rp1-cfe and are skipped.
+if (isset($_POST["probe"]) && $_POST["probe"] === "rpi") {
+	$found = "0";
+	foreach (glob("/sys/class/video4linux/v4l-subdev*/name") as $f) {
+		$name = trim((string) @file_get_contents($f));
+		if ($name === "" || preg_match('/^(unicam|bcm2835|rp1-cfe)/i', $name)) { continue; }
+		$found = "1";
+		break;
+	}
+	echo $found;
+	exit;
+}
+
 $key = isset($_POST["key"]) ? $_POST["key"] : "";
 if (!isset($ALLOWED[$key]) && !isset($_POST["set"])) {
 	http_response_code(400); echo "unknown setting"; exit;

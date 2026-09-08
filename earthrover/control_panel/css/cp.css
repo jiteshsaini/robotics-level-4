@@ -460,7 +460,7 @@ button img { vertical-align: middle; }
 	position: fixed;
 	top: 22%; left: 50%;
 	transform: translateX(-50%);
-	min-width: 280px;
+	min-width: 430px;
 	padding: 20px 24px;
 	background: var(--sheen);
 	border: 1px solid var(--line);
@@ -477,6 +477,37 @@ button img { vertical-align: middle; }
 	gap: 14px;
 	margin: 12px 0;
 	font-size: 13px;
+}
+.cfg_cols { display: flex; gap: 12px; margin-top: 14px; }
+.cfg_col {
+	flex: 1;
+	padding: 2px 11px 10px;
+	border: 1px solid var(--line);
+	border-radius: 10px;
+	background: rgba(255,255,255,.06);
+	transition: opacity .2s, background .2s;
+}
+/* the camera the source setting will not use */
+.cfg_col.faded { opacity: .35; }
+.cfg_col .cfg_row { flex-direction: column; align-items: flex-start; gap: 5px; margin: 8px 0 0; }
+.cfg_col .cfg_row select { width: 100%; }
+
+.cfg_head {
+	margin: 12px 0 2px;
+	padding-bottom: 4px;
+	border-bottom: 1px solid var(--line);
+	color: var(--ink);
+	font-size: 12px;
+	font-weight: 800;
+	letter-spacing: .6px;
+	text-align: left;
+}
+.cfg_head .cfg_note {
+	float: right;
+	color: var(--muted);
+	font-size: 10.5px;
+	font-weight: 600;
+	letter-spacing: 0;
 }
 .cfg_row select, .cfg_row input[type=number] {
 	padding: 5px 7px;
