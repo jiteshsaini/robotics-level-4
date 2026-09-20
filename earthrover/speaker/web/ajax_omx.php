@@ -21,8 +21,12 @@ if ($req === "" || !is_file($file) || pathinfo($file, PATHINFO_EXTENSION) !== "m
 // Same reason as speaker_tts.py: ALSA defaults to card 0 (HDMI), which
 // cannot be opened on a headless rover. Prefer the 3.5mm jack by card
 // NAME when the board has one; boards without a jack use the default.
+// An /etc/asound.conf means something on this Pi manages the default - a
+// control panel offering a Bluetooth speaker, for one. Naming the jack here
+// would override the choice its owner made, so follow the default.
 $dev = "";
-if (@strpos(@file_get_contents("/proc/asound/cards"), "Headphones") !== false) {
+if (!is_file("/etc/asound.conf")
+    && @strpos(@file_get_contents("/proc/asound/cards"), "Headphones") !== false) {
 	$dev = " --audio-device=alsa/plughw:CARD=Headphones,DEV=0";
 }
 

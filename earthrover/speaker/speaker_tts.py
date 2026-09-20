@@ -47,6 +47,12 @@ def alsa_device():
     indexes move between boots and boards. Boards without a jack (Pi 5) fall
     back to the default.
     """
+    # An /etc/asound.conf means something on this Pi manages the default -
+    # a control panel offering a Bluetooth speaker, for one. Naming the jack
+    # here would override the choice its owner made, so follow the default.
+    if os.path.exists("/etc/asound.conf"):
+        return ""
+
     try:
         with open("/proc/asound/cards") as f:
             if "Headphones" in f.read():
